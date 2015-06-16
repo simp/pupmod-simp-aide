@@ -161,12 +161,12 @@ class aide (
   }
 
   file { '/etc/aide.conf':
-    ensure   => 'present',
-    owner    => 'root',
-    group    => 'root',
-    mode     => '0600',
-    content  => template('aide/aide.conf.erb'),
-    notify   => Exec['update_aide_db']
+    ensure  => 'present',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0600',
+    content => template('aide/aide.conf.erb'),
+    notify  => Exec['update_aide_db']
   }
 
   file { '/usr/local/sbin/update_aide':

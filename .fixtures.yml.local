@@ -1,0 +1,12 @@
+---
+fixtures:
+  symlinks:
+    aide: "#{source_dir}"
+    auditd: "#{source_dir}/../auditd"
+    augeasproviders_core: "#{source_dir}/../augeasproviders_core"
+    augeasproviders_grub: "#{source_dir}/../augeasproviders_grub"
+    common: "#{source_dir}/../common"
+    concat: "#{source_dir}/../concat"
+    logrotate: "#{source_dir}/../logrotate"
+    rsyslog: "#{source_dir}/../rsyslog"
+    stdlib: "#{source_dir}/../stdlib"
