@@ -28,25 +28,29 @@ class aide::to_syslog (
   $log_facility = 'local6'
 ) {
   include '::aide'
-  include 'rsyslog'
+  include '::rsyslog'
 
-  rsyslog::add_rule { 'aide_log':
-    rule    => "\$InputFileName $logdir/aide.log
-      \$InputFileTag tag_aide_log:
-      \$InputFileStateFile aide_log
-      \$InputFileSeverity $log_severity
-      \$InputFileFacility $log_facility
-      \$InputRunFileMonitor",
+  rsyslog::rule::other { 'aide_log':
+    rule    =>
+"input(type=\"imfile\"
+  File=\"$logdir/aide.log\"
+  StateFile=\"aide_log\"
+  Tag=\"tag_aide_log\"
+  Severity=\"$log_severity\"
+  Facility=\"$log_facility\"
+)",
     require => File[$logdir]
   }
 
-  rsyslog::add_rule { 'aide_report':
-    rule    => "\$InputFileName $logdir/aide.report
-      \$InputFileTag tag_aide_report:
-      \$InputFileStateFile aide_report
-      \$InputFileSeverity $log_severity
-      \$InputFileFacility $log_facility
-      \$InputRunFileMonitor",
+  rsyslog::rule::other { 'aide_report':
+    rule    =>
+"input(type=\"imfile\"
+  File=\"$logdir/aide.report\"
+  Tag=\"tag_aide_report\"
+  StateFile=\"aide_report\"
+  Severity=\"$log_severity\"
+  Facility=\"$log_facility\"
+)",
     require => File[$logdir]
   }
 }

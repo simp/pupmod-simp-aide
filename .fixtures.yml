@@ -6,6 +6,7 @@ fixtures:
     augeasproviders_grub: "git://github.com/simp/augeasproviders_grub"
     common: "git://github.com/simp/pupmod-simp-common"
     concat: "git://github.com/simp/pupmod-simp-concat"
+    functions: "git://github.com/simp/pupmod-simp-functions"
     logrotate: "git://github.com/simp/pupmod-simp-logrotate"
     rsyslog: "git://github.com/simp/pupmod-simp-rsyslog"
     stdlib: "git://github.com/simp/puppetlabs-stdlib"

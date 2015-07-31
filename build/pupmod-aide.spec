@@ -1,7 +1,7 @@
 Summary: AIDE Puppet Module
 Name: pupmod-aide
 Version: 4.1.0
-Release: 6
+Release: 7
 License: Apache License, Version 2.0
 Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
@@ -9,7 +9,7 @@ Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Requires: pupmod-auditd >= 4.1.0-3
 Requires: pupmod-common >= 4.1.0-7
 Requires: pupmod-logrotate >= 4.1.0-0
-Requires: pupmod-rsyslog >= 4.1.0-3
+Requires: pupmod-rsyslog >= 5.0.0
 Requires: puppet >= 3.3.0
 Buildarch: noarch
 Requires: simp-bootstrap >= 4.2.0
@@ -57,6 +57,9 @@ fi
 # Post uninstall stuff
 
 %changelog
+* Fri Jul 31 2015 Kendall Moore <kmoore@keywcorp.com> - 4.1.0-7
+- Updated logging configuration to work with new rsyslog module.
+
 * Thu Feb 19 2015 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.1.0-6
 - Changed calls directly to /etc/init.d/rsyslog to '/sbin/service rsyslog' so
   that both RHEL6 and RHEL7 are properly supported.

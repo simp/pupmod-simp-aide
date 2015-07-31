@@ -7,6 +7,7 @@ fixtures:
     augeasproviders_grub: "#{source_dir}/../augeasproviders_grub"
     common: "#{source_dir}/../common"
     concat: "#{source_dir}/../concat"
+    functions: "#{source_dir}/../functions"
     logrotate: "#{source_dir}/../logrotate"
     rsyslog: "#{source_dir}/../rsyslog"
     stdlib: "#{source_dir}/../stdlib"
