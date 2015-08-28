@@ -9,5 +9,6 @@ fixtures:
     concat: "#{source_dir}/../concat"
     functions: "#{source_dir}/../functions"
     logrotate: "#{source_dir}/../logrotate"
+    pki: "#{source_dir}/../pki"
     rsyslog: "#{source_dir}/../rsyslog"
     stdlib: "#{source_dir}/../stdlib"

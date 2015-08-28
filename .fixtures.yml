@@ -8,6 +8,7 @@ fixtures:
     concat: "git://github.com/simp/pupmod-simp-concat"
     functions: "git://github.com/simp/pupmod-simp-functions"
     logrotate: "git://github.com/simp/pupmod-simp-logrotate"
+    pki: "git://github.com/simp/pupmod-simp-pki"
     rsyslog: "git://github.com/simp/pupmod-simp-rsyslog"
     stdlib: "git://github.com/simp/puppetlabs-stdlib"
   symlinks:
