@@ -1,13 +1,14 @@
 Summary: AIDE Puppet Module
 Name: pupmod-aide
 Version: 4.1.0
-Release: 7
+Release: 8
 License: Apache License, Version 2.0
 Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Requires: pupmod-auditd >= 4.1.0-3
 Requires: pupmod-common >= 4.1.0-7
+Requires: pupmod-simplib >= 1.0.0-0
 Requires: pupmod-logrotate >= 4.1.0-0
 Requires: pupmod-rsyslog >= 5.0.0
 Requires: puppet >= 3.3.0
@@ -57,6 +58,9 @@ fi
 # Post uninstall stuff
 
 %changelog
+* Mon Nov 09 2015 Chris Tessmer <chris.tessmer@onypoint.com> - 4.1.0-8
+- migration to simplib and simpcat (lib/ only)
+
 * Fri Jul 31 2015 Kendall Moore <kmoore@keywcorp.com> - 4.1.0-7
 - Updated logging configuration to work with new rsyslog module.
 
