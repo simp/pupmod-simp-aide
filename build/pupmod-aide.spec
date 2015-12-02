@@ -7,7 +7,6 @@ Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Requires: pupmod-auditd >= 4.1.0-3
-Requires: pupmod-common >= 4.1.0-7
 Requires: pupmod-simplib >= 1.0.0-0
 Requires: pupmod-logrotate >= 4.1.0-0
 Requires: pupmod-rsyslog >= 5.0.0

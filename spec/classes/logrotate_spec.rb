@@ -8,7 +8,7 @@ describe 'aide::logrotate' do
     let(:facts) {factgroup}
     it { should create_class('aide::logrotate') }
 
-    context "#{factgroup[:operatingsystem]} #{factgroup[:lsbmajdistrelease]}" do
+    context "#{factgroup[:operatingsystem]} #{factgroup[:operatingsystemmajrelease]}" do
       it { should compile.with_all_deps }
     end
   end

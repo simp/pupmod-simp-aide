@@ -22,8 +22,8 @@ class aide::logrotate (
 
   logrotate::add { 'aide':
     log_files     => [
-      "$::aide::logdir/*.report",
-      "$::aide::logdir/*.log"
+      "${::aide::logdir}/*.report",
+      "${::aide::logdir}/*.log"
     ],
     missingok     => true,
     rotate_period => $rotate_period,

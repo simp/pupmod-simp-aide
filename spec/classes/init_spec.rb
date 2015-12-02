@@ -9,7 +9,7 @@ describe 'aide' do
 
     it { should create_class('aide') }
 
-    context "#{factgroup[:operatingsystem]} #{factgroup[:lsbmajdistrelease]}" do
+    context "#{factgroup[:operatingsystem]} #{factgroup[:operatingsystemmajrelease]}" do
       it { should compile.with_all_deps }
       it { should contain_class('aide::default_rules') }
       it { should_not contain_class('aide::set_schedule') }
