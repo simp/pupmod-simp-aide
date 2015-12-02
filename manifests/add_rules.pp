@@ -29,7 +29,7 @@ define aide::add_rules (
   $rules,
   $ruledir = '/etc/aide.conf.d'
 ) {
-  file { "$ruledir/$name.aide":
+  file { "${ruledir}/${name}.aide":
     ensure  => 'present',
     owner   => 'root',
     group   => 'root',
@@ -40,8 +40,8 @@ define aide::add_rules (
   }
 
   # Add auditing rules for the aide configuration.
-  auditd::add_rules { "$name.aide":
-    content => "-w $ruledir/$name.aide -p wa -k CFG_aide"
+  auditd::add_rules { "${name}.aide":
+    content => "-w ${ruledir}/${name}.aide -p wa -k CFG_aide"
   }
 
   validate_absolute_path($ruledir)

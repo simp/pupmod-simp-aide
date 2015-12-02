@@ -178,14 +178,14 @@ class aide (
       killall -9 aide;
       wait;
 
-      if [ -f $dbdir/$database_name ]; then
+      if [ -f ${dbdir}/${database_name} ]; then
         /bin/nice -n 19 /usr/sbin/aide -c /etc/aide.conf -u;
       else
         /bin/nice -n 19 /usr/sbin/aide -c /etc/aide.conf -i;
       fi
 
       wait;
-      mv $dbdir/$database_out_name $dbdir/$database_name"
+      mv ${dbdir}/${database_out_name} ${dbdir}/${database_name}"
   }
 
   # CCE-27135-3
@@ -201,7 +201,7 @@ class aide (
 
   exec { 'verify_aide_db_presence':
     command => '/usr/local/sbin/update_aide &',
-    onlyif  => "/usr/bin/test ! -f $dbdir/$database_name",
+    onlyif  => "/usr/bin/test ! -f ${dbdir}/${database_name}",
     require => [
       File['/usr/local/sbin/update_aide'],
       File[$dbdir],

@@ -10,7 +10,7 @@ describe 'aide::add_rules' do
   FactGroups.factgroups.each do |factgroup|
     let(:facts) {factgroup}
 
-    context "#{factgroup[:operatingsystem]} #{factgroup[:lsbmajdistrelease]}" do
+    context "#{factgroup[:operatingsystem]} #{factgroup[:operatingsystemmajrelease]}" do
       it { should compile.with_all_deps }
       it { should create_file('/etc/aide.conf.d/test_rules.aide').with_content(/test_rules/) }
     end

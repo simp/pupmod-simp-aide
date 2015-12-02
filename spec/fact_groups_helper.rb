@@ -14,19 +14,19 @@ module FactGroups
     factgroups = [
       {
         :operatingsystem => 'RedHat',
-        :lsbmajdistrelease => '7'
+        :operatingsystemmajrelease => '7'
       },
       {
         :operatingsystem => 'RedHat',
-        :lsbmajdistrelease => '6'
+        :operatingsystemmajrelease => '6'
       },
       {
         :operatingsystem => 'CentOS',
-        :lsbmajdistrelease => '7'
+        :operatingsystemmajrelease => '7'
       },
       {
         :operatingsystem => 'CentOS',
-        :lsbmajdistrelease => '6'
+        :operatingsystemmajrelease => '6'
       },
     ]
 

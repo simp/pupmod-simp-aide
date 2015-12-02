@@ -33,11 +33,11 @@ class aide::to_syslog (
   rsyslog::rule::other { 'aide_log':
     rule    =>
 "input(type=\"imfile\"
-  File=\"$logdir/aide.log\"
+  File=\"${logdir}/aide.log\"
   StateFile=\"aide_log\"
   Tag=\"tag_aide_log\"
-  Severity=\"$log_severity\"
-  Facility=\"$log_facility\"
+  Severity=\"${log_severity}\"
+  Facility=\"${log_facility}\"
 )",
     require => File[$logdir]
   }
@@ -45,11 +45,11 @@ class aide::to_syslog (
   rsyslog::rule::other { 'aide_report':
     rule    =>
 "input(type=\"imfile\"
-  File=\"$logdir/aide.report\"
+  File=\"${logdir}/aide.report\"
   Tag=\"tag_aide_report\"
   StateFile=\"aide_report\"
-  Severity=\"$log_severity\"
-  Facility=\"$log_facility\"
+  Severity=\"${log_severity}\"
+  Facility=\"${log_facility}\"
 )",
     require => File[$logdir]
   }
