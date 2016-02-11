@@ -33,4 +33,6 @@ class aide::logrotate (
 
   validate_array_member($rotate_period, ['daily', 'weekly', 'monthly', 'yearly'])
   validate_integer($rotate_number)
+
+  compliance_map()
 }

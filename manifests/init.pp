@@ -222,4 +222,6 @@ class aide (
   validate_bool($rotate_logs)
   validate_bool($to_syslog)
   validate_bool($use_auditd)
+
+  compliance_map()
 }

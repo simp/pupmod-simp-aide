@@ -1,7 +1,7 @@
 Summary: AIDE Puppet Module
 Name: pupmod-aide
 Version: 4.1.0
-Release: 8
+Release: 9
 License: Apache License, Version 2.0
 Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
@@ -14,6 +14,7 @@ Requires: puppet >= 3.3.0
 Buildarch: noarch
 Requires: simp-bootstrap >= 4.2.0
 Obsoletes: pupmod-aide-test
+Requires: pupmod-onyxpoint-compliance_markup
 
 Prefix: /etc/puppet/environments/simp/modules
 
@@ -57,6 +58,9 @@ fi
 # Post uninstall stuff
 
 %changelog
+* Wed Feb 10 2016 Ralph Wright <ralph.wright@onypoint.com> - 4.1.0-9
+- Added compliance function support
+
 * Mon Nov 09 2015 Chris Tessmer <chris.tessmer@onypoint.com> - 4.1.0-8
 - migration to simplib and simpcat (lib/ only)
 
