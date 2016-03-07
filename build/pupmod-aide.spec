@@ -7,7 +7,7 @@ Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Requires: pupmod-auditd >= 4.1.0-3
-Requires: pupmod-simplib >= 1.0.0-0
+Requires: pupmod-simplib >= 1.1.0-0
 Requires: pupmod-logrotate >= 4.1.0-0
 Requires: pupmod-rsyslog >= 5.0.0
 Requires: puppet >= 3.3.0
@@ -58,6 +58,9 @@ fi
 # Post uninstall stuff
 
 %changelog
+* Thu Mar 10 2016 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.1.0-10
+- Updated for Puppet 4 compatibility
+
 * Wed Feb 10 2016 Ralph Wright <ralph.wright@onypoint.com> - 4.1.0-9
 - Added compliance function support
 

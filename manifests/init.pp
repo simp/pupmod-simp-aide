@@ -213,7 +213,7 @@ class aide (
   validate_absolute_path($logdir)
   validate_array_member($gzip_dbout,[true,false,'yes','no'])
   validate_integer($verbose)
-  validate_between($verbose,0,255)
+  validate_between(to_integer($verbose),0,255)
   validate_array($report_urls)
   validate_array($aliases)
   validate_absolute_path($ruledir)
