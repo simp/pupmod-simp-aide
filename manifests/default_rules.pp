@@ -13,7 +13,10 @@
 # * Trevor Vaughan <tvaughan@onyxpoint.com>
 #
 class aide::default_rules (
+  # FIXME: add params pattern to aide or make this a private class
   $default_rules = $::aide::default_rules,
+
+  # FIXME: add params pattern to aide or make this a private class
   $ruledir = $::aide::ruledir
 ) {
 

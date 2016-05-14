@@ -6,6 +6,8 @@ describe 'aide::logrotate' do
   include FactGroups
   FactGroups.factgroups.each do |factgroup|
     let(:facts) {factgroup}
+    let(:pre_condition) { 'include "aide"' }
+
     it { should create_class('aide::logrotate') }
 
     context "#{factgroup[:operatingsystem]} #{factgroup[:operatingsystemmajrelease]}" do

@@ -1,7 +1,7 @@
 Summary: AIDE Puppet Module
 Name: pupmod-aide
-Version: 4.1.0
-Release: 9
+Version: 4.1.1
+Release: 0
 License: Apache License, Version 2.0
 Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
@@ -58,6 +58,9 @@ fi
 # Post uninstall stuff
 
 %changelog
+* Tue May 17 2016 Chris Tessmer <chris.tessmer@onypoint.com> - 4.1.1-0
+- Sanitize code for `STRICT_VARIABLES=yes`
+
 * Thu Mar 10 2016 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.1.0-10
 - Updated for Puppet 4 compatibility
 

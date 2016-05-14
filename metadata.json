@@ -1,13 +1,16 @@
 {
-  "name":    "simp-aide",
-  "version": "4.1.0",
-  "author":  "simp",
+  "name": "simp-aide",
+  "version": "4.1.1",
+  "author": "simp",
   "summary": "manages AIDE",
   "license": "Apache-2.0",
-  "source":  "https://github.com/simp/pupmod-simp-aide",
+  "source": "https://github.com/simp/pupmod-simp-aide",
   "project_page": "https://github.com/simp/pupmod-simp-aide",
-  "issues_url":   "https://simp-project.atlassian.net",
-  "tags": [ "simp", "aide" ],
+  "issues_url": "https://simp-project.atlassian.net",
+  "tags": [
+    "simp",
+    "aide"
+  ],
   "dependencies": [
     {
       "name": "simp-auditd",

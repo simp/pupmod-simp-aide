@@ -5,6 +5,7 @@ describe 'aide::default_rules' do
   include FactGroups
   FactGroups.factgroups.each do |factgroup|
     let(:facts) { factgroup }
+    let(:pre_condition) { 'include "aide"' }
 
     it { should create_class('aide::default_rules') }
 
