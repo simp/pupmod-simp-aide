@@ -23,7 +23,8 @@
 # * Trevor Vaughan <tvaughan@onyxpoint.com>
 #
 class aide::to_syslog (
-  $logdir = $::aide::logdir,
+  # FIXME: add params patter to aide or make this a private class
+  $logdir = defined('$::aide::logdir')? { true => getvar('::aide::logdir'), false => fail("'::aide::logdir' is not defined") },
   $log_severity = 'warning',
   $log_facility = 'local6'
 ) {
