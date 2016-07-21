@@ -13,19 +13,19 @@
   ],
   "dependencies": [
     {
-      "name": "simp-auditd",
+      "name": "simp/auditd",
       "version_requirement": ">= 4.1.0"
     },
     {
-      "name": "simp-logrotate",
+      "name": "simp/logrotate",
       "version_requirement": ">= 4.1.0"
     },
     {
-      "name": "simp-rsyslog",
+      "name": "simp/rsyslog",
       "version_requirement": ">= 5.0.0"
     },
     {
-      "name": "onyxpoint/compliance_markup",
+      "name": "simp/compliance_markup",
       "version_requirement": ">= 1.0.0"
     }
   ],
