@@ -14,19 +14,19 @@
   "dependencies": [
     {
       "name": "simp/auditd",
-      "version_requirement": ">= 4.1.0"
+      "version_requirement": ">= 5.0.4 < 6.0.0"
     },
     {
       "name": "simp/logrotate",
-      "version_requirement": ">= 4.1.0"
+      "version_requirement": ">= 4.1.0 < 5.0.0"
     },
     {
       "name": "simp/rsyslog",
-      "version_requirement": ">= 5.0.0"
+      "version_requirement": ">= 5.1.0 < 6.0.0"
     },
     {
       "name": "simp/compliance_markup",
-      "version_requirement": ">= 1.0.0"
+      "version_requirement": ">= 1.0.1 < 2.0.0"
     }
   ],
   "operatingsystem_support": [
