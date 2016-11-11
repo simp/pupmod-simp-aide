@@ -113,6 +113,21 @@ class aide (
   $to_syslog = true,
   $use_auditd = true,
 ) {
+
+  validate_absolute_path($dbdir)
+  validate_absolute_path($logdir)
+  validate_array_member($gzip_dbout,[true,false,'yes','no'])
+  validate_integer($verbose)
+  validate_between(to_integer($verbose),0,255)
+  validate_array($report_urls)
+  validate_array($aliases)
+  validate_absolute_path($ruledir)
+  validate_array($rules)
+  validate_bool($enable)
+  validate_bool($rotate_logs)
+  validate_bool($to_syslog)
+  validate_bool($use_auditd)
+
   include '::aide::default_rules'
 
   if $enable {
@@ -128,7 +143,7 @@ class aide (
   }
 
   if $use_auditd {
-    include 'auditd'
+    include '::auditd'
 
     auditd::add_rules { 'aide':
       content => '-w /etc/aide.conf -p wa -k CFG_aide'
@@ -208,20 +223,4 @@ class aide (
       File[$logdir]
     ]
   }
-
-  validate_absolute_path($dbdir)
-  validate_absolute_path($logdir)
-  validate_array_member($gzip_dbout,[true,false,'yes','no'])
-  validate_integer($verbose)
-  validate_between(to_integer($verbose),0,255)
-  validate_array($report_urls)
-  validate_array($aliases)
-  validate_absolute_path($ruledir)
-  validate_array($rules)
-  validate_bool($enable)
-  validate_bool($rotate_logs)
-  validate_bool($to_syslog)
-  validate_bool($use_auditd)
-
-  compliance_map()
 }
