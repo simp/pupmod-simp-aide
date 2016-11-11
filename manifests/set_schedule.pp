@@ -19,6 +19,11 @@ class aide::set_schedule (
   $month = '*',
   $weekday = '0'
 ) {
+
+  validate_between($minute, 0, 60)
+  validate_between($hour, 0, 24)
+  validate_between($weekday, 0, 7)
+
   cron { 'aide_schedule':
     command  => '/bin/nice -n 19 /usr/sbin/aide -C',
     user     => 'root',
@@ -28,8 +33,4 @@ class aide::set_schedule (
     month    => $month,
     weekday  => $weekday
   }
-
-  validate_between($minute, 0, 60)
-  validate_between($hour, 0, 24)
-  validate_between($weekday, 0, 7)
 }

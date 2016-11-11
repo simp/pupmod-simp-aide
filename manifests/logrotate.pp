@@ -18,7 +18,11 @@ class aide::logrotate (
   $rotate_period = 'weekly',
   $rotate_number = '4'
 ) {
-  include 'logrotate'
+
+  validate_array_member($rotate_period, ['daily', 'weekly', 'monthly', 'yearly'])
+  validate_integer($rotate_number)
+
+  include '::logrotate'
 
   logrotate::add { 'aide':
     log_files     => [
@@ -30,9 +34,4 @@ class aide::logrotate (
     rotate        => $rotate_number,
     lastaction    => '/sbin/service rsyslog restart > /dev/null 2>&1 || true'
   }
-
-  validate_array_member($rotate_period, ['daily', 'weekly', 'monthly', 'yearly'])
-  validate_integer($rotate_number)
-
-  compliance_map()
 }
