@@ -26,7 +26,7 @@ group :test do
       # simp-rake-helpers and ruby 1.8.7 bomb Travis tests
       # TODO: fix upstream deps (parallel in simp-rake-helpers)
       RUBY_VERSION.sub(/\.\d+$/,'') != '1.8'
-    gem 'simp-rake-helpers'
+    gem 'simp-rake-helpers', '~>3.0'
   end
 end
 
@@ -45,7 +45,7 @@ group :development do
 end
 
 group :system_tests do
-  gem 'beaker'
+  gem 'beaker', :git => 'https://github.com/trevor-vaughan/beaker', :branch => 'BKR-978-2.51.0'
   gem 'beaker-rspec'
   gem 'simp-beaker-helpers', '>= 1.0.5'
 end

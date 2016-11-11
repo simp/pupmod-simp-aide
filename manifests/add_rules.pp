@@ -29,6 +29,9 @@ define aide::add_rules (
   $rules,
   $ruledir = '/etc/aide.conf.d'
 ) {
+
+  validate_absolute_path($ruledir)
+
   include '::aide'
 
   file { "${ruledir}/${name}.aide":
@@ -44,6 +47,4 @@ define aide::add_rules (
   auditd::add_rules { "${name}.aide":
     content => "-w ${ruledir}/${name}.aide -p wa -k CFG_aide"
   }
-
-  validate_absolute_path($ruledir)
 }
