@@ -63,20 +63,20 @@
 #   A set of default rules to include. If this is set, the internal
 #   defaults will be overridden.
 #
-# [*rotate_logs*]
+# [*logrotate*]
 #   Type: Boolean
 #
 #   Whether or not to use logrotate. If set to 'true', Hiera can be
 #   used to set the variables in auditd::logrotate
 #
-# [*to_syslog*]
+# [*syslog*]
 #   Type: Boolean
 #
 #   Whether or not to send the AIDE output directly to syslog.
-#   Use Hiera to set the parameters on aide::to_syslog appropriately
+#   Use Hiera to set the parameters on aide::syslog appropriately
 #   if you don't care for the defaults.
 #
-# [*use_auditd*]
+# [*auditd*]
 #   Type: Boolean
 #
 #   Whether or not to add rules to the auditd configuration.
@@ -109,9 +109,9 @@ class aide (
   $rules = [ 'default.aide' ],
   $enable = false,
   $default_rules = '',
-  $rotate_logs = true,
-  $to_syslog = true,
-  $use_auditd = true,
+  $logrotate = lookup('::simp_options::logrotate', { 'default_value' => false, 'value_type' => Boolean }),
+  $syslog = lookup('::simp_options::syslog', { 'default_value' => false, 'value_type' => Boolean }),
+  $auditd = lookup('::simp_options::auditd', { 'default_value' => false, 'value_type' => Boolean })
 ) {
 
   validate_absolute_path($dbdir)
@@ -124,9 +124,9 @@ class aide (
   validate_absolute_path($ruledir)
   validate_array($rules)
   validate_bool($enable)
-  validate_bool($rotate_logs)
-  validate_bool($to_syslog)
-  validate_bool($use_auditd)
+  validate_bool($logrotate)
+  validate_bool($syslog)
+  validate_bool($auditd)
 
   include '::aide::default_rules'
 
@@ -134,17 +134,15 @@ class aide (
     include '::aide::set_schedule'
   }
 
-  if $rotate_logs {
+  if $logrotate {
     include '::aide::logrotate'
   }
 
-  if $to_syslog {
-    include '::aide::to_syslog'
+  if $syslog {
+    include '::aide::syslog'
   }
 
-  if $use_auditd {
-    include '::auditd'
-
+  if $auditd {
     auditd::add_rules { 'aide':
       content => '-w /etc/aide.conf -p wa -k CFG_aide'
     }
