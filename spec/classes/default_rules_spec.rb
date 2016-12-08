@@ -1,16 +1,14 @@
 require 'spec_helper'
-require 'fact_groups_helper'
 
 describe 'aide::default_rules' do
-  include FactGroups
-  FactGroups.factgroups.each do |factgroup|
-    let(:facts) { factgroup }
-    let(:pre_condition) { 'include "aide"' }
+  context 'supported operating systems' do
+    on_supported_os.each do |os, facts|
 
-    it { should create_class('aide::default_rules') }
+      let(:facts) { facts }
+      let(:pre_condition) { 'include "aide"' }
 
-    context "#{factgroup[:operatingsystem]} #{factgroup[:operatingsystemmajrelease]}" do
       it { should compile.with_all_deps }
+      it { should create_class('aide::default_rules') }
       it { should create_file('/etc/aide.conf.d/default.aide').with_content(/\/bin\s+NORMAL/) }
     end
   end

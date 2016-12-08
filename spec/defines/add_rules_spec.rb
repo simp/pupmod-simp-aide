@@ -1,16 +1,15 @@
 require 'spec_helper'
-require 'fact_groups_helper'
 
 describe 'aide::add_rules' do
+  context 'supported operating systems' do
+    on_supported_os.each do |os, facts|
 
-  let(:title) {'test_rules'}
-  let(:params) {{ :rules => 'test_rules' }}
+      let(:facts) { facts }
+      let(:pre_condition) { 'include "aide"' }
 
-  include FactGroups
-  FactGroups.factgroups.each do |factgroup|
-    let(:facts) {factgroup}
+      let(:title) {'test_rules'}
+      let(:params) {{ :rules => 'test_rules' }}
 
-    context "#{factgroup[:operatingsystem]} #{factgroup[:operatingsystemmajrelease]}" do
       it { should compile.with_all_deps }
       it { should create_file('/etc/aide.conf.d/test_rules.aide').with_content(/test_rules/) }
     end

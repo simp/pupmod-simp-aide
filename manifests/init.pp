@@ -109,9 +109,9 @@ class aide (
   $rules = [ 'default.aide' ],
   $enable = false,
   $default_rules = '',
-  $logrotate = lookup('simp_options::logrotate', { 'default_value' => false, 'value_type' => Boolean }),
-  $syslog = lookup('simp_options::syslog', { 'default_value' => false, 'value_type' => Boolean }),
-  $auditd = lookup('simp_options::auditd', { 'default_value' => false, 'value_type' => Boolean })
+  Boolean $logrotate = simplib::lookup('simp_options::logrotate', { 'default_value' => false}),
+  Boolean $syslog = simplib::lookup('simp_options::syslog', { 'default_value' => false }),
+  Boolean $auditd = simplib::lookup('simp_options::auditd', { 'default_value' => false })
 ) {
 
   validate_absolute_path($dbdir)
@@ -124,9 +124,6 @@ class aide (
   validate_absolute_path($ruledir)
   validate_array($rules)
   validate_bool($enable)
-  validate_bool($logrotate)
-  validate_bool($syslog)
-  validate_bool($auditd)
 
   include '::aide::default_rules'
 

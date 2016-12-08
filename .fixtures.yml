@@ -13,6 +13,7 @@ fixtures:
     rsyslog: https://github.com/simp/pupmod-simp-rsyslog
     simpcat: https://github.com/simp/pupmod-simp-simpcat
     simplib: https://github.com/simp/pupmod-simp-simplib
+    simp_options: https://github.com/simp/pupmod-simp-simp_options
     stdlib:
       repo: https://github.com/simp/puppetlabs-stdlib
       branch: simp-master
