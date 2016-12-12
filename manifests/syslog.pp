@@ -1,4 +1,4 @@
-# == Class aide::to_syslog
+# == Class aide::syslog
 #
 # This sends the aide logs to syslog. You must set up the appropriate
 # forwarding rules elsewhere if you want to utilize a central site.
@@ -22,7 +22,7 @@
 #
 # * Trevor Vaughan <tvaughan@onyxpoint.com>
 #
-class aide::to_syslog (
+class aide::syslog (
   # FIXME: add params pattern to aide or make this a private class
   $logdir = defined('$::aide::logdir')? { true => getvar('::aide::logdir'), false => fail("'::aide::logdir' is not defined") },
   $log_severity = 'warning',
