@@ -86,44 +86,32 @@
 # * Trevor Vaughan <tvaughan@onyxpoint.com>
 #
 class aide (
-  $dbdir = '/var/lib/aide',
-  $logdir = '/var/log/aide',
-  $database_name = 'aide.db.gz',
-  $database_out_name = 'aide.db.new.gz',
-  $gzip_dbout = 'yes',
-  $verbose = '5',
-  $report_urls = [ 'file:@@{LOGDIR}/aide.report'],
-  $aliases = [
-    'R = p+i+l+n+u+g+s+m+c+sha512',
-    'L = p+i+l+n+u+g+acl+xattrs',
-    '> = p+i+l+n+u+g+S+acl+xattrs',
-    'ALLXTRAHASHES = sha1+rmd160+sha256+sha512+tiger',
-    'EVERYTHING = R+ALLXTRAHASHES',
-    'NORMAL = R',
-    'DIR = p+i+n+u+g+acl+xattrs',
-    'PERMS = p+i+u+g+acl',
-    'LOG = >',
-    'LSPP = R',
-    'DATAONLY =  p+n+u+g+s+acl+selinux+xattrs+sha256+rmd160+tiger' ],
-  $ruledir = '/etc/aide.conf.d',
-  $rules = [ 'default.aide' ],
-  $enable = false,
-  $default_rules = '',
-  Boolean $logrotate = simplib::lookup('simp_options::logrotate', { 'default_value' => false}),
-  Boolean $syslog = simplib::lookup('simp_options::syslog', { 'default_value' => false }),
-  Boolean $auditd = simplib::lookup('simp_options::auditd', { 'default_value' => false })
+  Stdlib::Absolutepath              $dbdir             = '/var/lib/aide',
+  Stdlib::Absolutepath              $logdir            = '/var/log/aide',
+  String                            $database_name     = 'aide.db.gz',
+  String                            $database_out_name = 'aide.db.new.gz',
+  Variant[Enum['yes','no'],Boolean] $gzip_dbout        = 'yes',
+  Stdlib::Compat::Integer           $verbose           = '5',
+  Array[String]                     $report_urls       = [ 'file:@@{LOGDIR}/aide.report'],
+  Array[String]                     $aliases           = ['R = p+i+l+n+u+g+s+m+c+sha512',
+                                                          'L = p+i+l+n+u+g+acl+xattrs',
+                                                          '> = p+i+l+n+u+g+S+acl+xattrs',
+                                                          'ALLXTRAHASHES = sha1+rmd160+sha256+sha512+tiger',
+                                                          'EVERYTHING = R+ALLXTRAHASHES',
+                                                          'NORMAL = R',
+                                                          'DIR = p+i+n+u+g+acl+xattrs',
+                                                          'PERMS = p+i+u+g+acl',
+                                                          'LOG = >',
+                                                          'LSPP = R',
+                                                          'DATAONLY =  p+n+u+g+s+acl+selinux+xattrs+sha256+rmd160+tiger' ],
+  Stdlib::Absolutepath              $ruledir           = '/etc/aide.conf.d',
+  Array[String]                     $rules             = [ 'default.aide' ],
+  Boolean                           $enable            = false,
+  String                            $default_rules     = '',
+  Boolean                           $logrotate         = simplib::lookup('simp_options::logrotate', { 'default_value' => false}),
+  Boolean                           $syslog            = simplib::lookup('simp_options::syslog', { 'default_value'    => false }),
+  Boolean                           $auditd            = simplib::lookup('simp_options::auditd', { 'default_value'    => false })
 ) {
-
-  validate_absolute_path($dbdir)
-  validate_absolute_path($logdir)
-  validate_array_member($gzip_dbout,[true,false,'yes','no'])
-  validate_integer($verbose)
-  validate_between(to_integer($verbose),0,255)
-  validate_array($report_urls)
-  validate_array($aliases)
-  validate_absolute_path($ruledir)
-  validate_array($rules)
-  validate_bool($enable)
 
   include '::aide::default_rules'
 

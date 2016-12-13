@@ -5,6 +5,7 @@
 # == Parameters
 #
 # [*default_rules*]
+#   String.
 #   A set of default rules to include. If this is set, the internal
 #   defaults will be overridden.
 #
@@ -13,11 +14,8 @@
 # * Trevor Vaughan <tvaughan@onyxpoint.com>
 #
 class aide::default_rules (
-  # FIXME: add params pattern to aide or make this a private class
-  $default_rules = $::aide::default_rules,
-
-  # FIXME: add params pattern to aide or make this a private class
-  $ruledir = $::aide::ruledir
+  String               $default_rules = $::aide::default_rules,
+  Stdlib::Absolutepath $ruledir       = $::aide::ruledir
 ) {
 
   include '::aide'
