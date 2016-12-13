@@ -23,9 +23,9 @@
 # * Trevor Vaughan <tvaughan@onyxpoint.com>
 #
 class aide::syslog (
-  Stdlib::Absolutepath $logdir = defined('$::aide::logdir')? { true => getvar('::aide::logdir'), false => fail("'::aide::logdir' is not defined") },
-  String $log_severity = 'warning',
-  String $log_facility = 'local6'
+  Stdlib::Absolutepath $logdir      = defined('$::aide::logdir')? { true => getvar('::aide::logdir'), false => fail("'::aide::logdir' is not defined") },
+  Aide::Logseverity    $log_severity = 'warning',
+  Aide::Logfacility    $log_facility = 'local6'
 ) {
   include '::aide'
   include '::rsyslog'
