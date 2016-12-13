@@ -1,4 +1,7 @@
-* Wed Dec 07 2016 Nick Markowski <nmarkowski@keywcorp.com> - 6.0.0
+* Tue Dec 13 2016 Nick Markowski <nmarkowski@keywcorp.com> - 6.0.0-0
+- Strong typed the module.
+
+* Wed Dec 07 2016 Nick Markowski <nmarkowski@keywcorp.com> - 6.0.0-0
 - Updated catalysts to take defaults from simp_options
 
 * Wed Nov 23 2016 Jeanne Greulich <jgreulich@onypoint.com> - 5.0.0-2016

@@ -23,10 +23,9 @@
 # * Trevor Vaughan <tvaughan@onyxpoint.com>
 #
 class aide::syslog (
-  # FIXME: add params pattern to aide or make this a private class
-  $logdir = defined('$::aide::logdir')? { true => getvar('::aide::logdir'), false => fail("'::aide::logdir' is not defined") },
-  $log_severity = 'warning',
-  $log_facility = 'local6'
+  Stdlib::Absolutepath $logdir = defined('$::aide::logdir')? { true => getvar('::aide::logdir'), false => fail("'::aide::logdir' is not defined") },
+  String $log_severity = 'warning',
+  String $log_facility = 'local6'
 ) {
   include '::aide'
   include '::rsyslog'

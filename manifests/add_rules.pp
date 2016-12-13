@@ -26,12 +26,9 @@
 # * Trevor Vaughan <mailto:tvaughan@onyxpoint.com>
 #
 define aide::add_rules (
-  $rules,
-  $ruledir = '/etc/aide.conf.d'
+  String               $rules,
+  Stdlib::Absolutepath $ruledir = '/etc/aide.conf.d'
 ) {
-
-  validate_absolute_path($ruledir)
-
   include '::aide'
 
   file { "${ruledir}/${name}.aide":

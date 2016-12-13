@@ -15,13 +15,9 @@
 # * Trevor Vaughan <tvaughan@onyxpoint.com>
 #
 class aide::logrotate (
-  $rotate_period = 'weekly',
-  $rotate_number = '4'
+  Aide::Rotateperiod      $rotate_period = 'weekly',
+  Stdlib::Compat::Integer $rotate_number = '4'
 ) {
-
-  validate_array_member($rotate_period, ['daily', 'weekly', 'monthly', 'yearly'])
-  validate_integer($rotate_number)
-
   include '::logrotate'
 
   logrotate::add { 'aide':

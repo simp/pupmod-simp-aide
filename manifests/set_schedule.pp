@@ -13,11 +13,11 @@
 # * Trevor Vaughan <tvaughan@onyxpoint.com>
 #
 class aide::set_schedule (
-  $minute = '22',
-  $hour = '4',
-  $monthday = '*',
-  $month = '*',
-  $weekday = '0'
+  Stdlib::Compat::Integer                    $minute   = '22',
+  Stdlib::Compat::Integer                    $hour     = '4',
+  Variant[Enum['*'],Stdlib::Compat::Integer] $monthday = '*',
+  Variant[Enum['*'],Stdlib::Compat::Integer] $month    = '*',
+  Stdlib::Compat::Integer                    $weekday  = '0'
 ) {
 
   validate_between($minute, 0, 60)
