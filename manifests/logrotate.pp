@@ -16,11 +16,11 @@
 #
 class aide::logrotate (
   Aide::Rotateperiod      $rotate_period = 'weekly',
-  Stdlib::Compat::Integer $rotate_number = '4'
+  Integer                 $rotate_number = 4
 ) {
   include '::logrotate'
 
-  logrotate::add { 'aide':
+  logrotate::rule { 'aide':
     log_files     => [
       "${::aide::logdir}/*.report",
       "${::aide::logdir}/*.log"
