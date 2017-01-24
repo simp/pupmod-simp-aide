@@ -13,7 +13,7 @@ describe 'aide' do
         it { is_expected.to_not contain_class('aide::set_schedule') }
         it { is_expected.to_not contain_class('aide::logrotate') }
         it { is_expected.to_not contain_class('aide::syslog') }
-        it { is_expected.to_not contain_auditd__add_rules('aide') }
+        it { is_expected.to_not contain_auditd__rule('aide') }
         it { is_expected.to contain_package('aide') }
       end
 
@@ -22,7 +22,7 @@ describe 'aide' do
         it { is_expected.to contain_class('aide::logrotate') }
         it { is_expected.to contain_class('aide::syslog') }
         it { is_expected.to contain_class('auditd') }
-        it { is_expected.to contain_auditd__add_rules('aide') }
+        it { is_expected.to contain_auditd__rule('aide') }
       end
     end
   end

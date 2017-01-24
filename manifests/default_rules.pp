@@ -21,13 +21,13 @@ class aide::default_rules (
   include '::aide'
 
   if !empty($default_rules) {
-    aide::add_rules { 'default':
+    aide::rule { 'default':
       ruledir => $ruledir,
       rules   => $default_rules
     }
   }
   else {
-    aide::add_rules { 'default':
+    aide::rule { 'default':
       ruledir => $ruledir,
       rules   => '/boot   NORMAL
 /bin    NORMAL

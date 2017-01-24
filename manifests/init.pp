@@ -128,7 +128,7 @@ class aide (
   }
 
   if $auditd {
-    auditd::add_rules { 'aide':
+    auditd::rule { 'aide':
       content => '-w /etc/aide.conf -p wa -k CFG_aide'
     }
   }
