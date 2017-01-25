@@ -1,11 +1,11 @@
-# == Define: aide::add_rules
+# == Define: aide::rule
 #
 # This define adds rules to the AIDE configuration. Rules are
 # added to /etc/aide.conf.d unless otherwise specified.
 #
 # == Exampls: _
 #
-#   aide::add_rules { 'tmp':
+#   aide::rule { 'tmp':
 #     rules => '!/tmp'
 #   }
 #
@@ -25,7 +25,7 @@
 #
 # * Trevor Vaughan <mailto:tvaughan@onyxpoint.com>
 #
-define aide::add_rules (
+define aide::rule (
   String               $rules,
   Stdlib::Absolutepath $ruledir = '/etc/aide.conf.d'
 ) {
@@ -41,7 +41,7 @@ define aide::add_rules (
   }
 
   # Add auditing rules for the aide configuration.
-  auditd::add_rules { "${name}.aide":
+  auditd::rule { "${name}.aide":
     content => "-w ${ruledir}/${name}.aide -p wa -k CFG_aide"
   }
 }
