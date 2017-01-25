@@ -1,3 +1,6 @@
+* Wed Jan 25 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.0.0-0
+- Updated calls to aide::rule and auditd::rule
+
 * Tue Dec 13 2016 Nick Markowski <nmarkowski@keywcorp.com> - 6.0.0-0
 - Strong typed the module.
 
