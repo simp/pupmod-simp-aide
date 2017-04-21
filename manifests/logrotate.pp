@@ -21,13 +21,13 @@ class aide::logrotate (
   include '::logrotate'
 
   logrotate::rule { 'aide':
-    log_files     => [
+    log_files                 => [
       "${::aide::logdir}/*.report",
       "${::aide::logdir}/*.log"
     ],
-    missingok     => true,
-    rotate_period => $rotate_period,
-    rotate        => $rotate_number,
-    lastaction    => '/sbin/service rsyslog restart > /dev/null 2>&1 || true'
+    missingok                 => true,
+    rotate_period             => $rotate_period,
+    rotate                    => $rotate_number,
+    lastaction_restart_logger => true
   }
 }
