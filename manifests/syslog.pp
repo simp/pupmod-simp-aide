@@ -1,4 +1,5 @@
 # Persist aide syslog log messages, including report output, to a local
+# file.
 #
 # @param logdir
 #   The AIDE log directory.

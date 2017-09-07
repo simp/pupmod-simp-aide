@@ -11,12 +11,13 @@
 # @author https://github.com/simp/pupmod-simp-aide/graphs/contributors
 #
 class aide::set_schedule (
-  Stdlib::Compat::Integer                    $minute   = '22',
-  Stdlib::Compat::Integer                    $hour     = '4',
-  Variant[Enum['*'],Stdlib::Compat::Integer] $monthday = '*',
-  Variant[Enum['*'],Stdlib::Compat::Integer] $month    = '*',
-  Stdlib::Compat::Integer                    $weekday  = '0'
+  Stdlib::Compat::Integer                    $minute   = $::aide::minute,
+  Stdlib::Compat::Integer                    $hour     = $::aide::hour,
+  Variant[Enum['*'],Stdlib::Compat::Integer] $monthday = $::aide::monthday,
+  Variant[Enum['*'],Stdlib::Compat::Integer] $month    = $::aide::month,
+  Stdlib::Compat::Integer                    $weekday  = $::aide::weekday
 ) {
+  assert_private()
 
   validate_between($minute, 0, 60)
   validate_between($hour, 0, 24)

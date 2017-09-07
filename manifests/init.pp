@@ -38,12 +38,26 @@
 #
 # @param enable
 #   Whether or not to enable AIDE to run on a periodic schedule.
-#   Use Hiera to set the parameters on aide::set_schedule
-#   appropriately if you don't care for the defaults.
+#   Enabling this meets CCE-27222-9.
 #
 #   This is 'false' by default since AIDE is quite stressful on the
 #   system and should be enabled after a good understanding of the
 #   performance impact.
+#
+# @param minute
+#   ``minute`` cron parameter for when the AIDE check is run
+#
+# @param hour 
+#   ``hour`` cron parameter for when the AIDE check is run
+#
+# @param monthday 
+#   ``monthday`` cron parameter for when the AIDE check is run
+#
+# @param month 
+#   ``month`` cron parameter for when the AIDE check is run
+#
+# @param weekday
+#   ``weekday`` cron parameter for when the AIDE check is run
 #
 # @param default_rules
 #   A set of default rules to include. If this is set, the internal
@@ -52,6 +66,12 @@
 # @param logrotate
 #   Whether to use logrotate. If set to 'true', Hiera can be
 #   used to set the variables in aide::logrotate
+#
+# @param rotate_period
+#   The logrotate period at which to rotate the logs.
+#
+# @param rotate_number
+#   The number of log files to preserve on the system.
 #
 # @param syslog
 #   Whether to send the AIDE output to syslog, in addition to the
@@ -70,23 +90,30 @@
 # @author https://github.com/simp/pupmod-simp-aide/graphs/contributors
 #
 class aide (
-  Stdlib::Absolutepath              $dbdir             = '/var/lib/aide',
-  Stdlib::Absolutepath              $logdir            = '/var/log/aide',
-  String                            $database_name     = 'aide.db.gz',
-  String                            $database_out_name = 'aide.db.new.gz',
-  Variant[Enum['yes','no'],Boolean] $gzip_dbout        = 'yes',
-  Stdlib::Compat::Integer           $verbose           = '5',
-  Array[String]                     $report_urls       = [ 'file:@@{LOGDIR}/aide.report'],
-  Array[String]                     $aliases,          # data in modules
-  Stdlib::Absolutepath              $ruledir           = '/etc/aide.conf.d',
-  Array[String]                     $rules             = [ 'default.aide' ],
-  Boolean                           $enable            = false,
-  String                            $default_rules     = '',
-  Boolean                           $logrotate         = simplib::lookup('simp_options::logrotate', { 'default_value' => false}),
-  Boolean                           $syslog            = simplib::lookup('simp_options::syslog', { 'default_value'    => false }),
-  Aide::SyslogFacility              $syslog_facility   = 'LOG_LOCAL6',
-  Boolean                           $auditd            = simplib::lookup('simp_options::auditd', { 'default_value'    => false }),
-  Integer                           $aide_init_timeout = 300
+  Array[String]                              $aliases,          # data in modules
+  Stdlib::Absolutepath                       $dbdir             = '/var/lib/aide',
+  Stdlib::Absolutepath                       $logdir            = '/var/log/aide',
+  String                                     $database_name     = 'aide.db.gz',
+  String                                     $database_out_name = 'aide.db.new.gz',
+  Variant[Enum['yes','no'],Boolean]          $gzip_dbout        = 'yes',
+  Stdlib::Compat::Integer                    $verbose           = '5',
+  Array[String]                              $report_urls       = [ 'file:@@{LOGDIR}/aide.report'],
+  Stdlib::Absolutepath                       $ruledir           = '/etc/aide.conf.d',
+  Array[String]                              $rules             = [ 'default.aide' ],
+  Boolean                                    $enable            = false,
+  Stdlib::Compat::Integer                    $minute            = 22,
+  Stdlib::Compat::Integer                    $hour              = 4,
+  Variant[Enum['*'],Stdlib::Compat::Integer] $monthday          = '*',
+  Variant[Enum['*'],Stdlib::Compat::Integer] $month             = '*',
+  Stdlib::Compat::Integer                    $weekday           = 0,
+  String                                     $default_rules     = '',
+  Boolean                                    $logrotate         = simplib::lookup('simp_options::logrotate', { 'default_value' => false}),
+  Aide::Rotateperiod                         $rotate_period     = 'weekly',
+  Integer                                    $rotate_number     = 4,
+  Boolean                                    $syslog            = simplib::lookup('simp_options::syslog', { 'default_value'    => false }),
+  Aide::SyslogFacility                       $syslog_facility   = 'LOG_LOCAL6',
+  Boolean                                    $auditd            = simplib::lookup('simp_options::auditd', { 'default_value'    => false }),
+  Integer                                    $aide_init_timeout = 300
 ) {
 
   include '::aide::default_rules'

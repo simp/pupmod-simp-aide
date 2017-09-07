@@ -13,11 +13,10 @@
 #
 class aide::logrotate (
   Stdlib::Absolutepath    $logdir        = $::aide::logdir,
-  Aide::Rotateperiod      $rotate_period = 'weekly',
-  Integer                 $rotate_number = 4
+  Aide::Rotateperiod      $rotate_period = $::aide::rotate_period,
+  Integer                 $rotate_number = $::aide::rotate_number
 ) {
   assert_private()
-  include '::logrotate'
 
   logrotate::rule { 'aide':
     log_files                 => [ "${logdir}/*.log" ],

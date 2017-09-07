@@ -1,8 +1,5 @@
 require 'spec_helper'
 
-file_content_7 = "/usr/bin/systemctl restart rsyslog > /dev/null 2>&1 || true"
-file_content_6 = "/sbin/service rsyslog restart > /dev/null 2>&1 || true"
-
 describe 'aide' do
   context 'supported operating systems' do
     on_supported_os.each do |os, os_facts|
@@ -80,12 +77,24 @@ EOM
           it { is_expected.to contain_exec('verify_aide_db_presence').with_command('/usr/local/sbin/update_aide') }
         end
 
-        context 'with logrotate, syslog, and auditd set to true' do
+        context 'with enabled logrotate, syslog, and auditd set to true' do
           let(:params) {{
+            :enable        => true,
             :logrotate     => true,
             :syslog        => true,
             :auditd        => true
           }}
+ 
+          it { is_expected.to contain_class('aide::set_schedule') }
+          it { is_expected.to contain_cron('aide_schedule').with( {
+            :command  => '/bin/nice -n 19 /usr/sbin/aide -C',
+            :user     => 'root',
+            :minute   => '22',
+            :hour     => '4',
+            :monthday => '*',
+            :month    => '*',
+            :weekday  => '0'
+          } ) }
 
           it{ is_expected.to contain_file('/etc/aide.conf').with_content(
             /report_url=file:@@{LOGDIR}\/aide.report/ )
@@ -96,16 +105,13 @@ EOM
           }
 
           it { is_expected.to contain_class('aide::logrotate') }
-          it { should create_file('/etc/logrotate.d/aide').with_content(/\/var\/log\/aide\/\*\.log/) }
-          it { 
-            if ['RedHat','CentOS'].include?(facts[:operatingsystem])
-              if facts[:operatingsystemmajrelease].to_s < '7'
-                is_expected.to create_file('/etc/logrotate.d/aide').with_content(/#{file_content_6}/)
-              else
-                is_expected.to create_file('/etc/logrotate.d/aide').with_content(/#{file_content_7}/)
-              end
-            end
-          }
+          it { is_expected.to contain_logrotate__rule('aide').with( {
+            :log_files                 => [ "/var/log/aide/*.log" ],
+            :missingok                 => true,
+            :rotate_period             => 'weekly',
+            :rotate                    => 4,
+            :lastaction_restart_logger => true
+          } ) }
 
           it { is_expected.to contain_class('aide::syslog') }
           it { is_expected.to contain_class('rsyslog') }
