@@ -10,7 +10,7 @@ HOSTS:
     hypervisor: vagrant
     repos:
       simp:
-        url: https://dl.bintray.com/simp/4.2.0-Beta2
+        url: https://packagecloud.io/simp-project/6_X/el/7/x86_64
         gpgkeys:
           - https://raw.githubusercontent.com/NationalSecurityAgency/SIMP/master/GPGKEYS/RPM-GPG-KEY-SIMP
           - https://getfedora.org/static/0608B895.txt
@@ -22,23 +22,24 @@ HOSTS:
     hypervisor: vagrant
     repos:
       simp:
-        url: https://dl.bintray.com/simp/5.1.0-Beta
+        url: https://packagecloud.io/simp-project/6_X/el/6/x86_64
         gpgkeys:
           - https://raw.githubusercontent.com/NationalSecurityAgency/SIMP/master/GPGKEYS/RPM-GPG-KEY-SIMP
           - https://getfedora.org/static/352C64E5.txt
 
-  leap42:
-    roles:
-      - client
-    platform: sles-12-x86_64
-    box: M0ses/openSUSE-Leap-42.1-minimal
-    hypervisor: vagrant
-    repos:
-      simp:
-        url: https://dl.bintray.com/simp/4.2.0-Beta2
-        gpgkeys:
-          - https://raw.githubusercontent.com/NationalSecurityAgency/SIMP/master/GPGKEYS/RPM-GPG-KEY-SIMP
-          - https://getfedora.org/static/0608B895.txt
+# BROKEN
+#  leap42:
+#    roles:
+#      - client
+#    platform: sles-12-x86_64
+#    box: M0ses/openSUSE-Leap-42.1-minimal
+#    hypervisor: vagrant
+#    repos:
+#      simp:
+#        url: https://dl.bintray.com/simp/4.2.0-Beta2
+#        gpgkeys:
+#          - https://raw.githubusercontent.com/NationalSecurityAgency/SIMP/master/GPGKEYS/RPM-GPG-KEY-SIMP
+#          - https://getfedora.org/static/0608B895.txt
 
 CONFIG:
   log_level: verbose

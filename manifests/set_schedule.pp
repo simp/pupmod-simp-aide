@@ -1,16 +1,14 @@
-# == Class: aide::set_schedule
-#
 # Sets a schedule for AIDE to run a check on your system via cron.
 #
 # Enabling this meets CCE-27222-9.
 #
-# == Parameters
+# @param minute ``minute`` cron parameter
+# @param hour ``hour`` cron parameter
+# @param monthday ``monthday`` cron parameter
+# @param month ``month`` cron parameter
+# @param weekday ``weekday`` cron parameter
 #
-# The parameters for this are simply the cron parameters.
-#
-# == Authors
-#
-# * Trevor Vaughan <tvaughan@onyxpoint.com>
+# @author https://github.com/simp/pupmod-simp-aide/graphs/contributors
 #
 class aide::set_schedule (
   Stdlib::Compat::Integer                    $minute   = '22',

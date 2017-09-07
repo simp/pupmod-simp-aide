@@ -1,24 +1,20 @@
-# == Class: aide::default_rules
-#
 # A helper class to keep the main AIDE class relatively readable.
 #
-# == Parameters
-#
-# [*default_rules*]
-#   String.
+# @param default_rules
 #   A set of default rules to include. If this is set, the internal
 #   defaults will be overridden.
 #
-# == Authors
+# @param ruledir
+#   The directory in which the default rules file will be written.
 #
-# * Trevor Vaughan <tvaughan@onyxpoint.com>
+# @author https://github.com/simp/pupmod-simp-aide/graphs/contributors
 #
 class aide::default_rules (
   String               $default_rules = $::aide::default_rules,
   Stdlib::Absolutepath $ruledir       = $::aide::ruledir
 ) {
 
-  include '::aide'
+  assert_private()
 
   if !empty($default_rules) {
     aide::rule { 'default':
@@ -92,8 +88,8 @@ class aide::default_rules (
 /var/spool/cron/root LSPP
 /etc/login.defs LSPP
 /etc/securetty LSPP
-/var/log/faillog LSPP
-/var/log/lastlog LSPP
+/var/log/faillog LOG
+/var/log/lastlog LOG
 /etc/hosts LSPP
 /etc/sysconfig LSPP
 /etc/inittab LSPP

@@ -1,56 +1,42 @@
-# == Class: aide
+# Sets up a functioning AIDE system.
 #
-# Use this set up a functioning AIDE system.
-#
-# Most parameters were plucked directly from the aide.conf(5)
+# Many parameters were plucked directly from the aide.conf(5)
 # man page.
 #
-# == Parameters
+# @param dbdir
+#   The AIDE database directory, DBDIR.
 #
-# [*dbdir*]
-#   The AIDE database directory.
+# @param logdir
+#   The AIDE log directory, LOGDIR.
 #
-# [*logdir*]
-#   The AIDE log directory.
-#
-# [*database_name*]
+# @param database_name
 #   The name of the database file within DBDIR.
 #
-# [*database_out_name*]
+# @param database_out_name
 #   The name of the database out file within DBDIR.
 #
-# [*gzip_dbout*]
-#   Type: Boolean
+# @param gzip_dbout
+#   Whether to compress the output database.
 #
-#   Whether or not to compress the output database.
-#
-# [*verbose*]
-#   Type: Integer
-#
+# @param verbose
 #   The verbosity of the output messages.
 #
-# [*report_urls*]
-#   Type: Array
+# @param report_urls
+#   An array of report URLs. A syslog report URL will be
+#   automatically added to this list when ``syslog`` is
+#   set to ``true``.
 #
-#   An array of report URLs.
-#
-# [*aliases*]
-#   Type: Array
-#
+# @param aliases
 #   A set of common aliases that may be used within the AIDE
 #   configuration file. It is not recommended that these be changed.
 #
-# [*ruledir*]
+# @param ruledir
 #   The directory to include for all additional rules.
 #
-# [*rules*]
-#   Type: Array
-#
+# @param rules
 #   An array of rule files to include.
 #
-# *The following are not related to aide.conf*
-#
-# [*enable*]
+# @param enable
 #   Whether or not to enable AIDE to run on a periodic schedule.
 #   Use Hiera to set the parameters on aide::set_schedule
 #   appropriately if you don't care for the defaults.
@@ -59,31 +45,29 @@
 #   system and should be enabled after a good understanding of the
 #   performance impact.
 #
-# [*default_rules*]
+# @param default_rules
 #   A set of default rules to include. If this is set, the internal
 #   defaults will be overridden.
 #
-# [*logrotate*]
-#   Type: Boolean
+# @param logrotate
+#   Whether to use logrotate. If set to 'true', Hiera can be
+#   used to set the variables in aide::logrotate
 #
-#   Whether or not to use logrotate. If set to 'true', Hiera can be
-#   used to set the variables in auditd::logrotate
+# @param syslog
+#   Whether to send the AIDE output to syslog, in addition to the
+#   local report file. Use Hiera to set the parameters on aide::syslog
+#   appropriately if you don't care for the defaults.
 #
-# [*syslog*]
-#   Type: Boolean
+# @param syslog_facility
+#   The syslog facility to use for the AIDE output syslog messages.
 #
-#   Whether or not to send the AIDE output directly to syslog.
-#   Use Hiera to set the parameters on aide::syslog appropriately
-#   if you don't care for the defaults.
+# @param auditd
+#   Whether to add rules for changes to the aide configuration.
 #
-# [*auditd*]
-#   Type: Boolean
+# @param aide_init_timeout
+#   Maximum time to wait in seconds for AIDE database initialization
 #
-#   Whether or not to add rules to the auditd configuration.
-#
-# == Authors
-#
-# * Trevor Vaughan <tvaughan@onyxpoint.com>
+# @author https://github.com/simp/pupmod-simp-aide/graphs/contributors
 #
 class aide (
   Stdlib::Absolutepath              $dbdir             = '/var/lib/aide',
@@ -93,24 +77,16 @@ class aide (
   Variant[Enum['yes','no'],Boolean] $gzip_dbout        = 'yes',
   Stdlib::Compat::Integer           $verbose           = '5',
   Array[String]                     $report_urls       = [ 'file:@@{LOGDIR}/aide.report'],
-  Array[String]                     $aliases           = ['R = p+i+l+n+u+g+s+m+c+sha512',
-                                                          'L = p+i+l+n+u+g+acl+xattrs',
-                                                          '> = p+i+l+n+u+g+S+acl+xattrs',
-                                                          'ALLXTRAHASHES = sha1+rmd160+sha256+sha512+tiger',
-                                                          'EVERYTHING = R+ALLXTRAHASHES',
-                                                          'NORMAL = R',
-                                                          'DIR = p+i+n+u+g+acl+xattrs',
-                                                          'PERMS = p+i+u+g+acl',
-                                                          'LOG = >',
-                                                          'LSPP = R',
-                                                          'DATAONLY =  p+n+u+g+s+acl+selinux+xattrs+sha256+rmd160+tiger' ],
+  Array[String]                     $aliases,          # data in modules
   Stdlib::Absolutepath              $ruledir           = '/etc/aide.conf.d',
   Array[String]                     $rules             = [ 'default.aide' ],
   Boolean                           $enable            = false,
   String                            $default_rules     = '',
   Boolean                           $logrotate         = simplib::lookup('simp_options::logrotate', { 'default_value' => false}),
   Boolean                           $syslog            = simplib::lookup('simp_options::syslog', { 'default_value'    => false }),
-  Boolean                           $auditd            = simplib::lookup('simp_options::auditd', { 'default_value'    => false })
+  Aide::SyslogFacility              $syslog_facility   = 'LOG_LOCAL6',
+  Boolean                           $auditd            = simplib::lookup('simp_options::auditd', { 'default_value'    => false }),
+  Integer                           $aide_init_timeout = 300
 ) {
 
   include '::aide::default_rules'
@@ -125,6 +101,10 @@ class aide (
 
   if $syslog {
     include '::aide::syslog'
+    $_report_urls = $report_urls << "syslog:${syslog_facility}"
+  }
+  else {
+    $_report_urls = $report_urls
   }
 
   if $auditd {
@@ -173,7 +153,7 @@ class aide (
     group   => 'root',
     mode    => '0700',
     content => "#!/bin/sh
-      killall -9 aide;
+      /usr/bin/killall -9 aide;
       wait;
 
       if [ -f ${dbdir}/${database_name} ]; then
@@ -183,27 +163,42 @@ class aide (
       fi
 
       wait;
-      mv ${dbdir}/${database_out_name} ${dbdir}/${database_name}"
+      mv ${dbdir}/${database_out_name} ${dbdir}/${database_name}
+
+      # Need to report aide initialize/update failure. Since aide
+      # update returns non-zero error codes even upon success, (return
+      # codes 0 - 7), an easy way to determine an aide failure for
+      # either initialization or update is to detect a move failure. The
+      # database out will not be created if the initialize/update fails.
+      exit $?"
   }
 
-  # CCE-27135-3
+  # This is used to automatically update the database when the user
+  # changes AIDE configuration.
   exec { 'update_aide_db':
-    command     => '/usr/local/sbin/update_aide &',
+    command     => '/usr/local/sbin/update_aide',
     refreshonly => true,
     require     => [
       File['/usr/local/sbin/update_aide'],
       File[$dbdir],
       File[$logdir]
-    ]
+    ],
+    timeout    => $aide_init_timeout
   }
 
+  # CCE-27135-3
+  # This makes sure the database is initialized, even if no
+  # AIDE configuration has changed.
   exec { 'verify_aide_db_presence':
-    command => '/usr/local/sbin/update_aide &',
+    command => '/usr/local/sbin/update_aide',
     onlyif  => "/usr/bin/test ! -f ${dbdir}/${database_name}",
     require => [
       File['/usr/local/sbin/update_aide'],
+      File['/etc/aide.conf'],
+      Class['aide::default_rules'],
       File[$dbdir],
       File[$logdir]
-    ]
+    ],
+    timeout    => $aide_init_timeout
   }
 }
