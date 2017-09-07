@@ -1,3 +1,13 @@
+* Wed Tue 05 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 6.1.0-0
+- Fixed bug whereby aide reports/errors were not being sent to syslog.
+  AIDE can now be configured to report to syslog, itself.
+- Use FIPS-appropriate hash algorithms when in FIPS mode
+- No longer hide AIDE initialization failures (which are primarily
+  configuration errors) when a manifest with the aide class is applied.
+- Improved acceptance tests.
+- Commented out SUSE acceptance test node, as the node configuration
+  is broken.
+
 * Wed Apr 19 2017 Nick Markowski <nmarkowski@keywcorp.com> - 6.0.1-0
 - Updated logrotate to use new lastaction API
 - Confine puppet version in metadata.json

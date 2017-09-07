@@ -4,12 +4,14 @@ database=file:@@{DBDIR}/<%= @database_name %>
 database_out=file:@@{DBDIR}/<%= @database_out_name %>
 gzip_dbout=<%= @gzip_dbout %>
 verbose=<%= @verbose %>
-<% @report_urls.each do |report_url| -%>
-report_url=<%= report_url %><%= "\n" %>
+<% @_report_urls.each do |report_url| -%>
+report_url=<%= report_url %>
 <% end -%>
+
 <% @aliases.each do |a| -%>
-<%= a %><%= "\n" %>
+<%= a %>
 <% end -%>
+
 <% @rules.each do |rule| -%>
 @@include <%= @ruledir %>/<%= rule %>
 <% end -%>

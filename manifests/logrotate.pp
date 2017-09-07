@@ -1,30 +1,25 @@
-# == Class aide::logrotate
-#
 # A class that sets up the logrotate state for aide.
 #
-# == Parameters
+# @param logdir Directory containing the logs to be rotated.
+#   The logs in that directory are assumed to end with '.log'.
 #
-# [*rotate_period*]
+# @param rotate_period
 #   The logrotate period at which to rotate the logs.
 #
-# [*rotate_number*]
+# @param rotate_number
 #   The number of log files to preserve on the system.
 #
-# == Authors
-#
-# * Trevor Vaughan <tvaughan@onyxpoint.com>
+# @author https://github.com/simp/pupmod-simp-aide/graphs/contributors
 #
 class aide::logrotate (
-  Aide::Rotateperiod      $rotate_period = 'weekly',
-  Integer                 $rotate_number = 4
+  Stdlib::Absolutepath    $logdir        = $::aide::logdir,
+  Aide::Rotateperiod      $rotate_period = $::aide::rotate_period,
+  Integer                 $rotate_number = $::aide::rotate_number
 ) {
-  include '::logrotate'
+  assert_private()
 
   logrotate::rule { 'aide':
-    log_files                 => [
-      "${::aide::logdir}/*.report",
-      "${::aide::logdir}/*.log"
-    ],
+    log_files                 => [ "${logdir}/*.log" ],
     missingok                 => true,
     rotate_period             => $rotate_period,
     rotate                    => $rotate_number,
