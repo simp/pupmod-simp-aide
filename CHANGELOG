@@ -1,4 +1,4 @@
-* Wed Sep 05 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 6.1.0-0
+* Tue Sep 05 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 6.1.0-0
 - Fixed bug whereby aide reports/errors were not being sent to syslog.
   AIDE can now be configured to report to syslog, itself.
 - Use FIPS-appropriate hash algorithms when in FIPS mode
