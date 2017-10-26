@@ -174,6 +174,8 @@ class aide (
     notify  => Exec['update_aide_db']
   }
 
+  # In update_aide, retain output database for the SCAP Security Guide
+  # OVAL check xccdf_org.ssgproject.content_rule_aide_build_database
   file { '/usr/local/sbin/update_aide':
     ensure  => 'file',
     owner   => 'root',
@@ -190,12 +192,12 @@ class aide (
       fi
 
       wait;
-      mv ${dbdir}/${database_out_name} ${dbdir}/${database_name}
+      cp ${dbdir}/${database_out_name} ${dbdir}/${database_name}
 
       # Need to report aide initialize/update failure. Since aide
       # update returns non-zero error codes even upon success, (return
       # codes 0 - 7), an easy way to determine an aide failure for
-      # either initialization or update is to detect a move failure. The
+      # either initialization or update is to detect a copy failure. The
       # database out will not be created if the initialize/update fails.
       exit $?"
   }

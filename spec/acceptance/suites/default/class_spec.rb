@@ -49,6 +49,10 @@ EOM
         on(host, 'ls /var/lib/aide/aide.db.gz')
       end
 
+      it 'should retain the output database for SCAP xccdf_org.ssgproject.content_rule_aide_build_database' do
+        on(host, 'ls /var/lib/aide/aide.db.new.gz')
+      end
+
       it 'should generate an empty report when no problems are found' do
         on(host, '/usr/local/sbin/update_aide')
         on(host, '/usr/sbin/aide --check')

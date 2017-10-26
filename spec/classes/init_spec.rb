@@ -61,12 +61,12 @@ EOM
       fi
 
       wait;
-      mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
+      cp /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
 
       # Need to report aide initialize/update failure. Since aide
       # update returns non-zero error codes even upon success, (return
       # codes 0 - 7), an easy way to determine an aide failure for
-      # either initialization or update is to detect a move failure. The
+      # either initialization or update is to detect a copy failure. The
       # database out will not be created if the initialize/update fails.
       exit $?
 EOM
