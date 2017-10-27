@@ -1,3 +1,8 @@
+* Thu Oct 26 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 6.1.1-0
+- Retain output database upon AIDE database update for SCAP
+  Security Guide OVAL check
+  xccdf_org.ssgproject.content_rule_aide_build_database
+
 * Tue Sep 05 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 6.1.0-0
 - Fixed bug whereby aide reports/errors were not being sent to syslog.
   AIDE can now be configured to report to syslog, itself.
