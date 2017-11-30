@@ -1,3 +1,6 @@
+* Thu Nov 30 2017 Steven Pritchard <steven.pritchard@onyxpoint.com> - 6.1.2-0
+- Update README.md from puppet strings
+
 * Thu Oct 26 2017 Liz Nemsick <lnemsick.simp@gmail.com> - 6.1.1-0
 - Retain output database upon AIDE database update for SCAP
   Security Guide OVAL check
