@@ -31,4 +31,5 @@ CONFIG:
   log_level: verbose
   synced_folder : disabled
   type: aio
+  puppet_collection: puppet5
   vagrant_memsize: 256
