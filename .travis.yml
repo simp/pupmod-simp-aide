@@ -1,4 +1,3 @@
-
 # The testing matrix considers ruby/puppet versions supported by SIMP and PE:
 # ------------------------------------------------------------------------------
 #  release    pup   ruby      eol
@@ -17,61 +16,63 @@ bundler_args: --without development system_tests --path .vendor
 notifications:
   email: false
 
-addons:
-  apt:
-    packages:
-      - rpm
-
 before_install:
   - rm -f Gemfile.lock
 
 jobs:
   allow_failures:
-    - env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 5.0"
+    - env: PUPPET_VERSION="~> 5.0"
 
   include:
-    - stage: check
-      rvm: 2.1.9
+
+    - stage: validate
+      rvm: 2.4.1
+      env: PUPPET_VERSION="~> 5"
       script:
         - bundle exec rake check:dot_underscore
         - bundle exec rake check:test_file
         - bundle exec rake pkg:check_version
+        - bundle exec rake syntax
+        - bundle exec rake lint
         - bundle exec rake metadata_lint
-        - bundle exec rake compare_latest_tag
+        - bundle exec rake pkg:compare_latest_tag
+        - bundle exec rake pkg:create_tag_changelog
+        - bundle exec puppet module build
+
+    - stage: validate
+      rvm: 2.1.9
+      env: PUPPET_VERSION="~> 4.8"
+      script:
+        - bundle exec rake syntax
+        - bundle exec rake lint
+        - bundle exec rake metadata_lint
 
     - stage: spec
-      rvm: 2.1.9
-      env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 5.0"
+      rvm: 2.4.1
+      env: PUPPET_VERSION="~> 5.0"
       script:
         - bundle exec rake spec
 
     - stage: spec
       rvm: 2.1.9
-      env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 4.10.0"
+      env: PUPPET_VERSION="~> 4.10.0"
       script:
         - bundle exec rake spec
 
     - stage: spec
       rvm: 2.1.9
-      env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 4.9.2"
+      env: PUPPET_VERSION="~> 4.9.2"
       script:
         - bundle exec rake spec
 
     - stage: spec
       rvm: 2.1.9
-      env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 4.8.2"
+      env: PUPPET_VERSION="~> 4.7.0"
       script:
         - bundle exec rake spec
 
-    - stage: spec
-      rvm: 2.1.9
-      env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 4.7.0"
-      script:
-        - bundle exec rake spec
-
-    # This needs to be last since we have an acceptance test
     - stage: deploy
-      rvm: 2.1.9
+      rvm: 2.4.1
       script:
         - true
       before_deploy:
@@ -84,7 +85,7 @@ jobs:
           skip_cleanup: true
           on:
             tags: true
-            condition: '($SKIP_FORGE_PUBLISH != true)'
+            condition: '($SKIP_FORGE_PUBLISH != true) && ($FORGE_PUBLISH = true)'
         - provider: puppetforge
           user: simp
           password:
@@ -92,4 +93,4 @@ jobs:
           on:
             tags: true
             rvm: 2.1.9
-            condition: '($SKIP_FORGE_PUBLISH != true)'
+            condition: '($SKIP_FORGE_PUBLISH != true) && ($FORGE_PUBLISH = true)'
