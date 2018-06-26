@@ -1,9 +1,0 @@
-Obsoletes: pupmod-aide-test
-Requires: pupmod-simp-auditd < 8.0.0-0
-Requires: pupmod-simp-auditd >= 7.0.0-0
-Requires: pupmod-simp-logrotate < 7.0.0-0
-Requires: pupmod-simp-logrotate >= 6.1.0-0
-Requires: pupmod-simp-rsyslog < 8.0.0-0
-Requires: pupmod-simp-rsyslog >= 7.0.0-0
-Requires: pupmod-simp-simplib < 4.0.0-0
-Requires: pupmod-simp-simplib >= 3.1.0-0

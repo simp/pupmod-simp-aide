@@ -31,16 +31,20 @@ jobs:
 
   include:
     - stage: check
-      rvm: 2.1.9
+      rvm: 2.4.1
+      env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 5"
       script:
         - bundle exec rake check:dot_underscore
         - bundle exec rake check:test_file
         - bundle exec rake pkg:check_version
+        - bundle exec rake lint
         - bundle exec rake metadata_lint
-        - bundle exec rake compare_latest_tag
+        - bundle exec rake pkg:compare_latest_tag
+        - bundle exec rake pkg:create_tag_changelog
+        - bundle exec puppet module build
 
     - stage: spec
-      rvm: 2.1.9
+      rvm: 2.4.1
       env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 5.0"
       script:
         - bundle exec rake spec
@@ -59,24 +63,18 @@ jobs:
 
     - stage: spec
       rvm: 2.1.9
-      env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 4.8.2"
-      script:
-        - bundle exec rake spec
-
-    - stage: spec
-      rvm: 2.1.9
       env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 4.7.0"
       script:
         - bundle exec rake spec
 
-    # This needs to be last since we have an acceptance test
     - stage: deploy
-      rvm: 2.1.9
+      rvm: 2.4.1
       script:
         - true
       before_deploy:
         - "export PUPMOD_METADATA_VERSION=`ruby -r json -e \"puts JSON.parse(File.read('metadata.json')).fetch('version')\"`"
         - '[[ $TRAVIS_TAG =~ ^simp-${PUPMOD_METADATA_VERSION}$|^${PUPMOD_METADATA_VERSION}$ ]]'
+
       deploy:
         - provider: releases
           api_key:
@@ -91,5 +89,5 @@ jobs:
             secure: "Os40yaNVVU3ypsLac11cu7PYfv0mdilx1qBA8euk12xoJxhYzrLz7n4Zlp/Bx+6knmMOeucUy6U0PKg3XCasTGFKKImw3h4X3kTOby0xcxGj4BAsxySv10JcB9x7MrIT5+Q9rx+vOef/kotNSMMWxNNVniV5VjrjuX+qOK4NtzhtyQLIpleZZ02geYSPLBCe+R5pPaf5D/zsWMu+v7oaqI9VM0XuvSGQAHNbSO97/trNgJP/nDeK/zWBzkGD/EP9wmJj9lfNSl9oa50uclqNkgHZ91SXmYv7f+YlqxpsbDKsoFs2HGPnGiipyIA0EEJXHTiknJ3v7XLveH3/ENE6hem3nJ+82WeQyMbsJTEmvb0vmTsiRTgls8GlpInG/ykBSGhqQdY21oYMS4PCvS2+CCZUw6qjaDokiTk5AeSugQNSiU1lqcRXUacYDwn0F8LR49ixDsPtoCsnvy/FRU87tr10ZyrnBtIGqgChJUsLhBA9s4FIzP9WmO6rUxZ0qufDq/wMHDRyPBPHNch5yTURGbOkGYzGkZ3u8cL5ezmGCteSKBOYsRNr45F9/ld1Rg+XfJ68UX8nysHs+GLMnaoD5l8vHHZu/nqcZbc2fEivQQ3OP2g2RzPF6WeBX8Fv20EZT9ZuAeGJEQkRySpp6jTjtSFUlhPUMbWXYwEbODESrHU="
           on:
             tags: true
-            rvm: 2.1.9
+            rvm: 2.4.1
             condition: '($SKIP_FORGE_PUBLISH != true)'
