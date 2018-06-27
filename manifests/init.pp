@@ -106,7 +106,7 @@ class aide (
   Variant[Enum['*'],Stdlib::Compat::Integer] $monthday          = '*',
   Variant[Enum['*'],Stdlib::Compat::Integer] $month             = '*',
   Stdlib::Compat::Integer                    $weekday           = 0,
-  String                                     $default_rules     = '',
+  String                                     $default_rules     = '', # lint:ignore:empty_string_assignment
   Boolean                                    $logrotate         = simplib::lookup('simp_options::logrotate', { 'default_value' => false}),
   Aide::Rotateperiod                         $rotate_period     = 'weekly',
   Integer                                    $rotate_number     = 4,
@@ -212,7 +212,7 @@ class aide (
       File[$dbdir],
       File[$logdir]
     ],
-    timeout    => $aide_init_timeout
+    timeout     => $aide_init_timeout
   }
 
   # CCE-27135-3
@@ -228,6 +228,6 @@ class aide (
       File[$dbdir],
       File[$logdir]
     ],
-    timeout    => $aide_init_timeout
+    timeout => $aide_init_timeout
   }
 }
