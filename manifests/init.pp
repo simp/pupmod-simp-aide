@@ -171,6 +171,7 @@ class aide (
     group   => 'root',
     mode    => '0600',
     content => template('aide/aide.conf.erb'),
+    require => Package['aide'],
     notify  => Exec['update_aide_db']
   }
 
@@ -208,6 +209,7 @@ class aide (
     command     => '/usr/local/sbin/update_aide',
     refreshonly => true,
     require     => [
+      Package['aide'],
       File['/usr/local/sbin/update_aide'],
       File[$dbdir],
       File[$logdir]
@@ -222,6 +224,7 @@ class aide (
     command => '/usr/local/sbin/update_aide',
     onlyif  => "/usr/bin/test ! -f ${dbdir}/${database_name}",
     require => [
+      Package['aide'],
       File['/usr/local/sbin/update_aide'],
       File['/etc/aide.conf'],
       Class['aide::default_rules'],
