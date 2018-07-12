@@ -7,6 +7,7 @@
 # @param monthday ``monthday`` cron parameter
 # @param month ``month`` cron parameter
 # @param weekday ``weekday`` cron parameter
+# @param command ``command`` cron parameter
 #
 # @author https://github.com/simp/pupmod-simp-aide/graphs/contributors
 #
@@ -15,7 +16,8 @@ class aide::set_schedule (
   Stdlib::Compat::Integer                    $hour     = $::aide::hour,
   Variant[Enum['*'],Stdlib::Compat::Integer] $monthday = $::aide::monthday,
   Variant[Enum['*'],Stdlib::Compat::Integer] $month    = $::aide::month,
-  Stdlib::Compat::Integer                    $weekday  = $::aide::weekday
+  Stdlib::Compat::Integer                    $weekday  = $::aide::weekday,
+  String                                     $command  = $::aide::cron_command,
 ) {
   assert_private()
 
@@ -24,7 +26,7 @@ class aide::set_schedule (
   validate_between($weekday, 0, 7)
 
   cron { 'aide_schedule':
-    command  => '/bin/nice -n 19 /usr/sbin/aide -C',
+    command  => $command,
     user     => 'root',
     minute   => $minute,
     hour     => $hour,

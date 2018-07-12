@@ -47,17 +47,20 @@
 # @param minute
 #   ``minute`` cron parameter for when the AIDE check is run
 #
-# @param hour 
+# @param hour
 #   ``hour`` cron parameter for when the AIDE check is run
 #
-# @param monthday 
+# @param monthday
 #   ``monthday`` cron parameter for when the AIDE check is run
 #
-# @param month 
+# @param month
 #   ``month`` cron parameter for when the AIDE check is run
 #
 # @param weekday
 #   ``weekday`` cron parameter for when the AIDE check is run
+#
+# @param cron_command
+#   ``command`` cron parameter for when AIDE check is run
 #
 # @param default_rules
 #   A set of default rules to include. If this is set, the internal
@@ -106,6 +109,7 @@ class aide (
   Variant[Enum['*'],Stdlib::Compat::Integer] $monthday          = '*',
   Variant[Enum['*'],Stdlib::Compat::Integer] $month             = '*',
   Stdlib::Compat::Integer                    $weekday           = 0,
+  String                                     $cron_command      = '/bin/nice -n 19 /usr/sbin/aide -C',
   String                                     $default_rules     = '', # lint:ignore:empty_string_assignment
   Boolean                                    $logrotate         = simplib::lookup('simp_options::logrotate', { 'default_value' => false}),
   Aide::Rotateperiod                         $rotate_period     = 'weekly',
