@@ -47,13 +47,13 @@
 # @param minute
 #   ``minute`` cron parameter for when the AIDE check is run
 #
-# @param hour 
+# @param hour
 #   ``hour`` cron parameter for when the AIDE check is run
 #
-# @param monthday 
+# @param monthday
 #   ``monthday`` cron parameter for when the AIDE check is run
 #
-# @param month 
+# @param month
 #   ``month`` cron parameter for when the AIDE check is run
 #
 # @param weekday
