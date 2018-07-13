@@ -20,9 +20,6 @@ before_install:
   - rm -f Gemfile.lock
 
 jobs:
-  allow_failures:
-    - env: PUPPET_VERSION="~> 5.0"
-
   include:
 
     - stage: validate

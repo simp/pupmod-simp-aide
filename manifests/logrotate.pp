@@ -12,9 +12,9 @@
 # @author https://github.com/simp/pupmod-simp-aide/graphs/contributors
 #
 class aide::logrotate (
-  Stdlib::Absolutepath    $logdir        = $::aide::logdir,
-  Aide::Rotateperiod      $rotate_period = $::aide::rotate_period,
-  Integer                 $rotate_number = $::aide::rotate_number
+  Stdlib::Absolutepath $logdir        = $::aide::logdir,
+  Aide::Rotateperiod   $rotate_period = $::aide::rotate_period,
+  Integer              $rotate_number = $::aide::rotate_number
 ) {
   assert_private()
 
