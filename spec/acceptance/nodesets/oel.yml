@@ -1,3 +1,10 @@
+<%
+  if ENV['BEAKER_HYPERVISOR']
+    hypervisor = ENV['BEAKER_HYPERVISOR']
+  else
+    hypervisor = 'vagrant'
+  end
+-%>
 HOSTS:
   oel6:
     roles:
@@ -7,28 +14,19 @@ HOSTS:
       - client
     platform: el-6-x86_64
     box: elastic/oel-6-x86_64
-    hypervisor: vagrant
-    repos:
-      simp:
-        url: https://packagecloud.io/simp-project/6_X/el/7/x86_64
-        gpgkeys:
-          - https://raw.githubusercontent.com/NationalSecurityAgency/SIMP/master/GPGKEYS/RPM-GPG-KEY-SIMP
-          - https://getfedora.org/static/0608B895.txt
+    hypervisor: <%= hypervisor %>
   oel7:
     roles:
       - client
     platform: el-7-x86_64
     box: elastic/oel-7-x86_64
-    hypervisor: vagrant
-    repos:
-      simp:
-        url: https://packagecloud.io/simp-project/6_X/el/6/x86_64
-        gpgkeys:
-          - https://raw.githubusercontent.com/NationalSecurityAgency/SIMP/master/GPGKEYS/RPM-GPG-KEY-SIMP
-          - https://getfedora.org/static/352C64E5.txt
+    hypervisor: <%= hypervisor %>
 
 CONFIG:
   log_level: verbose
   synced_folder : disabled
   type: aio
   vagrant_memsize: 256
+<% if ENV['BEAKER_PUPPET_ENVIRONMENT'] -%>
+  puppet_environment: <%= ENV['BEAKER_PUPPET_ENVIRONMENT'] %>
+<% end -%>
