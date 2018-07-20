@@ -93,7 +93,7 @@ EOM
 
       it 'should generate an empty report and log nothing when no problems are found' do
         on(host, '/usr/local/sbin/update_aide')
-        on(host, 'logrotate --force /etc/logrotate.d/aide')
+        on(host, 'logrotate --force /etc/logrotate.simp.d/aide')
         on(host, '/usr/sbin/aide --check')
         report = on(host, 'cat /var/log/aide/aide.report').stdout
         expect(report).to eq ''
