@@ -6,20 +6,20 @@
   end
 -%>
 HOSTS:
-  el6:
+  oel6:
     roles:
       - server
       - default
       - master
       - client
     platform: el-6-x86_64
-    box: centos/6
+    box: elastic/oel-6-x86_64
     hypervisor: <%= hypervisor %>
-  el7:
+  oel7:
     roles:
       - client
     platform: el-7-x86_64
-    box: centos/7
+    box: elastic/oel-7-x86_64
     hypervisor: <%= hypervisor %>
 
 CONFIG:
