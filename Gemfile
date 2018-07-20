@@ -26,7 +26,7 @@ group :development do
 end
 
 group :system_tests do
-  gem 'beaker'
+  gem 'beaker', '~> 3.35'
   gem 'beaker-rspec'
-  gem 'simp-beaker-helpers', ENV.fetch('SIMP_BEAKER_HELPERS_VERSION', '~> 1.7')
+  gem 'simp-beaker-helpers', ENV.fetch('SIMP_BEAKER_HELPERS_VERSION', '~> 1.10')
 end
