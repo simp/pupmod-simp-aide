@@ -1,31 +1,20 @@
-# A helper class to keep the main AIDE class relatively readable.
-#
-# @param default_rules
-#   A set of default rules to include. If this is set, the internal
-#   defaults will be overridden.
-#
-# @param ruledir
-#   The directory in which the default rules file will be written.
-#
-# @author https://github.com/simp/pupmod-simp-aide/graphs/contributors
-#
-class aide::default_rules (
-  String               $default_rules = $::aide::default_rules,
-  Stdlib::Absolutepath $ruledir       = $::aide::ruledir
-) {
+require 'spec_helper'
 
-  assert_private()
+# We have to test aide::default_rules via aide, because aide::default_rules
+# is private.  To take advantage of hooks built into puppet-rspec, the class
+# described needs to be the class instantiated, i.e., aide.
+describe 'aide' do
+  on_supported_os.each do |os, os_facts|
+    context "supported #{os}" do
+      let(:facts) { os_facts }
 
-  if !empty($default_rules) {
-    aide::rule { 'default':
-      ruledir => $ruledir,
-      rules   => $default_rules
-    }
-  }
-  else {
-    aide::rule { 'default':
-      ruledir => $ruledir,
-      rules   => '/boot   NORMAL
+      context 'with default parameters' do
+        it { is_expected.to create_class('aide') }
+        it { is_expected.to contain_class('aide::default_rules') }
+        it { is_expected.to contain_aide__rule('default').with_ruledir('/etc/aide.conf.d') }
+        it {
+          expected = <<EOM
+/boot   NORMAL
 /bin    NORMAL
 /sbin   NORMAL
 /lib    NORMAL
@@ -112,7 +101,24 @@ class aide::default_rules (
 /etc/issue LSPP
 /etc/issue.net LSPP
 /etc/cups LSPP
-!/var/log/and-httpd'
-    }
-  }
-}
+!/var/log/and-httpd
+EOM
+          is_expected.to contain_aide__rule('default').with_rules(expected.strip)
+        }
+      end
+
+      context 'with custom ruledir' do
+        let(:params) {{ :ruledir  => '/etc/aide.d' }}
+
+        it { is_expected.to contain_aide__rule('default').with_ruledir('/etc/aide.d') }
+      end
+
+      context 'with custom default rules' do
+        let(:custom_rules) { "/bin HIGH\n/sbin HIGH" }
+        let(:params) {{ :default_rules => custom_rules }}
+
+        it { is_expected.to contain_aide__rule('default').with_rules(custom_rules) }
+      end
+    end
+  end
+end
