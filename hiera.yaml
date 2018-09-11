@@ -1,11 +1,8 @@
 ---
-version: 4
-datadir: data
+version: 5
+defaults:
+  datadir: data
+  data_hash: yaml_data
 hierarchy:
-  # NOTE:  Booleans don't work well with data in modules in old versions
-  # of puppet (e.g. 4.7.0).  'false' gets translated to ''.  To support
-  # these versions, we need both is_false.yaml and is_.yaml for the
-  # fips_enabled=false case.
   - name: "fips_enabled"
-    backend: yaml
-    path: "fips_enabled/is_%{facts.fips_enabled}"
+    path: "fips_enabled/is_%{facts.fips_enabled}.yaml"
