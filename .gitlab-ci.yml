@@ -46,6 +46,13 @@
   script:
     - bundle exec rake spec
 
+# To avoid running a prohibitive number of tests every commit,
+# don't set this env var in your gitlab instance
+.only_with_SIMP_FULL_MATRIX: &only_with_SIMP_FULL_MATRIX
+  only:
+    variables:
+      - $SIMP_FULL_MATRIX
+
 stages:
   - validation
   - unit
@@ -102,7 +109,6 @@ pup5_3-unit:
   <<: *cache_bundler
   <<: *setup_bundler_env
   <<: *spec_tests
-  allow_failure: true
 
 
 # Keep an eye on the latest puppet 5
@@ -117,7 +123,6 @@ pup5_latest-validation:
   <<: *cache_bundler
   <<: *setup_bundler_env
   <<: *validation_checks
-  allow_failure: true
 
 pup5_latest-unit:
   stage: unit
@@ -129,7 +134,6 @@ pup5_latest-unit:
   <<: *cache_bundler
   <<: *setup_bundler_env
   <<: *spec_tests
-  allow_failure: true
 
 
 
@@ -179,6 +183,7 @@ default-puppet5-fips:
     - beaker
   <<: *cache_bundler
   <<: *setup_bundler_env
+  <<: *only_with_SIMP_FULL_MATRIX
   variables:
     PUPPET_VERSION: '~> 5.5.1'
     BEAKER_PUPPET_COLLECTION: 'puppet5'
@@ -205,6 +210,7 @@ default-oel-fips:
     - beaker
   <<: *cache_bundler
   <<: *setup_bundler_env
+  <<: *only_with_SIMP_FULL_MATRIX
   variables:
     PUPPET_VERSION: '~> 4.10.0'
     BEAKER_fips: 'yes'
@@ -218,6 +224,7 @@ default-oel-puppet5:
     - beaker
   <<: *cache_bundler
   <<: *setup_bundler_env
+  <<: *only_with_SIMP_FULL_MATRIX
   variables:
     PUPPET_VERSION: '~> 5.5.1'
     BEAKER_PUPPET_COLLECTION: 'puppet5'
@@ -231,6 +238,7 @@ default-oel-puppet5-fips:
     - beaker
   <<: *cache_bundler
   <<: *setup_bundler_env
+  <<: *only_with_SIMP_FULL_MATRIX
   variables:
     PUPPET_VERSION: '~> 5.5.1'
     BEAKER_PUPPET_COLLECTION: 'puppet5'

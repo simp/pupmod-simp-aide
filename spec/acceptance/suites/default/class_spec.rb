@@ -19,14 +19,13 @@ describe 'aide class' do
 
   hosts.each do |host|
     context 'with defaults' do
-      let(:hieradata) { <<EOM
-simp_options::auditd: false
-simp_options::syslog: false
-simp_options::logrotate: false
-auditd::enable: false
-EOM
-      }
-      
+      let(:hieradata) {{
+        'simp_options::auditd'    => false,
+        'simp_options::syslog'    => false,
+        'simp_options::logrotate' => false,
+        'auditd::enable'          => false,
+      }}
+
       it 'should install psmisc for killall' do
         # centos/7 box doesn't have psmisc installed by default
         install_package(host, 'psmisc')
@@ -73,17 +72,18 @@ EOM
     end
 
     context 'with syslog and logrotate enabled' do
-      let(:hieradata) { <<EOM
-simp_options::auditd: false
-simp_options::syslog: true
-simp_options::logrotate: true
-aide::syslog_format: true
-auditd::enable: false
-EOM
-       }
+      let(:hieradata) {{
+        'simp_options::auditd'    => false ,
+        'simp_options::syslog'    => true ,
+        'simp_options::logrotate' => true,
+        'aide::syslog_format'     => true,
+        'auditd::enable'          => false,
+       }}
 
       it 'should work with no errors' do
         set_hieradata_on(host, hieradata)
+        apply_manifest_on(host, manifest, :catch_failures => true)
+        # rsyslog changes require a second run
         apply_manifest_on(host, manifest, :catch_failures => true)
       end
 

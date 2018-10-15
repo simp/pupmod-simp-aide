@@ -90,6 +90,8 @@
 # @param aide_init_timeout
 #   Maximum time to wait in seconds for AIDE database initialization
 #
+# @param package_ensure The ensure status of packages to be managed
+#
 # @author https://github.com/simp/pupmod-simp-aide/graphs/contributors
 #
 class aide (
@@ -117,7 +119,8 @@ class aide (
   Boolean                                    $syslog            = simplib::lookup('simp_options::syslog', { 'default_value'    => false }),
   Aide::SyslogFacility                       $syslog_facility   = 'LOG_LOCAL6',
   Boolean                                    $auditd            = simplib::lookup('simp_options::auditd', { 'default_value'    => false }),
-  Integer                                    $aide_init_timeout = 300
+  Integer                                    $aide_init_timeout = 300,
+  String                                     $package_ensure    = simplib::lookup('simp_options::package_ensure', { 'default_value' => 'installed' }),
 ) {
 
   include '::aide::default_rules'
@@ -145,7 +148,9 @@ class aide (
   }
 
   # CCE-27024-9
-  package { 'aide': ensure => 'latest' }
+  package { 'aide':
+    ensure => $package_ensure
+  }
 
   file { $ruledir:
     ensure => 'directory',
