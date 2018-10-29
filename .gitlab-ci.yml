@@ -1,13 +1,18 @@
 # The testing matrix considers ruby/puppet versions supported by SIMP and PE:
 #
-# https://puppet.com/docs/pe/2017.3/overview/component_versions_in_recent_pe_releases.html
+# https://puppet.com/docs/pe/latest/overview/component_versions_in_recent_pe_releases.html
 # https://puppet.com/misc/puppet-enterprise-lifecycle
-# https://puppet.com/docs/pe/2017.3/overview/getting_support_for_pe.html#standard-releases-and-long-term-support-releases
+# https://puppet.com/docs/pe/latest/overview/getting_support_for_pe.html
 # ------------------------------------------------------------------------------
-#  release    pup   ruby      eol
-# PE 2017.2   4.10  2.1.9  2018-02-21
-# PE 2017.3   5.3   2.4.1  2018-07
-# PE 2018.1   ???   ?????  ????-??  (LTS)
+# Release       Puppet   Ruby   EOL
+# PE 2016.4.15  4.10.12  2.1.9  2018-12 (LTS)
+# SIMP 6.0      4.8.2    2.1.9  TBD
+# SIMP 6.1      4.10.6   2.1.9  TBD
+# SIMP 6.2      4.10.12  2.1.9  TBD
+# SIMP 6.3      5.5.7    2.4.4  TBD***
+# PE 2018.1     5.5.6    2.4.4  2020-05 (LTS)***
+#
+# *** = Modules created for SIMP 6.3+ are not required to support Puppet < 5.5
 ---
 .cache_bundler: &cache_bundler
   cache:
@@ -85,27 +90,27 @@ pup4_10-unit:
   <<: *spec_tests
 
 
-# Puppet 5.3 for PE 2017.3 support (EOL: 2018-07)
+# Puppet 5.5 for PE 2018.1
 # See: https://puppet.com/misc/puppet-enterprise-lifecycle
 # --------------------------------------
-pup5_3-validation:
+pup5_5-validation:
   stage: validation
   tags:
     - docker
   image: ruby:2.4
   variables:
-    PUPPET_VERSION: '~> 5.3.0'
+    PUPPET_VERSION: '5.5.6'
   <<: *cache_bundler
   <<: *setup_bundler_env
   <<: *validation_checks
 
-pup5_3-unit:
+pup5_5-unit:
   stage: unit
   tags:
     - docker
   image: ruby:2.4
   variables:
-    PUPPET_VERSION: '~> 5.3.0'
+    PUPPET_VERSION: '5.5.6'
   <<: *cache_bundler
   <<: *setup_bundler_env
   <<: *spec_tests
@@ -145,6 +150,7 @@ default:
     - beaker
   <<: *cache_bundler
   <<: *setup_bundler_env
+  <<: *only_with_SIMP_FULL_MATRIX
   variables:
     PUPPET_VERSION: '~> 4.10.0'
   script:
@@ -157,6 +163,7 @@ default-fips:
     - beaker
   <<: *cache_bundler
   <<: *setup_bundler_env
+  <<: *only_with_SIMP_FULL_MATRIX
   variables:
     PUPPET_VERSION: '~> 4.10.0'
     BEAKER_fips: 'yes'
@@ -171,7 +178,7 @@ default-puppet5:
   <<: *cache_bundler
   <<: *setup_bundler_env
   variables:
-    PUPPET_VERSION: '~> 5.5.1'
+    PUPPET_VERSION: '~> 5.5.6'
     BEAKER_PUPPET_COLLECTION: 'puppet5'
   script:
     - bundle exec rake spec_clean
@@ -183,9 +190,8 @@ default-puppet5-fips:
     - beaker
   <<: *cache_bundler
   <<: *setup_bundler_env
-  <<: *only_with_SIMP_FULL_MATRIX
   variables:
-    PUPPET_VERSION: '~> 5.5.1'
+    PUPPET_VERSION: '~> 5.5.6'
     BEAKER_PUPPET_COLLECTION: 'puppet5'
     BEAKER_fips: 'yes'
   script:
@@ -198,6 +204,7 @@ default-oel:
     - beaker
   <<: *cache_bundler
   <<: *setup_bundler_env
+  <<: *only_with_SIMP_FULL_MATRIX
   variables:
     PUPPET_VERSION: '~> 4.10.0'
   script:
@@ -224,9 +231,8 @@ default-oel-puppet5:
     - beaker
   <<: *cache_bundler
   <<: *setup_bundler_env
-  <<: *only_with_SIMP_FULL_MATRIX
   variables:
-    PUPPET_VERSION: '~> 5.5.1'
+    PUPPET_VERSION: '~> 5.5.6'
     BEAKER_PUPPET_COLLECTION: 'puppet5'
   script:
     - bundle exec rake spec_clean
@@ -240,7 +246,7 @@ default-oel-puppet5-fips:
   <<: *setup_bundler_env
   <<: *only_with_SIMP_FULL_MATRIX
   variables:
-    PUPPET_VERSION: '~> 5.5.1'
+    PUPPET_VERSION: '~> 5.5.6'
     BEAKER_PUPPET_COLLECTION: 'puppet5'
     BEAKER_fips: 'yes'
   script:
