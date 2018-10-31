@@ -35,7 +35,7 @@ jobs:
   include:
     - stage: check
       rvm: 2.4.4
-      env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 5"
+      env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 5.5"
       script:
         - bundle exec rake check:dot_underscore
         - bundle exec rake check:test_file
@@ -48,19 +48,19 @@ jobs:
 
    - stage: spec
       rvm: 2.4.4
-      env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 5.5.6"
+      env: STRICT_VARIABLES=yes PUPPET_VERSION="~> 5.5.6"
       script:
         - bundle exec rake spec
 
     - stage: spec
       rvm: 2.4.4
-      env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 5.0"
+      env: STRICT_VARIABLES=yes PUPPET_VERSION="~> 5.5"
       script:
         - bundle exec rake spec
 
     - stage: spec
       rvm: 2.1.9
-      env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 4.10.4"
+      env: STRICT_VARIABLES=yes PUPPET_VERSION="~> 4.10.4"
       script:
         - bundle exec rake spec
 
