@@ -19,7 +19,7 @@ HOSTS:
     roles:
       - client
     platform: el-7-x86_64
-    box: onyxpoint.com/oel-7-x86_64
+    box: onyxpoint/oel-7-x86_64
     hypervisor: <%= hypervisor %>
 
 CONFIG:
