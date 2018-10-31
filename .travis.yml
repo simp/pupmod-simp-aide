@@ -1,7 +1,18 @@
 # The testing matrix considers ruby/puppet versions supported by SIMP and PE:
+#
+# https://puppet.com/docs/pe/2018.1/component_versions_in_recent_pe_releases.html
+# https://puppet.com/misc/puppet-enterprise-lifecycle
+# https://puppet.com/docs/pe/2018.1/overview/getting_support_for_pe.html
 # ------------------------------------------------------------------------------
-#  release    pup   ruby      eol
-# PE 2017.2   4.10  2.1.9  TBD
+# Release       Puppet   Ruby   EOL
+# PE 2016.4.15  4.10.12  2.1.9  2018-12 (LTS)
+# SIMP 6.0      4.8.2    2.1.9  TBD
+# SIMP 6.1      4.10.6   2.1.9  TBD
+# SIMP 6.2      4.10.12  2.1.9  TBD
+# SIMP 6.3      5.5.7    2.4.4  TBD***
+# PE 2018.1     5.5.6    2.4.4  2020-05 (LTS)***
+#
+# *** = Modules created for SIMP 6.3+ are not required to support Puppet < 5.5
 ---
 language: ruby
 cache: bundler
@@ -23,8 +34,8 @@ before_install:
 jobs:
   include:
     - stage: check
-      rvm: 2.4.1
-      env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 5"
+      rvm: 2.4.4
+      env: STRICT_VARIABLES=yes PUPPET_VERSION="~> 5.5"
       script:
         - bundle exec rake check:dot_underscore
         - bundle exec rake check:test_file
@@ -36,19 +47,25 @@ jobs:
         - bundle exec puppet module build
 
     - stage: spec
-      rvm: 2.4.1
-      env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 5.0"
+      rvm: 2.4.4
+      env: STRICT_VARIABLES=yes PUPPET_VERSION="~> 5.5.6"
+      script:
+        - bundle exec rake spec
+
+    - stage: spec
+      rvm: 2.4.4
+      env: STRICT_VARIABLES=yes PUPPET_VERSION="~> 5.5"
       script:
         - bundle exec rake spec
 
     - stage: spec
       rvm: 2.1.9
-      env: STRICT_VARIABLES=yes TRUSTED_NODE_DATA=yes PUPPET_VERSION="~> 4.10.0"
+      env: STRICT_VARIABLES=yes PUPPET_VERSION="~> 4.10.4"
       script:
         - bundle exec rake spec
 
     - stage: deploy
-      rvm: 2.4.1
+      rvm: 2.4.4
       script:
         - true
       before_deploy:
@@ -69,5 +86,5 @@ jobs:
             secure: "Os40yaNVVU3ypsLac11cu7PYfv0mdilx1qBA8euk12xoJxhYzrLz7n4Zlp/Bx+6knmMOeucUy6U0PKg3XCasTGFKKImw3h4X3kTOby0xcxGj4BAsxySv10JcB9x7MrIT5+Q9rx+vOef/kotNSMMWxNNVniV5VjrjuX+qOK4NtzhtyQLIpleZZ02geYSPLBCe+R5pPaf5D/zsWMu+v7oaqI9VM0XuvSGQAHNbSO97/trNgJP/nDeK/zWBzkGD/EP9wmJj9lfNSl9oa50uclqNkgHZ91SXmYv7f+YlqxpsbDKsoFs2HGPnGiipyIA0EEJXHTiknJ3v7XLveH3/ENE6hem3nJ+82WeQyMbsJTEmvb0vmTsiRTgls8GlpInG/ykBSGhqQdY21oYMS4PCvS2+CCZUw6qjaDokiTk5AeSugQNSiU1lqcRXUacYDwn0F8LR49ixDsPtoCsnvy/FRU87tr10ZyrnBtIGqgChJUsLhBA9s4FIzP9WmO6rUxZ0qufDq/wMHDRyPBPHNch5yTURGbOkGYzGkZ3u8cL5ezmGCteSKBOYsRNr45F9/ld1Rg+XfJ68UX8nysHs+GLMnaoD5l8vHHZu/nqcZbc2fEivQQ3OP2g2RzPF6WeBX8Fv20EZT9ZuAeGJEQkRySpp6jTjtSFUlhPUMbWXYwEbODESrHU="
           on:
             tags: true
-            rvm: 2.4.1
+            rvm: 2.4.4
             condition: '($SKIP_FORGE_PUBLISH != true)'
