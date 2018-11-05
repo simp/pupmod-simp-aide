@@ -1,0 +1,288 @@
+---
+version: 2.0.0
+checks:
+  oval:com.puppet.forge.simp.aide.auditd:
+    settings:
+      parameter: aide::auditd
+      value: true
+    type: puppet-class-parameter
+    controls:
+      nist_800_53_rev4:AU-3:2: true
+      nist_800_53_rev4:AU-4:1: true
+      nist_800_53_rev4:AU-9: true
+    identifiers:
+      nist_800_53_rev4:
+      - AU-3:2
+      - AU-4:1
+      - AU-9
+  oval:com.puppet.forge.simp.aide.default_rules:
+    settings:
+      parameter: aide::default_rules
+      value: nil
+    type: puppet-class-parameter
+    controls:
+      nist_800_53_rev4:SI-7: true
+      nist_800_53_rev4:SI-7:1: true
+      nist_800_53_rev4:SI-7:2: true
+      nist_800_53_rev4:SI-7:3: true
+      nist_800_53_rev4:SI-7:8: true
+      disa_stig: true
+      RHEL-07-021820: true
+      SRG-OS-000364-GPOS-00151: true
+      cci:CCI-000293: true
+      cci:CCI-001812: true
+      cci:CCI-001813: true
+      cci:CCI-001814: true
+    identifiers:
+      nist_800_53_rev4:
+      - SI-7
+      - SI-7:1
+      - SI-7:2
+      - SI-7:3
+      - SI-7:8
+      disa_stig:
+      - RHEL-07-021820
+      - SRG-OS-000364-GPOS-00151
+      - CCI-000293
+      - CCI-001812
+      - CCI-001813
+      - CCI-001814
+  oval:com.puppet.forge.simp.aide.logrotate:
+    settings:
+      parameter: aide::logrotate
+      value: true
+    type: puppet-class-parameter
+    controls:
+      nist_800_53_rev4:AU-4: true
+      nist_800_53_rev4:AU-5:b: true
+      nist_800_53_rev4:AU-11: true
+    identifiers:
+      nist_800_53_rev4:
+      - AU-4
+      - AU-5:b
+      - AU-11
+  oval:com.puppet.forge.simp.aide.logrotate.rotate_number:
+    settings:
+      parameter: aide::logrotate::rotate_number
+      value: 4
+    type: puppet-class-parameter
+    controls:
+      nist_800_53_rev4:AU-4: true
+      nist_800_53_rev4:AU-5:b: true
+      nist_800_53_rev4:AU-11: true
+    identifiers:
+      nist_800_53_rev4:
+      - AU-4
+      - AU-5:b
+      - AU-11
+  oval:com.puppet.forge.simp.aide.logrotate.rotate_period:
+    settings:
+      parameter: aide::logrotate::rotate_period
+      value: weekly
+    type: puppet-class-parameter
+    controls:
+      nist_800_53_rev4:AU-4: true
+      nist_800_53_rev4:AU-5:b: true
+      nist_800_53_rev4:AU-11: true
+      disa_stig: true
+      RHEL-07-030320: true
+      SRG-OS-000341-GPOS-00132: true
+      cci:CCI-001849: true
+    identifiers:
+      nist_800_53_rev4:
+      - AU-4
+      - AU-5:b
+      - AU-11
+      disa_stig:
+      - RHEL-07-030320
+      - SRG-OS-000341-GPOS-00132
+      - CCI-001849
+  oval:com.puppet.forge.simp.aide.syslog:
+    settings:
+      parameter: aide::syslog
+      value: true
+    type: puppet-class-parameter
+    controls:
+      nist_800_53_rev4:AU-4: true
+      disa_stig: true
+      cci:CCI-001744: true
+      SRG-OS-000363-GPOS-00150: true
+    identifiers:
+      nist_800_53_rev4:
+      - AU-4
+      disa_stig:
+      - CCI-001744
+      - SRG-OS-000363-GPOS-00150
+  oval:com.puppet.forge.simp.aide.enable.el6:
+    settings:
+      parameter: aide::enable
+      value: false
+    type: puppet-class-parameter
+    controls:
+      nist_800_53_rev4:SI-7: true
+      nist_800_53_rev4:SI-7:1: true
+      nist_800_53_rev4:SI-7:2: true
+      nist_800_53_rev4:SI-7:3: true
+      nist_800_53_rev4:SI-7:8: true
+    identifiers:
+      nist_800_53_rev4:
+      - SI-7
+      - SI-7:1
+      - SI-7:2
+      - SI-7:3
+      - SI-7:8
+    confine:
+      osfamily: RedHat
+      operatingsystemmajrelease: '6'
+  oval:com.puppet.forge.simp.aide.aliases:
+    settings:
+      parameter: aide::aliases
+      value:
+      - R = p+i+l+n+u+g+s+m+c+acl+sha1+sha256
+      - L = p+i+l+n+u+g+acl+xattrs
+      - "> = p+i+l+n+u+g+S+acl+xattrs"
+      - ALLXTRAHASHES = sha1+sha256
+      - EVERYTHING = R+ALLXTRAHASHES
+      - NORMAL = R
+      - DIR = p+i+n+u+g+acl+xattrs
+      - PERMS = p+i+u+g+acl
+      - LOG = >
+      - LSPP = R
+      - DATAONLY = p+n+u+g+s+acl+selinux+xattrs+sha1+sha256
+    type: puppet-class-parameter
+    controls:
+      disa_stig: true
+      RHEL-07-021600: true
+      SRG-OS-000480-GPOS-00227: true
+      cci:CCI-000366: true
+    identifiers:
+      disa_stig:
+      - RHEL-07-021600
+      - SRG-OS-000480-GPOS-00227
+      - CCI-000366
+    confine:
+      osfamily: RedHat
+      operatingsystemmajrelease: '7'
+  oval:com.puppet.forge.simp.aide.enable:
+    settings:
+      parameter: aide::enable
+      value: true
+    type: puppet-class-parameter
+    controls:
+      disa_stig: true
+      RHEL-07-020940: true
+      SRG-OS-000480-GPOS-00227: true
+      cci:CCI-000318: true
+      cci:CCI-001812: true
+      cci:CCI-001813: true
+      cci:CCI-001814: true
+      cci:CCI-000368: true
+    identifiers:
+      disa_stig:
+      - RHEL-07-020940
+      - SRG-OS-000480-GPOS-00227
+      - CCI-000318
+      - CCI-001812
+      - CCI-001813
+      - CCI-001814
+      - CCI-000368
+    confine:
+      osfamily: RedHat
+      operatingsystemmajrelease: '7'
+    oval-ids:
+    - xccdf_org:ssgproject:content_rule_aide_periodic_cron_checking
+    - aide_periodic_cron_checking
+  oval:com.puppet.forge.simp.aide.hour:
+    settings:
+      parameter: aide::hour
+      value: 4
+    type: puppet-class-parameter
+    controls:
+      disa_stig: true
+      cci:CCI-001744: true
+      SRG-OS-000363-GPOS-00150: true
+    identifiers:
+      disa_stig:
+      - CCI-001744
+      - SRG-OS-000363-GPOS-00150
+    confine:
+      osfamily: RedHat
+      operatingsystemmajrelease: '7'
+    oval-ids:
+    - xccdf_org:ssgproject:content_rule_aide_periodic_cron_checking
+    - aide_periodic_cron_checking
+  oval:com.puppet.forge.simp.aide.minute:
+    settings:
+      parameter: aide::minute
+      value: 5
+    type: puppet-class-parameter
+    controls:
+      disa_stig: true
+      cci:CCI-001744: true
+      SRG-OS-000363-GPOS-00150: true
+    identifiers:
+      disa_stig:
+      - CCI-001744
+      - SRG-OS-000363-GPOS-00150
+    confine:
+      osfamily: RedHat
+      operatingsystemmajrelease: '7'
+    oval-ids:
+    - xccdf_org:ssgproject:content_rule_aide_periodic_cron_checking
+    - aide_periodic_cron_checking
+  oval:com.puppet.forge.simp.aide.enable:
+    settings:
+      parameter: aide::enable
+      value: true
+    type: puppet-class-parameter
+    controls:
+      disa_stig: true
+      cci:CCI-001744: true
+      SRG-OS-000363-GPOS-00150: true
+    identifiers:
+      disa_stig:
+      - CCI-001744
+      - SRG-OS-000363-GPOS-00150
+    confine:
+      osfamily: RedHat
+      operatingsystemmajrelease: '7'
+  oval:com.puppet.forge.simp.aide.weekday:
+    settings:
+      parameter: aide::weekday
+      value: 0
+    type: puppet-class-parameter
+    controls:
+      disa_stig: true
+      cci:CCI-001744: true
+      SRG-OS-000363-GPOS-00150: true
+    identifiers:
+      disa_stig:
+      - CCI-001744
+      - SRG-OS-000363-GPOS-00150
+    confine:
+      osfamily: RedHat
+      operatingsystemmajrelease: '7'
+    oval-ids:
+    - xccdf_org:ssgproject:content_rule_aide_periodic_cron_checking
+    - aide_periodic_cron_checking
+  oval:com.puppet.forge.simp.aide.enable.nist_800_53_rev4:
+    settings:
+      parameter: aide::enable
+      value: false
+    type: puppet-class-parameter
+    controls:
+      nist_800_53_rev4:SI-7: true
+      nist_800_53_rev4:SI-7:1: true
+      nist_800_53_rev4:SI-7:2: true
+      nist_800_53_rev4:SI-7:3: true
+      nist_800_53_rev4:SI-7:8: true
+    identifiers:
+      nist_800_53_rev4:
+      - SI-7
+      - SI-7:1
+      - SI-7:2
+      - SI-7:3
+      - SI-7:8
+    confine:
+      osfamily: RedHat
+      operatingsystemmajrelease: '7'
