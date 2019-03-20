@@ -12,18 +12,14 @@
 # @author https://github.com/simp/pupmod-simp-aide/graphs/contributors
 #
 class aide::set_schedule (
-  Stdlib::Compat::Integer                    $minute   = $::aide::minute,
-  Stdlib::Compat::Integer                    $hour     = $::aide::hour,
-  Variant[Enum['*'],Stdlib::Compat::Integer] $monthday = $::aide::monthday,
-  Variant[Enum['*'],Stdlib::Compat::Integer] $month    = $::aide::month,
-  Stdlib::Compat::Integer                    $weekday  = $::aide::weekday,
-  String                                     $command  = $::aide::cron_command,
+  Simplib::Cron::Minute   $minute   = $::aide::minute,
+  Simplib::Cron::Hour     $hour     = $::aide::hour,
+  Simplib::Cron::Monthday $monthday = $::aide::monthday,
+  Simplib::Cron::Month    $month    = $::aide::month,
+  Simplib::Cron::Weekday  $weekday  = $::aide::weekday,
+  String                  $command  = $::aide::cron_command,
 ) {
   assert_private()
-
-  validate_between($minute, 0, 60)
-  validate_between($hour, 0, 24)
-  validate_between($weekday, 0, 7)
 
   cron { 'aide_schedule':
     command  => $command,
