@@ -7,11 +7,12 @@ checks:
       value: true
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:AU-3:2: true
-      nist_800_53_rev4:AU-4:1: true
-      nist_800_53_rev4:AU-9: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AU-3:2: true
+      nist_800_53:rev4:AU-4:1: true
+      nist_800_53:rev4:AU-9: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - AU-3:2
       - AU-4:1
       - AU-9
@@ -21,11 +22,12 @@ checks:
       value: nil
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:SI-7: true
-      nist_800_53_rev4:SI-7:1: true
-      nist_800_53_rev4:SI-7:2: true
-      nist_800_53_rev4:SI-7:3: true
-      nist_800_53_rev4:SI-7:8: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:SI-7: true
+      nist_800_53:rev4:SI-7:1: true
+      nist_800_53:rev4:SI-7:2: true
+      nist_800_53:rev4:SI-7:3: true
+      nist_800_53:rev4:SI-7:8: true
       disa_stig: true
       RHEL-07-021820: true
       SRG-OS-000364-GPOS-00151: true
@@ -34,7 +36,7 @@ checks:
       cci:CCI-001813: true
       cci:CCI-001814: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - SI-7
       - SI-7:1
       - SI-7:2
@@ -53,11 +55,12 @@ checks:
       value: true
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:AU-4: true
-      nist_800_53_rev4:AU-5:b: true
-      nist_800_53_rev4:AU-11: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AU-4: true
+      nist_800_53:rev4:AU-5:b: true
+      nist_800_53:rev4:AU-11: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - AU-4
       - AU-5:b
       - AU-11
@@ -67,11 +70,12 @@ checks:
       value: 4
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:AU-4: true
-      nist_800_53_rev4:AU-5:b: true
-      nist_800_53_rev4:AU-11: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AU-4: true
+      nist_800_53:rev4:AU-5:b: true
+      nist_800_53:rev4:AU-11: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - AU-4
       - AU-5:b
       - AU-11
@@ -81,15 +85,16 @@ checks:
       value: weekly
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:AU-4: true
-      nist_800_53_rev4:AU-5:b: true
-      nist_800_53_rev4:AU-11: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AU-4: true
+      nist_800_53:rev4:AU-5:b: true
+      nist_800_53:rev4:AU-11: true
       disa_stig: true
       RHEL-07-030320: true
       SRG-OS-000341-GPOS-00132: true
       cci:CCI-001849: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - AU-4
       - AU-5:b
       - AU-11
@@ -103,12 +108,13 @@ checks:
       value: true
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:AU-4: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AU-4: true
       disa_stig: true
       cci:CCI-001744: true
       SRG-OS-000363-GPOS-00150: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - AU-4
       disa_stig:
       - CCI-001744
@@ -119,13 +125,14 @@ checks:
       value: false
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:SI-7: true
-      nist_800_53_rev4:SI-7:1: true
-      nist_800_53_rev4:SI-7:2: true
-      nist_800_53_rev4:SI-7:3: true
-      nist_800_53_rev4:SI-7:8: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:SI-7: true
+      nist_800_53:rev4:SI-7:1: true
+      nist_800_53:rev4:SI-7:2: true
+      nist_800_53:rev4:SI-7:3: true
+      nist_800_53:rev4:SI-7:8: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - SI-7
       - SI-7:1
       - SI-7:2
@@ -170,28 +177,15 @@ checks:
     type: puppet-class-parameter
     controls:
       disa_stig: true
-      RHEL-07-020940: true
-      SRG-OS-000480-GPOS-00227: true
-      cci:CCI-000318: true
-      cci:CCI-001812: true
-      cci:CCI-001813: true
-      cci:CCI-001814: true
-      cci:CCI-000368: true
+      cci:CCI-001744: true
+      SRG-OS-000363-GPOS-00150: true
     identifiers:
       disa_stig:
-      - RHEL-07-020940
-      - SRG-OS-000480-GPOS-00227
-      - CCI-000318
-      - CCI-001812
-      - CCI-001813
-      - CCI-001814
-      - CCI-000368
+      - CCI-001744
+      - SRG-OS-000363-GPOS-00150
     confine:
       osfamily: RedHat
       operatingsystemmajrelease: '7'
-    oval-ids:
-    - xccdf_org:ssgproject:content_rule_aide_periodic_cron_checking
-    - aide_periodic_cron_checking
   oval:com.puppet.forge.simp.aide.hour:
     settings:
       parameter: aide::hour
@@ -230,22 +224,6 @@ checks:
     oval-ids:
     - xccdf_org:ssgproject:content_rule_aide_periodic_cron_checking
     - aide_periodic_cron_checking
-  oval:com.puppet.forge.simp.aide.enable:
-    settings:
-      parameter: aide::enable
-      value: true
-    type: puppet-class-parameter
-    controls:
-      disa_stig: true
-      cci:CCI-001744: true
-      SRG-OS-000363-GPOS-00150: true
-    identifiers:
-      disa_stig:
-      - CCI-001744
-      - SRG-OS-000363-GPOS-00150
-    confine:
-      osfamily: RedHat
-      operatingsystemmajrelease: '7'
   oval:com.puppet.forge.simp.aide.weekday:
     settings:
       parameter: aide::weekday
@@ -265,19 +243,20 @@ checks:
     oval-ids:
     - xccdf_org:ssgproject:content_rule_aide_periodic_cron_checking
     - aide_periodic_cron_checking
-  oval:com.puppet.forge.simp.aide.enable.nist_800_53_rev4:
+  oval:com.puppet.forge.simp.aide.enable.nist_800_53:rev4:
     settings:
       parameter: aide::enable
       value: false
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:SI-7: true
-      nist_800_53_rev4:SI-7:1: true
-      nist_800_53_rev4:SI-7:2: true
-      nist_800_53_rev4:SI-7:3: true
-      nist_800_53_rev4:SI-7:8: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:SI-7: true
+      nist_800_53:rev4:SI-7:1: true
+      nist_800_53:rev4:SI-7:2: true
+      nist_800_53:rev4:SI-7:3: true
+      nist_800_53:rev4:SI-7:8: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - SI-7
       - SI-7:1
       - SI-7:2
