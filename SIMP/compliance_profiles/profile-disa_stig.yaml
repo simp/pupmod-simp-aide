@@ -6,3 +6,4 @@ profiles:
       disa_stig: true
 controls:
   disa_stig: {}
+
