@@ -7,7 +7,7 @@ fixtures:
     augeasproviders_grub: https://github.com/simp/augeasproviders_grub
     cron_core: https://github.com/puppetlabs/puppetlabs-cron_core
     compliance_markup: https://github.com/simp/pupmod-simp-compliance_markup
-    simp_options: https://github.com/silug/pupmod-simp-simp_options
+    simp_options: https://github.com/simp/pupmod-simp-simp_options
     logrotate: https://github.com/simp/pupmod-simp-logrotate
     pki: https://github.com/simp/pupmod-simp-pki
     rsyslog: https://github.com/simp/pupmod-simp-rsyslog
