@@ -49,21 +49,6 @@ checks:
       - CCI-001812
       - CCI-001813
       - CCI-001814
-  oval:com.puppet.forge.simp.aide.logrotate:
-    settings:
-      parameter: aide::logrotate
-      value: true
-    type: puppet-class-parameter
-    controls:
-      nist_800_53:rev4: true
-      nist_800_53:rev4:AU-4: true
-      nist_800_53:rev4:AU-5:b: true
-      nist_800_53:rev4:AU-11: true
-    identifiers:
-      nist_800_53:rev4:
-      - AU-4
-      - AU-5:b
-      - AU-11
   oval:com.puppet.forge.simp.aide.logrotate.rotate_number:
     settings:
       parameter: aide::logrotate::rotate_number
