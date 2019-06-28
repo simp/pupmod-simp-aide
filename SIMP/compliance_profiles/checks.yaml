@@ -1,21 +1,6 @@
 ---
 version: 2.0.0
 checks:
-  oval:com.puppet.forge.simp.aide.auditd:
-    settings:
-      parameter: aide::auditd
-      value: true
-    type: puppet-class-parameter
-    controls:
-      nist_800_53:rev4: true
-      nist_800_53:rev4:AU-3:2: true
-      nist_800_53:rev4:AU-4:1: true
-      nist_800_53:rev4:AU-9: true
-    identifiers:
-      nist_800_53:rev4:
-      - AU-3:2
-      - AU-4:1
-      - AU-9
   oval:com.puppet.forge.simp.aide.default_rules:
     settings:
       parameter: aide::default_rules
@@ -87,23 +72,6 @@ checks:
       - RHEL-07-030320
       - SRG-OS-000341-GPOS-00132
       - CCI-001849
-  oval:com.puppet.forge.simp.aide.syslog:
-    settings:
-      parameter: aide::syslog
-      value: true
-    type: puppet-class-parameter
-    controls:
-      nist_800_53:rev4: true
-      nist_800_53:rev4:AU-4: true
-      disa_stig: true
-      cci:CCI-001744: true
-      SRG-OS-000363-GPOS-00150: true
-    identifiers:
-      nist_800_53:rev4:
-      - AU-4
-      disa_stig:
-      - CCI-001744
-      - SRG-OS-000363-GPOS-00150
   oval:com.puppet.forge.simp.aide.enable:
     settings:
       parameter: aide::enable
