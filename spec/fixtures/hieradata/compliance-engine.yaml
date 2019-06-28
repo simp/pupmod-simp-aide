@@ -26,6 +26,3 @@ simp_options::ldap::bind_pw: 'bind_pw'
 simp_options::ldap::bind_hash: '{SSHA}bindhash'
 simp_options::ldap::sync_pw: 'sync_pw'
 simp_options::ldap::sync_hash: '{SSHA}synchash'
-
-sssd::domains :
-  - 'LOCAL'
