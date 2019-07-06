@@ -1,0 +1,5 @@
+---
+# SIMP infrastructure settings
+simp_options::trusted_nets:   ['192.168.122.0/24']
+simp_options::puppet::server: '192.168.122.1'
+simp_options::puppet::ca: '192.168.122.1'
