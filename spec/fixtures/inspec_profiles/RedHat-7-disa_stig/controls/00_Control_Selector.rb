@@ -1,6 +1,6 @@
 skips = {}
 overrides = []
-subsystems = [ 'audit' ]
+subsystems = [ 'aide' ]
 
 require_controls 'disa_stig-el7-baseline' do
   skips.each_pair do |ctrl, reason|
