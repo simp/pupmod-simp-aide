@@ -1,7 +1,7 @@
 name: EL7 Aide STIG
 title: Aide STIG for EL 7
 supports:
-  - os-family: CentOS
+  - os-family: redhat
 maintainer: SIMP Team
 copyright: Onyx Point, Inc.
 copyright_email: simp@onyxpoint.com
