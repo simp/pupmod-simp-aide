@@ -26,7 +26,7 @@ describe 'run inspec against the appropriate fixtures for simp audit profile' do
               @inspec = Simp::BeakerHelpers::Inspec.new(host, profile)
               @inspec_report = {:data => nil}
             end
-          
+
             it 'should run inspec' do
               @inspec.run
             end

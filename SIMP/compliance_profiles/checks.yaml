@@ -4,7 +4,7 @@ checks:
   oval:com.puppet.forge.simp.aide.default_rules:
     settings:
       parameter: aide::default_rules
-      value: nil
+      value: ''
     type: puppet-class-parameter
     controls:
       nist_800_53:rev4: true
