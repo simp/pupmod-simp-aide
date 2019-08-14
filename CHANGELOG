@@ -1,3 +1,9 @@
+* Wed Aug 14 2019 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.3.1-0
+- With contributions from ischmidt1235 on GitHub
+- Add InSpec compliance tests
+- Fix bug in Compliance Engine data
+- Add SCAP compliance tests
+
 * Thu Jun 06 2019 Steven Pritchard <steven.pritchard@onyxpoint.com> - 6.3.0-0
 - Add v2 compliance_markup data
 - Drop support for Puppet 4
