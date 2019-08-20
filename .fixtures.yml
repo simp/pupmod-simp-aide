@@ -13,12 +13,11 @@ fixtures:
     rsyslog: https://github.com/simp/pupmod-simp-rsyslog
     simplib: https://github.com/simp/pupmod-simp-simplib
     stdlib: https://github.com/simp/puppetlabs-stdlib
-    systemd:
-      repo: https://github.com/simp/puppet-systemd
-      branch: simp-master
+    systemd: https://github.com/simp/puppet-systemd
     disa_stig-el7-baseline:
       repo: https://github.com/simp/inspec-profile-disa_stig-el7
       branch:  master
       target: spec/fixtures/inspec_deps/inspec_profiles/profiles
+    
   symlinks:
     aide: "#{source_dir}"
