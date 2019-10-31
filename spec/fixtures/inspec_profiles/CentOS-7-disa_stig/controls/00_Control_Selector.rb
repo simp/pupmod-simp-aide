@@ -1,4 +1,6 @@
-skips = {}
+skips = {
+  'V-71975' => "Skipping:  No mail server is configured. SIMP-7220 ticket created"
+}
 overrides = []
 subsystems = [ 'aide' ]
 
