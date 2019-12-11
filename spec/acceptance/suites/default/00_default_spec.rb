@@ -52,18 +52,18 @@ describe 'aide class' do
         on(host, 'ls /var/lib/aide/aide.db.new.gz')
       end
 
-      it 'should generate an empty report when no problems are found' do
+      it 'should generate an empty or clean report when no problems are found' do
         on(host, '/usr/local/sbin/update_aide')
         on(host, '/usr/sbin/aide --check')
         report = on(host, 'cat /var/log/aide/aide.report').stdout
-        expect(report).to eq ''
+        expect(report).to match(/^(.+NO differences.+)?$/)
       end
 
       it 'should generate a valid report when problems are found' do
         on(host, 'touch /etc/yum.conf')
         on(host, '/usr/sbin/aide --check', :acceptable_exit_codes => changes_detected)
         on(host, "grep 'found differences between database and filesystem' /var/log/aide/aide.report")
-        on(host, "grep 'changed: /etc/yum.conf' /var/log/aide/aide.report")
+        on(host, "grep '/etc/.*\.conf' /var/log/aide/aide.report")
       end
 
       it 'should not generate /var/log/aide/aide.log' do
@@ -91,14 +91,14 @@ describe 'aide class' do
         apply_manifest_on(host, manifest, :catch_changes => true)
       end
 
-      it 'should generate an empty report and log nothing when no problems are found' do
+      it 'should generate an empty or clean report and log nothing when no problems are found' do
         on(host, '/usr/local/sbin/update_aide')
         on(host, 'logrotate --force /etc/logrotate.simp.d/aide')
         on(host, '/usr/sbin/aide --check')
         report = on(host, 'cat /var/log/aide/aide.report').stdout
-        expect(report).to eq ''
+        expect(report).to match(/^(.+NO differences.+)?$/)
         log = on(host, 'cat /var/log/aide/aide.log').stdout
-        expect(log).to eq ''
+        expect(log).to match(/^(.+NO differences.+)?$/)
       end
 
       it 'should generate a valid report and log that report when problems are found' do
@@ -106,10 +106,10 @@ describe 'aide class' do
         on(host, '/usr/sbin/aide --check', :acceptable_exit_codes => changes_detected)
 
         on(host, "grep 'found differences between database and filesystem' /var/log/aide/aide.report")
-        on(host, "grep 'changed: /etc/yum.conf' /var/log/aide/aide.report")
+        on(host, "grep '/etc/.*\.conf' /var/log/aide/aide.report")
 
         on(host, "grep 'found differences between database and filesystem' /var/log/aide/aide.log")
-        on(host, "grep 'changed: /etc/yum.conf' /var/log/aide/aide.log")
+        on(host, "grep '/etc/.*\.conf' /var/log/aide/aide.log")
       end
     end
   end

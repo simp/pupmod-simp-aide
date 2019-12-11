@@ -6,3 +6,11 @@ defaults:
 hierarchy:
   - name: "fips_enabled"
     path: "fips_enabled/is_%{facts.fips_enabled}.yaml"
+  - name: "OS + Release"
+    path: "os/%{facts.operatingsystem}-%{facts.operatingsystemmajrelease}.yaml"
+  - name: "OS"
+    path: "os/%{facts.operatingsystem}.yaml"
+  - name: "Kernel"
+    path: "os/%{facts.kernel}.yaml"
+  - name: "Common"
+    path: "common.yaml"

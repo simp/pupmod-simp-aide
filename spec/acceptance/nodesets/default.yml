@@ -31,6 +31,17 @@ HOSTS:
         baseurl: 'https://packages.chef.io/repos/yum/current/el/7/$basearch'
         gpgkeys:
           - https://packages.chef.io/chef.asc
+  el8:
+    roles:
+      - client
+    platform: el-8-x86_64
+    box: centos/8
+    hypervisor: <%= hypervisor %>
+    yum_repos:
+      chef-current:
+        baseurl: 'https://packages.chef.io/repos/yum/current/el/8/$basearch'
+        gpgkeys:
+          - https://packages.chef.io/chef.asc
 CONFIG:
   log_level: verbose
   synced_folder : disabled

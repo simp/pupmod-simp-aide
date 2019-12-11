@@ -1,7 +1,7 @@
 ---
 fixtures:
   repositories:
-    auditd: https://github.com/simp/pupmod-simp-auditd
+    #auditd: https://github.com/simp/pupmod-simp-auditd
     augeas_core: https://github.com/puppetlabs/puppetlabs-augeas_core
     augeasproviders_core: https://github.com/simp/augeasproviders_core
     augeasproviders_grub: https://github.com/simp/augeasproviders_grub
@@ -16,8 +16,9 @@ fixtures:
     systemd: https://github.com/simp/puppet-systemd
     disa_stig-el7-baseline:
       repo: https://github.com/simp/inspec-profile-disa_stig-el7
-      branch:  master
+      branch: master
       target: spec/fixtures/inspec_deps/inspec_profiles/profiles
-    
+
   symlinks:
     aide: "#{source_dir}"
+    auditd: "#{source_dir}/../auditd"

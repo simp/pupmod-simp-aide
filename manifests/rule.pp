@@ -25,7 +25,7 @@ define aide::rule (
   String               $rules,
   Stdlib::Absolutepath $ruledir = '/etc/aide.conf.d'
 ) {
-  include '::aide'
+  include 'aide'
 
   file { "${ruledir}/${name}.aide":
     ensure  => 'present',
@@ -36,8 +36,12 @@ define aide::rule (
     notify  => Exec['update_aide_db']
   }
 
-  # Add auditing rules for the aide configuration.
-  auditd::rule { "${name}.aide":
-    content => "-w ${ruledir}/${name}.aide -p wa -k CFG_aide"
+  if $aide::auditd {
+    simplib::assert_optional_dependency($module_name, 'simp/auditd')
+
+    # Add auditing rules for the aide configuration.
+    auditd::rule { "${name}.aide":
+      content => "-w ${ruledir}/${name}.aide -p wa -k CFG_aide"
+    }
   }
 }
