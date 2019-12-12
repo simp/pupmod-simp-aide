@@ -1,7 +1,7 @@
 ---
 fixtures:
   repositories:
-    #auditd: https://github.com/simp/pupmod-simp-auditd
+    auditd: https://github.com/simp/pupmod-simp-auditd
     augeas_core: https://github.com/puppetlabs/puppetlabs-augeas_core
     augeasproviders_core: https://github.com/simp/augeasproviders_core
     augeasproviders_grub: https://github.com/simp/augeasproviders_grub
@@ -21,4 +21,3 @@ fixtures:
 
   symlinks:
     aide: "#{source_dir}"
-    auditd: "#{source_dir}/../auditd"
