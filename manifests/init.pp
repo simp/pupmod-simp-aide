@@ -96,6 +96,7 @@
 #
 class aide (
   Array[String]                     $aliases,          # data in modules
+  Variant[Array[String[1]],String]  $default_rules,    #data in modules
   Stdlib::Absolutepath              $dbdir             = '/var/lib/aide',
   Stdlib::Absolutepath              $logdir            = '/var/log/aide',
   String                            $database_name     = 'aide.db.gz',
@@ -112,29 +113,28 @@ class aide (
   Simplib::Cron::Month              $month             = '*',
   Simplib::Cron::Weekday            $weekday           = 0,
   String                            $cron_command      = '/bin/nice -n 19 /usr/sbin/aide -C',
-  String                            $default_rules     = '', # lint:ignore:empty_string_assignment
   Boolean                           $logrotate         = simplib::lookup('simp_options::logrotate', { 'default_value' => false}),
   Aide::Rotateperiod                $rotate_period     = 'weekly',
   Integer                           $rotate_number     = 4,
-  Boolean                           $syslog            = simplib::lookup('simp_options::syslog', { 'default_value'    => false }),
+  Boolean                           $syslog            = simplib::lookup('simp_options::syslog', { 'default_value' => false }),
   Aide::SyslogFacility              $syslog_facility   = 'LOG_LOCAL6',
-  Boolean                           $auditd            = simplib::lookup('simp_options::auditd', { 'default_value'    => false }),
+  Boolean                           $auditd            = simplib::lookup('simp_options::auditd', { 'default_value' => false }),
   Integer                           $aide_init_timeout = 300,
   String                            $package_ensure    = simplib::lookup('simp_options::package_ensure', { 'default_value' => 'installed' }),
 ) {
 
-  include '::aide::default_rules'
+  include 'aide::default_rules'
 
   if $enable {
-    include '::aide::set_schedule'
+    include 'aide::set_schedule'
   }
 
   if $logrotate {
-    include '::aide::logrotate'
+    include 'aide::logrotate'
   }
 
   if $syslog {
-    include '::aide::syslog'
+    include 'aide::syslog'
     $_report_urls = $report_urls << "syslog:${syslog_facility}"
   }
   else {

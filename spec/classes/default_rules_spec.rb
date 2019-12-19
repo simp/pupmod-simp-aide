@@ -53,6 +53,7 @@ describe 'aide' do
 /etc/profile.d/ NORMAL
 /etc/X11/ NORMAL
 /etc/yum.conf NORMAL
+/etc/dnf/dnf.conf NORMAL
 /etc/yumex.conf NORMAL
 /etc/yumex.profiles.conf NORMAL
 /etc/yum/ NORMAL

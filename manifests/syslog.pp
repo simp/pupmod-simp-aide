@@ -10,7 +10,10 @@ class aide::syslog (
   Stdlib::Absolutepath $logdir = $::aide::logdir
 ) {
   assert_private()
-  include '::rsyslog'
+
+  simplib::assert_optional_dependency($module_name, 'simp/rsyslog')
+
+  include 'rsyslog'
 
   rsyslog::rule::local { 'XX_aide':
     rule            => '$programname == \'aide\'',
