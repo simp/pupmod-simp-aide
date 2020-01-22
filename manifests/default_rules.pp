@@ -25,6 +25,7 @@ class aide::default_rules (
 
   aide::rule { 'default':
     ruledir => $ruledir,
-    rules   => $_rules
+    rules   => $_rules,
+    order   => '002',
   }
 }

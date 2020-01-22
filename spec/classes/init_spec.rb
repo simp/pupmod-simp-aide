@@ -23,7 +23,9 @@ describe 'aide' do
           it { is_expected.to contain_file('/etc/aide.conf.d').with_ensure('directory') }
           it { is_expected.to contain_file('/var/lib/aide').with_ensure('directory') }
           it { is_expected.to contain_file('/var/log/aide').with_ensure('directory') }
-          it { is_expected.to contain_file('/etc/aide.conf').with_content(<<EOM
+          it { is_expected.to contain_concat('/etc/aide.conf') }
+          it { is_expected.to contain_concat__fragment('aide.conf').with_target('/etc/aide.conf') }
+          it { is_expected.to contain_concat__fragment('aide.conf').with_content(<<EOM
 @@define DBDIR /var/lib/aide
 @@define LOGDIR /var/log/aide
 database=file:@@{DBDIR}/aide.db.gz
@@ -44,7 +46,6 @@ LOG = >
 LSPP = R
 DATAONLY = p+n+u+g+s+acl+selinux+xattrs+sha1+sha256
 
-@@include /etc/aide.conf.d/default.aide
 EOM
           ) }
 
@@ -96,11 +97,11 @@ EOM
             :weekday  => '0'
           } ) }
 
-          it{ is_expected.to contain_file('/etc/aide.conf').with_content(
+          it{ is_expected.to contain_concat__fragment('aide.conf').with_content(
             /report_url=file:@@{LOGDIR}\/aide.report/ )
           }
 
-          it{ is_expected.to contain_file('/etc/aide.conf').with_content(
+          it{ is_expected.to contain_concat__fragment('aide.conf').with_content(
             /report_url=syslog:LOG_LOCAL6/ )
           }
 
@@ -141,7 +142,7 @@ EOM
 
         context 'with default parameters' do
           it { is_expected.to create_class('aide') }
-          it { is_expected.to contain_file('/etc/aide.conf').with_content(<<EOM
+          it { is_expected.to contain_concat__fragment('aide.conf').with_content(<<EOM
 @@define DBDIR /var/lib/aide
 @@define LOGDIR /var/log/aide
 database=file:@@{DBDIR}/aide.db.gz
@@ -162,7 +163,6 @@ LOG = >
 LSPP = R
 DATAONLY = p+n+u+g+s+acl+selinux+xattrs+sha512
 
-@@include /etc/aide.conf.d/default.aide
 EOM
           ) }
         end

@@ -7,6 +7,7 @@ fixtures:
     augeasproviders_grub: https://github.com/simp/augeasproviders_grub
     cron_core: https://github.com/puppetlabs/puppetlabs-cron_core
     compliance_markup: https://github.com/simp/pupmod-simp-compliance_markup
+    concat: https://github.com/simp/puppetlabs-concat
     simp_options: https://github.com/simp/pupmod-simp-simp_options
     logrotate: https://github.com/simp/pupmod-simp-logrotate
     pki: https://github.com/simp/pupmod-simp-pki
@@ -18,6 +19,3 @@ fixtures:
       repo: https://github.com/simp/inspec-profile-disa_stig-el7
       branch: master
       target: spec/fixtures/inspec_deps/inspec_profiles/profiles
-
-  symlinks:
-    aide: "#{source_dir}"

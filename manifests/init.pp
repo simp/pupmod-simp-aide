@@ -34,7 +34,11 @@
 #   The directory to include for all additional rules.
 #
 # @param rules
-#   An array of rule files to include.
+#   A hash of `aide::rule` resources to create.
+#   In previous versions, this parameter was used to specify an array
+#   of rule files to include.  This is now automatic. Passing an
+#   array to this parameter is deprecated, does nothing, and may be
+#   removed completely in a future release of this module.
 #
 # @param enable
 #   Whether or not to enable AIDE to run on a periodic schedule.
@@ -105,7 +109,7 @@ class aide (
   Stdlib::Compat::Integer           $verbose           = '5',
   Array[String]                     $report_urls       = [ 'file:@@{LOGDIR}/aide.report'],
   Stdlib::Absolutepath              $ruledir           = '/etc/aide.conf.d',
-  Array[String]                     $rules             = [ 'default.aide' ],
+  Variant[Hash,Array[String]]       $rules             = {},
   Boolean                           $enable            = false,
   Simplib::Cron::Minute             $minute            = 22,
   Simplib::Cron::Hour               $hour              = 4,
@@ -124,6 +128,16 @@ class aide (
 ) {
 
   include 'aide::default_rules'
+
+  if $rules =~ Hash {
+    $rules.each |String $key, Hash $attrs| {
+      aide::rule { $key:
+        * => $attrs,
+      }
+    }
+  } else {
+    deprecation('aide_rules','Using an Array with $aide::rules is deprecated. The parameter is no longer used to specify rule files')
+  }
 
   if $enable {
     include 'aide::set_schedule'
@@ -153,11 +167,12 @@ class aide (
   }
 
   file { $ruledir:
-    ensure => 'directory',
-    owner  => 'root',
-    group  => 'root',
-    mode   => '0700',
-    purge  => true
+    ensure  => 'directory',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0700',
+    purge   => true,
+    recurse => true,
   }
 
   file { $dbdir:
@@ -174,14 +189,18 @@ class aide (
     mode   => '0700',
   }
 
-  file { '/etc/aide.conf':
-    ensure  => 'present',
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0600',
+  concat { '/etc/aide.conf':
+    ensure => 'present',
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0600',
+    notify => Exec['update_aide_db'],
+  }
+
+  concat::fragment { 'aide.conf':
+    target  => '/etc/aide.conf',
     content => template('aide/aide.conf.erb'),
-    require => Package['aide'],
-    notify  => Exec['update_aide_db']
+    order   => '001',
   }
 
   # In update_aide, retain output database for the SCAP Security Guide
@@ -235,7 +254,7 @@ class aide (
     require => [
       Package['aide'],
       File['/usr/local/sbin/update_aide'],
-      File['/etc/aide.conf'],
+      Concat['/etc/aide.conf'],
       Class['aide::default_rules'],
       File[$dbdir],
       File[$logdir]
