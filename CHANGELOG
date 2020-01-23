@@ -1,3 +1,11 @@
+* Thu Jan 23 2020 Alexander Fisher <alex@linfratech.co.uk> 6.4.0-0
+- Automatically add `@@include` lines to aide.conf
+  Previously, when declaring `aide::rule` resources, it was also
+  necessary to add the rule name to the `$aide::rules` array.
+  By switching to using `concat` this is no longer necessary. Instead the
+  `rules` parameter is repurposed to accept a hash of `aide::rule`
+  resources.
+
 * Wed Dec 11 2019 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.4.0-0
 - Add EL8 support
 - Move the default rules to data in modules
