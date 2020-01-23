@@ -19,21 +19,32 @@
 #   MUST be the same value as that entered in aide::conf if you want the system
 #   to work properly.  Default: '/etc/aide.conf.d'
 #
+# @param order
+#   Order of aide rules can be significant. This parameter can be used to
+#   control the order of included rule files.
+#
 # @author https://github.com/simp/pupmod-simp-aide/graphs/contributors
 #
 define aide::rule (
   String               $rules,
-  Stdlib::Absolutepath $ruledir = '/etc/aide.conf.d'
+  Stdlib::Absolutepath $ruledir = '/etc/aide.conf.d',
+  String               $order = '999',
 ) {
   include 'aide'
 
   file { "${ruledir}/${name}.aide":
-    ensure  => 'present',
+    ensure  => file,
     owner   => 'root',
     group   => 'root',
     mode    => '0400',
     content => template('aide/rules.erb'),
     notify  => Exec['update_aide_db']
+  }
+
+  concat::fragment { "aide rule ${name}":
+    target  => '/etc/aide.conf',
+    content => "@@include ${ruledir}/${name}.aide\n",
+    order   => $order,
   }
 
   if $aide::auditd {
