@@ -1,3 +1,6 @@
+* Wed Feb 12 2020 Alexander Fisher <alex@linfratech.co.uk> 6.4.1-0
+- Fix badge URLs in README
+
 * Thu Jan 23 2020 Alexander Fisher <alex@linfratech.co.uk> 6.4.0-0
 - Automatically add `@@include` lines to aide.conf
   Previously, when declaring `aide::rule` resources, it was also
