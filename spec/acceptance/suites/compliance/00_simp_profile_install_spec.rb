@@ -44,9 +44,10 @@ defaults:
         apply_manifest_on(host, manifest, :catch_failures => true)
       end
 
-      it 'should reboot and then run puppet for audit updates' do
+      it 'should reboot and then run puppet twice for audit updates' do
         host.reboot
 
+        apply_manifest_on(host, manifest, :catch_failures => true)
         apply_manifest_on(host, manifest, :catch_failures => true)
       end
 

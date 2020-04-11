@@ -203,6 +203,28 @@ class aide (
     order   => '001',
   }
 
+  $_update_aide_script = @("EOF")
+    #!/bin/sh
+    /usr/bin/killall -9 aide;
+    wait;
+
+    if [ -f ${dbdir}/${database_name} ]; then
+      /bin/nice -n 19 /usr/sbin/aide -c /etc/aide.conf -u;
+    else
+      /bin/nice -n 19 /usr/sbin/aide -c /etc/aide.conf -i;
+    fi
+
+    wait;
+    cp ${dbdir}/${database_out_name} ${dbdir}/${database_name}
+
+    # Need to report aide initialize/update failure. Since aide
+    # update returns non-zero error codes even upon success, (return
+    # codes 0 - 7), an easy way to determine an aide failure for
+    # either initialization or update is to detect a copy failure. The
+    # database out will not be created if the initialize/update fails.
+    exit $?
+    | EOF
+
   # In update_aide, retain output database for the SCAP Security Guide
   # OVAL check xccdf_org.ssgproject.content_rule_aide_build_database
   file { '/usr/local/sbin/update_aide':
@@ -210,25 +232,7 @@ class aide (
     owner   => 'root',
     group   => 'root',
     mode    => '0700',
-    content => "#!/bin/sh
-      /usr/bin/killall -9 aide;
-      wait;
-
-      if [ -f ${dbdir}/${database_name} ]; then
-        /bin/nice -n 19 /usr/sbin/aide -c /etc/aide.conf -u;
-      else
-        /bin/nice -n 19 /usr/sbin/aide -c /etc/aide.conf -i;
-      fi
-
-      wait;
-      cp ${dbdir}/${database_out_name} ${dbdir}/${database_name}
-
-      # Need to report aide initialize/update failure. Since aide
-      # update returns non-zero error codes even upon success, (return
-      # codes 0 - 7), an easy way to determine an aide failure for
-      # either initialization or update is to detect a copy failure. The
-      # database out will not be created if the initialize/update fails.
-      exit $?"
+    content => $_update_aide_script
   }
 
   # This is used to automatically update the database when the user

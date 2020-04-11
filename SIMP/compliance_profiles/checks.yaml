@@ -93,7 +93,7 @@ checks:
       - SI-7:8
     confine:
       osfamily: RedHat
-  oval:com.puppet.forge.simp.aide.aliases:
+  oval:com.puppet.forge.simp.aide.aliases.el7:
     settings:
       parameter: aide::aliases
       value:
@@ -122,6 +122,32 @@ checks:
     confine:
       osfamily: RedHat
       operatingsystemmajrelease: '7'
+  oval:com.puppet.forge.simp.aide.aliases.el8:
+    settings:
+      parameter: aide::aliases
+      value:
+      - ALLXTRAHASHES = sha1+sha256
+      - EVERYTHING = R+ALLXTRAHASHES
+      - NORMAL = R
+      - DIR = p+i+n+u+g+acl+xattrs
+      - PERMS = p+i+u+g+acl
+      - LOG = >
+      - LSPP = R
+      - DATAONLY = p+n+u+g+s+acl+selinux+xattrs+sha1+sha256
+    type: puppet-class-parameter
+    controls:
+      disa_stig: true
+      RHEL-07-021600: true
+      SRG-OS-000480-GPOS-00227: true
+      cci:CCI-000366: true
+    identifiers:
+      disa_stig:
+      - RHEL-07-021600
+      - SRG-OS-000480-GPOS-00227
+      - CCI-000366
+    confine:
+      osfamily: RedHat
+      operatingsystemmajrelease: '8'
   oval:com.puppet.forge.simp.aide.enable:
     settings:
       parameter: aide::enable
