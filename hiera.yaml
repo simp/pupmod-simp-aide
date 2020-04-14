@@ -4,6 +4,8 @@ defaults:
   datadir: data
   data_hash: yaml_data
 hierarchy:
+  - name: "fips_enabled OS + Release"
+    path: "fips_enabled/is_%{facts.fips_enabled}/os/%{facts.operatingsystem}-%{facts.operatingsystemmajrelease}.yaml"
   - name: "fips_enabled"
     path: "fips_enabled/is_%{facts.fips_enabled}.yaml"
   - name: "OS + Release"
