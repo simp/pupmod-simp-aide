@@ -127,13 +127,13 @@ checks:
       parameter: aide::aliases
       value:
       - ALLXTRAHASHES = sha1+sha256
-      - EVERYTHING = R+ALLXTRAHASHES
-      - NORMAL = R
+      - NORMAL = p+i+l+n+u+g+s+m+c+acl+sha512
+      - EVERYTHING = NORMAL+ALLXTRAHASHES
       - DIR = p+i+n+u+g+acl+xattrs
       - PERMS = p+i+u+g+acl
       - LOG = >
-      - LSPP = R
-      - DATAONLY = p+n+u+g+s+acl+selinux+xattrs+sha1+sha256
+      - LSPP = p+i+l+n+u+g+s+m+c+acl+sha512
+      - DATAONLY = p+n+u+g+s+acl+selinux+xattrs+sha512
     type: puppet-class-parameter
     controls:
       disa_stig: true
