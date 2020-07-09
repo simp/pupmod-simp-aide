@@ -1,4 +1,4 @@
-* Wed Apr 29 2020 Trevor Vaughan <tvaughan@onyxpoint.com> 6.4.1-0
+* Wed Apr 29 2020 Trevor Vaughan <tvaughan@onyxpoint.com> 6.4.2-0
 - Update the EL8 ciphers to be safe on FIPS systems by default
   - Do not use the built-in aliases
 - Remove overrides for aide::aliases on EL8 since it works properly in FIPS mode
