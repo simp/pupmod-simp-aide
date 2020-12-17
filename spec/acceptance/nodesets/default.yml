@@ -6,23 +6,13 @@
   end
 -%>
 HOSTS:
-  el6:
-    roles:
-      - server
-      - default
-      - master
-      - client
-    platform: el-6-x86_64
-    box: centos/6
-    hypervisor: <%= hypervisor %>
-    yum_repos:
-      chef-current:
-        baseurl: 'https://packages.chef.io/repos/yum/current/el/7/$basearch'
-        gpgkeys:
-          - https://packages.chef.io/chef.asc
   el7:
     roles:
       - client
+      # roles migrated from now-removed el6 node(s): 
+      - server
+      - default
+      - master
     platform: el-7-x86_64
     box: centos/7
     hypervisor: <%= hypervisor %>

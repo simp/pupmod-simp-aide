@@ -6,19 +6,13 @@
   end
 -%>
 HOSTS:
-  oel6:
-    roles:
-      - server
-      - default
-      - master
-      - client
-    platform: el-6-x86_64
-    box: onyxpoint/oel-6-x86_64
-    hypervisor: <%= hypervisor %>
-
   oel7:
     roles:
       - client
+      # roles migrated from now-removed el6 node(s): 
+      - server
+      - default
+      - master
     platform: el-7-x86_64
     box: onyxpoint/oel-7-x86_64
     hypervisor: <%= hypervisor %>
