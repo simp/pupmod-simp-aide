@@ -19,3 +19,5 @@ fixtures:
       repo: https://github.com/simp/inspec-profile-disa_stig-el7
       branch: master
       target: spec/fixtures/inspec_deps/inspec_profiles/profiles
+  symlinks:
+    aide: "#{source_dir}"

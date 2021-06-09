@@ -1,3 +1,15 @@
+* Thu Jun 10 2021 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.5.0
+- Changed
+  - Default to `systemd` for scheduling
+  - Use `--check` instead of `-C` by default to match what most scanners expect
+  - Randomize the minute field so that I/O load is reduced on hosting platforms
+- Added
+  - Allow users to choose between the following options:
+    - `systemd` => Default - Use systemd timers
+    - `root`    => Legacy - Update root's crontab
+    - `etc`     => Scanner Compat - Update /etc/crontab using Augeas
+  - When one method is chosen, the others will be disabled
+
 * Wed Feb 03 2021 Liz Nemsick <lnemsick.simp@gmail.com> - 6.4.3
 - Expanded simp/rsyslog dependendency range to < 9.0.0.
 

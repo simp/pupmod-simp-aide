@@ -23,6 +23,7 @@ describe 'run inspec against the appropriate fixtures for simp audit profile' do
             end
           else
             before(:all) do
+              Simp::BeakerHelpers::Inspec.enable_repo_on(hosts)
               @inspec = Simp::BeakerHelpers::Inspec.new(host, profile)
               @inspec_report = {:data => nil}
             end

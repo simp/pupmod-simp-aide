@@ -5,7 +5,7 @@ test_name 'aide class'
 describe 'aide class' do
   let(:manifest) {
     <<-EOS
-      class { 'aide': }
+      include aide
     EOS
   }
 

@@ -163,7 +163,21 @@ checks:
       - SRG-OS-000363-GPOS-00150
     confine:
       osfamily: RedHat
-      operatingsystemmajrelease: '7'
+  oval:com.puppet.forge.simp.aide.cron_command:
+    settings:
+      parameter: aide::cron_command
+      value: '/usr/sbin/aide --check'
+    type: puppet-class-parameter
+    controls:
+      disa_stig: true
+      cci:CCI-001744: true
+      SRG-OS-000363-GPOS-00150: true
+    identifiers:
+      disa_stig:
+      - CCI-001744
+      - SRG-OS-000363-GPOS-00150
+    confine:
+      osfamily: RedHat
   oval:com.puppet.forge.simp.aide.hour:
     settings:
       parameter: aide::hour
