@@ -9,6 +9,8 @@
     - `root`    => Legacy - Update root's crontab
     - `etc`     => Scanner Compat - Update /etc/crontab using Augeas
   - When one method is chosen, the others will be disabled
+- Removed
+  - Puppet 5 support
 
 * Wed Feb 03 2021 Liz Nemsick <lnemsick.simp@gmail.com> - 6.4.3
 - Expanded simp/rsyslog dependendency range to < 9.0.0.

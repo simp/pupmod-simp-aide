@@ -224,20 +224,6 @@ variables:
 # Puppet Versions
 #-----------------------------------------------------------------------
 
-.pup_5_x: &pup_5_x
-  image: 'ruby:2.4'
-  variables:
-    PUPPET_VERSION: '~> 5.0'
-    BEAKER_PUPPET_COLLECTION: 'puppet5'
-    MATRIX_RUBY_VERSION: '2.4'
-
-.pup_5_pe: &pup_5_pe
-  image: 'ruby:2.4'
-  variables:
-    PUPPET_VERSION: '5.5.22'
-    BEAKER_PUPPET_COLLECTION: 'puppet5'
-    MATRIX_RUBY_VERSION: '2.4'
-
 .pup_6_x: &pup_6_x
   image: 'ruby:2.5'
   variables:
@@ -325,15 +311,6 @@ pup-lint:
 # Unit Tests
 #-----------------------------------------------------------------------
 
-pup5.x-unit:
-  <<: *pup_5_x
-  <<: *unit_tests
-  <<: *with_SIMP_SPEC_MATRIX_LEVEL_2
-
-pup5.pe-unit:
-  <<: *pup_5_pe
-  <<: *unit_tests
-
 pup6.x-unit:
   <<: *pup_6_x
   <<: *unit_tests
@@ -356,13 +333,6 @@ pup7.x-unit:
 
 # Repo-specific content
 # ==============================================================================
-
-pup5.pe:
-  <<: *pup_5_pe
-  <<: *acceptance_base
-  <<: *with_SIMP_ACCEPTANCE_MATRIX_LEVEL_3
-  script:
-    - 'bundle exec rake beaker:suites[default]'
 
 pup6.x:
   <<: *pup_6_x
