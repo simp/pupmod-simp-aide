@@ -163,47 +163,47 @@ Default value: ``false``
 
 ##### <a name="minute"></a>`minute`
 
-Data type: `Optional[Simplib::Cron::Minute]`
+Data type: `Simplib::Cron::Minute`
 
 ``minute`` cron parameter for when the AIDE check is run
 
-Default value: ``undef``
+Default value: `fqdn_rand(59)`
 
 ##### <a name="hour"></a>`hour`
 
-Data type: `Optional[Simplib::Cron::Hour]`
+Data type: `Simplib::Cron::Hour`
 
 ``hour`` cron parameter for when the AIDE check is run
 
-Default value: ``undef``
+Default value: `4`
 
 ##### <a name="monthday"></a>`monthday`
 
-Data type: `Optional[Simplib::Cron::Monthday]`
+Data type: `Simplib::Cron::Monthday`
 
 ``monthday`` cron parameter for when the AIDE check is run
 
-Default value: ``undef``
+Default value: `'*'`
 
 ##### <a name="month"></a>`month`
 
-Data type: `Optional[Simplib::Cron::Month]`
+Data type: `Simplib::Cron::Month`
 
 ``month`` cron parameter for when the AIDE check is run
 
-Default value: ``undef``
+Default value: `'*'`
 
 ##### <a name="weekday"></a>`weekday`
 
-Data type: `Optional[Simplib::Cron::Weekday]`
+Data type: `Simplib::Cron::Weekday`
 
 ``weekday`` cron parameter for when the AIDE check is run
 
-Default value: ``undef``
+Default value: `0`
 
 ##### <a name="cron_method"></a>`cron_method`
 
-Data type: `Optional[Enum['root', 'etc', 'systemd']]`
+Data type: `Enum['root', 'etc', 'systemd']`
 
 Set to the preferred method for scheduling the job
 
@@ -213,7 +213,7 @@ Set to the preferred method for scheduling the job
 
   * Methods that are not selected will be disabled
 
-Default value: ``undef``
+Default value: `'systemd'`
 
 ##### <a name="systemd_calendar"></a>`systemd_calendar`
 
@@ -228,11 +228,11 @@ Default value: ``undef``
 
 ##### <a name="cron_command"></a>`cron_command`
 
-Data type: `Optional[String[1]]`
+Data type: `String[1]`
 
 ``command`` cron parameter for when AIDE check is run
 
-Default value: ``undef``
+Default value: `'/bin/nice -n 19 /usr/sbin/aide --check'`
 
 ##### <a name="default_rules"></a>`default_rules`
 
