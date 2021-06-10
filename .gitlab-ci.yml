@@ -338,19 +338,19 @@ pup6.x:
   <<: *pup_6_x
   <<: *acceptance_base
   script:
-    - 'bundle exec rake beaker:suites[default]'
+    - 'bundle exec rake beaker:suites[default,default]'
 
 pup6.x-fips:
   <<: *pup_6_x
   <<: *acceptance_base
   script:
-    - 'BEAKER_fips=yes bundle exec rake beaker:suites[default]'
+    - 'BEAKER_fips=yes bundle exec rake beaker:suites[default,default]'
 
 pup6.x-compliance:
   <<: *pup_6_x
   <<: *compliance_base
   script:
-    - 'BEAKER_fips=yes bundle exec rake beaker:suites[compliance]'
+    - 'BEAKER_fips=yes bundle exec rake beaker:suites[compliance,default]'
 
 pup6.pe:
   <<: *pup_6_pe

@@ -4,6 +4,7 @@
   - Use `--check` instead of `-C` by default to match what most scanners expect
   - Randomize the minute field so that I/O load is reduced on hosting platforms
 - Added
+  - Puppet 7 support
   - Allow users to choose between the following options:
     - `systemd` => Default - Use systemd timers
     - `root`    => Legacy - Update root's crontab
