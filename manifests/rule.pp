@@ -37,7 +37,7 @@ define aide::rule (
     owner   => 'root',
     group   => 'root',
     mode    => '0400',
-    content => template('aide/rules.erb'),
+    content => regsubst($rules, '^\s*', ''),
     notify  => Exec['update_aide_db']
   }
 

@@ -88,15 +88,6 @@ describe 'aide' do
           }}
 
           it { is_expected.to contain_class('aide::set_schedule') }
-          it { is_expected.to contain_cron('aide_schedule').with( {
-            :command  => '/bin/nice -n 19 /usr/sbin/aide -C',
-            :user     => 'root',
-            :minute   => '22',
-            :hour     => '4',
-            :monthday => '*',
-            :month    => '*',
-            :weekday  => '0'
-          } ) }
 
           it{ is_expected.to contain_concat__fragment('aide.conf').with_content(
             /report_url=file:@@{LOGDIR}\/aide.report/ )

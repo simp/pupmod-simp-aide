@@ -1,0 +1,23 @@
+<%-|
+  $dbdir,
+  $logdir,
+  $database_name,
+  $database_out_name,
+  $gzip_dbout,
+  $verbose,
+  $report_urls,
+  $aliases
+| -%>
+@@define DBDIR <%= $dbdir %>
+@@define LOGDIR <%= $logdir %>
+database=file:@@{DBDIR}/<%= $database_name %>
+database_out=file:@@{DBDIR}/<%= $database_out_name %>
+gzip_dbout=<%= $gzip_dbout %>
+verbose=<%= $verbose %>
+<% $report_urls.each |$report_url| { -%>
+report_url=<%= $report_url %>
+<% } -%>
+
+<% $aliases.each |$a| { -%>
+<%= $a %>
+<% } -%>

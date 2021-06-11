@@ -224,20 +224,6 @@ variables:
 # Puppet Versions
 #-----------------------------------------------------------------------
 
-.pup_5_x: &pup_5_x
-  image: 'ruby:2.4'
-  variables:
-    PUPPET_VERSION: '~> 5.0'
-    BEAKER_PUPPET_COLLECTION: 'puppet5'
-    MATRIX_RUBY_VERSION: '2.4'
-
-.pup_5_pe: &pup_5_pe
-  image: 'ruby:2.4'
-  variables:
-    PUPPET_VERSION: '5.5.22'
-    BEAKER_PUPPET_COLLECTION: 'puppet5'
-    MATRIX_RUBY_VERSION: '2.4'
-
 .pup_6_x: &pup_6_x
   image: 'ruby:2.5'
   variables:
@@ -325,15 +311,6 @@ pup-lint:
 # Unit Tests
 #-----------------------------------------------------------------------
 
-pup5.x-unit:
-  <<: *pup_5_x
-  <<: *unit_tests
-  <<: *with_SIMP_SPEC_MATRIX_LEVEL_2
-
-pup5.pe-unit:
-  <<: *pup_5_pe
-  <<: *unit_tests
-
 pup6.x-unit:
   <<: *pup_6_x
   <<: *unit_tests
@@ -357,48 +334,23 @@ pup7.x-unit:
 # Repo-specific content
 # ==============================================================================
 
-pup5.pe:
-  <<: *pup_5_pe
-  <<: *acceptance_base
-  script:
-    - 'bundle exec rake beaker:suites[default]'
-
-pup5.pe-fips:
-  <<: *pup_5_pe
-  <<: *acceptance_base
-  script:
-    - 'BEAKER_fips=yes bundle exec rake beaker:suites[default]'
-
-pup5.pe-oel:
-  <<: *pup_5_pe
-  <<: *acceptance_base
-  script:
-    - 'bundle exec rake beaker:suites[default,oel]'
-
-pup5.pe-oel-fips:
-  <<: *pup_5_pe
-  <<: *acceptance_base
-  <<: *with_SIMP_ACCEPTANCE_MATRIX_LEVEL_3
-  script:
-    - 'BEAKER_fips=yes bundle exec rake beaker:suites[default,oel]'
-
 pup6.x:
   <<: *pup_6_x
   <<: *acceptance_base
   script:
-    - 'bundle exec rake beaker:suites[default]'
+    - 'bundle exec rake beaker:suites[default,default]'
 
 pup6.x-fips:
   <<: *pup_6_x
   <<: *acceptance_base
   script:
-    - 'BEAKER_fips=yes bundle exec rake beaker:suites[default]'
+    - 'BEAKER_fips=yes bundle exec rake beaker:suites[default,default]'
 
 pup6.x-compliance:
   <<: *pup_6_x
   <<: *compliance_base
   script:
-    - 'BEAKER_fips=yes bundle exec rake beaker:suites[compliance]'
+    - 'BEAKER_fips=yes bundle exec rake beaker:suites[compliance,default]'
 
 pup6.pe:
   <<: *pup_6_pe
@@ -420,6 +372,32 @@ pup6.pe-oel:
 
 pup6.pe-oel-fips:
   <<: *pup_6_pe
+  <<: *acceptance_base
+  <<: *with_SIMP_ACCEPTANCE_MATRIX_LEVEL_3
+  script:
+    - 'BEAKER_fips=yes bundle exec rake beaker:suites[default,oel]'
+pup7:
+  <<: *pup_7_x
+  <<: *acceptance_base
+  script:
+    - 'bundle exec rake beaker:suites[default,default]'
+
+pup7-fips:
+  <<: *pup_7_x
+  <<: *acceptance_base
+  <<: *with_SIMP_ACCEPTANCE_MATRIX_LEVEL_2
+  script:
+    - 'BEAKER_fips=yes bundle exec rake beaker:suites[default,default]'
+
+pup7-oel:
+  <<: *pup_7_x
+  <<: *acceptance_base
+  <<: *with_SIMP_ACCEPTANCE_MATRIX_LEVEL_2
+  script:
+    - 'bundle exec rake beaker:suites[default,oel]'
+
+pup7-oel-fips:
+  <<: *pup_7_x
   <<: *acceptance_base
   <<: *with_SIMP_ACCEPTANCE_MATRIX_LEVEL_3
   script:

@@ -63,6 +63,21 @@
 # @param weekday
 #   ``weekday`` cron parameter for when the AIDE check is run
 #
+# @param cron_method
+#   Set to the preferred method for scheduling the job
+#
+#     * systemd => systemd timer (default)
+#     * root    => root's crontab (legacy)
+#     * etc     => /etc/crontab (scanner compat)
+#
+#     * Methods that are not selected will be disabled
+#
+# @param systemd_calendar
+#   An exact systemd calendar string
+#
+#   * Overrides all other scheduling parameters
+#   * Will not be validated
+#
 # @param cron_command
 #   ``command`` cron parameter for when AIDE check is run
 #
@@ -99,32 +114,34 @@
 # @author https://github.com/simp/pupmod-simp-aide/graphs/contributors
 #
 class aide (
-  Array[String]                     $aliases,          # data in modules
-  Variant[Array[String[1]],String]  $default_rules,    #data in modules
-  Stdlib::Absolutepath              $dbdir             = '/var/lib/aide',
-  Stdlib::Absolutepath              $logdir            = '/var/log/aide',
-  String                            $database_name     = 'aide.db.gz',
-  String                            $database_out_name = 'aide.db.new.gz',
-  Variant[Enum['yes','no'],Boolean] $gzip_dbout        = 'yes',
-  Stdlib::Compat::Integer           $verbose           = '5',
-  Array[String]                     $report_urls       = [ 'file:@@{LOGDIR}/aide.report'],
-  Stdlib::Absolutepath              $ruledir           = '/etc/aide.conf.d',
-  Variant[Hash,Array[String]]       $rules             = {},
-  Boolean                           $enable            = false,
-  Simplib::Cron::Minute             $minute            = 22,
-  Simplib::Cron::Hour               $hour              = 4,
-  Simplib::Cron::Monthday           $monthday          = '*',
-  Simplib::Cron::Month              $month             = '*',
-  Simplib::Cron::Weekday            $weekday           = 0,
-  String                            $cron_command      = '/bin/nice -n 19 /usr/sbin/aide -C',
-  Boolean                           $logrotate         = simplib::lookup('simp_options::logrotate', { 'default_value' => false}),
-  Aide::Rotateperiod                $rotate_period     = 'weekly',
-  Integer                           $rotate_number     = 4,
-  Boolean                           $syslog            = simplib::lookup('simp_options::syslog', { 'default_value' => false }),
-  Aide::SyslogFacility              $syslog_facility   = 'LOG_LOCAL6',
-  Boolean                           $auditd            = simplib::lookup('simp_options::auditd', { 'default_value' => false }),
-  Integer                           $aide_init_timeout = 300,
-  String                            $package_ensure    = simplib::lookup('simp_options::package_ensure', { 'default_value' => 'installed' }),
+  Array[String]                            $aliases,
+  Variant[Array[String[1]],String]         $default_rules,
+  Stdlib::Absolutepath                     $dbdir             = '/var/lib/aide',
+  Stdlib::Absolutepath                     $logdir            = '/var/log/aide',
+  String                                   $database_name     = 'aide.db.gz',
+  String                                   $database_out_name = 'aide.db.new.gz',
+  Variant[Enum['yes','no'],Boolean]        $gzip_dbout        = 'yes',
+  Stdlib::Compat::Integer                  $verbose           = '5',
+  Array[String]                            $report_urls       = [ 'file:@@{LOGDIR}/aide.report'],
+  Stdlib::Absolutepath                     $ruledir           = '/etc/aide.conf.d',
+  Variant[Hash,Array[String]]              $rules             = {},
+  Boolean                                  $enable            = false,
+  Simplib::Cron::Minute                    $minute            = fqdn_rand(59),
+  Simplib::Cron::Hour                      $hour              = 4,
+  Simplib::Cron::Monthday                  $monthday          = '*',
+  Simplib::Cron::Month                     $month             = '*',
+  Simplib::Cron::Weekday                   $weekday           = 0,
+  Enum['root', 'etc', 'systemd']           $cron_method       = 'systemd',
+  Optional[String[1]]                      $systemd_calendar  = undef,
+  String[1]                                $cron_command      = '/bin/nice -n 19 /usr/sbin/aide --check',
+  Boolean                                  $logrotate         = simplib::lookup('simp_options::logrotate', { 'default_value' => false}),
+  Aide::Rotateperiod                       $rotate_period     = 'weekly',
+  Integer                                  $rotate_number     = 4,
+  Boolean                                  $syslog            = simplib::lookup('simp_options::syslog', { 'default_value' => false }),
+  Aide::SyslogFacility                     $syslog_facility   = 'LOG_LOCAL6',
+  Boolean                                  $auditd            = simplib::lookup('simp_options::auditd', { 'default_value' => false }),
+  Integer                                  $aide_init_timeout = 300,
+  String                                   $package_ensure    = simplib::lookup('simp_options::package_ensure', { 'default_value' => 'installed' }),
 ) {
 
   include 'aide::default_rules'
@@ -199,8 +216,20 @@ class aide (
 
   concat::fragment { 'aide.conf':
     target  => '/etc/aide.conf',
-    content => template('aide/aide.conf.erb'),
     order   => '001',
+    content => epp(
+      "${module_name}/aide.conf.epp",
+      {
+        'dbdir'             => $dbdir,
+        'logdir'            => $logdir,
+        'database_name'     => $database_name,
+        'database_out_name' => $database_out_name,
+        'gzip_dbout'        => $gzip_dbout,
+        'verbose'           => $verbose,
+        'report_urls'       => $_report_urls,
+        'aliases'           => $aliases
+      }
+    )
   }
 
   $_update_aide_script = @("EOF")
