@@ -1,3 +1,7 @@
+* Mon Jun 14 2021 Chris Tessmer <chris.tessmer@onyxpoint.com> - 6.6.0
+- Removed support for Puppet 5
+- Ensured support for Puppet 7 in requirements and stdlib
+
 * Thu Jun 10 2021 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.5.0
 - Changed
   - Default to `systemd` for scheduling

@@ -1,6 +1,6 @@
 {
   "name": "simp-aide",
-  "version": "6.5.0",
+  "version": "6.6.0",
   "author": "SIMP Team",
   "summary": "manages AIDE",
   "license": "Apache-2.0",
@@ -22,11 +22,11 @@
     },
     {
       "name": "puppetlabs/stdlib",
-      "version_requirement": ">= 4.12.0 < 8.0.0"
+      "version_requirement": ">= 6.18.0 < 8.0.0"
     },
     {
       "name": "puppetlabs/concat",
-      "version_requirement": ">= 4.0.0 < 7.0.0"
+      "version_requirement": ">= 6.4.0 < 8.0.0"
     }
   ],
   "simp": {
@@ -71,7 +71,7 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 6.0.0 < 8.0.0"
+      "version_requirement": ">= 6.22.1 < 8.0.0"
     }
   ]
 }
