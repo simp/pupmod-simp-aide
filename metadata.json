@@ -1,6 +1,6 @@
 {
   "name": "simp-aide",
-  "version": "6.5.0",
+  "version": "6.6.0",
   "author": "SIMP Team",
   "summary": "manages AIDE",
   "license": "Apache-2.0",
@@ -13,8 +13,8 @@
   ],
   "dependencies": [
     {
-      "name": "camptocamp/systemd",
-      "version_requirement": ">= 2.2.0 < 3.0.0"
+      "name": "puppet/systemd",
+      "version_requirement": ">= 3.0.0 < 4.0.0"
     },
     {
       "name": "simp/simplib",
