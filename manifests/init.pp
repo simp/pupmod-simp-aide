@@ -140,7 +140,7 @@ class aide (
   Boolean                                  $syslog            = simplib::lookup('simp_options::syslog', { 'default_value' => false }),
   Aide::SyslogFacility                     $syslog_facility   = 'LOG_LOCAL6',
   Boolean                                  $auditd            = simplib::lookup('simp_options::auditd', { 'default_value' => false }),
-  Integer                                  $aide_init_timeout = 300,
+  Integer                                  $aide_init_timeout = $facts['processorcount'] ? { 1 => 600, default => 300 },
   String                                   $package_ensure    = simplib::lookup('simp_options::package_ensure', { 'default_value' => 'installed' }),
 ) {
 
