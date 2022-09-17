@@ -6,29 +6,17 @@
   end
 -%>
 HOSTS:
-  el7:
+  amzn2:
     roles:
-      - client
-      - server
       - default
-      - master
     platform: el-7-x86_64
-    box: centos/7
-    hypervisor: <%= hypervisor %>
-
-  el8:
-    roles:
-      - client
-    platform: el-8-x86_64
-    box: centos/stream8
+    box: gbailey/amzn2
     hypervisor: <%= hypervisor %>
 
 CONFIG:
   log_level: verbose
   synced_folder : disabled
   type: aio
-  # For DB updates
-  vagrant_cpus: 2
 <% if ENV['BEAKER_PUPPET_COLLECTION'] -%>
   puppet_collection: <%= ENV['BEAKER_PUPPET_COLLECTION'] %>
 <% end -%>

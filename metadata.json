@@ -1,6 +1,6 @@
 {
   "name": "simp-aide",
-  "version": "6.6.0",
+  "version": "6.7.0",
   "author": "SIMP Team",
   "summary": "manages AIDE",
   "license": "Apache-2.0",
@@ -46,6 +46,12 @@
     ]
   },
   "operatingsystem_support": [
+    {
+      "operatingsystem": "Amazon",
+      "operatingsystemrelease": [
+        "2"
+      ]
+    },
     {
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
