@@ -121,7 +121,7 @@ class aide (
   String                                   $database_name     = 'aide.db.gz',
   String                                   $database_out_name = 'aide.db.new.gz',
   Variant[Enum['yes','no'],Boolean]        $gzip_dbout        = 'yes',
-  Stdlib::Compat::Integer                  $verbose           = '5',
+  Integer                                  $verbose           = 5,
   Array[String]                            $report_urls       = [ 'file:@@{LOGDIR}/aide.report'],
   Stdlib::Absolutepath                     $ruledir           = '/etc/aide.conf.d',
   Variant[Hash,Array[String]]              $rules             = {},
