@@ -56,7 +56,7 @@ class aide::set_schedule (
 
   $_timer = @("EOM")
   [Timer]
-  OnCalendar=$_systemd_calendar
+  OnCalendar=${_systemd_calendar}
   EOM
 
   $_service = @("EOM")
@@ -65,7 +65,7 @@ class aide::set_schedule (
   # Exit codes that simply mean that something was changed or updated but that
   # the check ran successfully
   SuccessExitStatus=1 2 3 4 5 6 7
-  ExecStart=$command
+  ExecStart=${command}
   EOM
 
   systemd::timer { 'puppet_aide.timer':
