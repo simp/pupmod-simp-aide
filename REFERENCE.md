@@ -7,19 +7,19 @@
 ### Classes
 
 * [`aide`](#aide): Sets up a functioning AIDE system.  Many parameters were plucked directly from the aide.conf(5) man page.
-* [`aide::default_rules`](#aidedefault_rules): A helper class to keep the main AIDE class relatively readable.
-* [`aide::logrotate`](#aidelogrotate): A class that sets up the logrotate state for aide.
-* [`aide::set_schedule`](#aideset_schedule): Sets a schedule for AIDE to run a check on your system
-* [`aide::syslog`](#aidesyslog): Persist aide syslog log messages, including report output, to a local file.
+* [`aide::default_rules`](#aide--default_rules): A helper class to keep the main AIDE class relatively readable.
+* [`aide::logrotate`](#aide--logrotate): A class that sets up the logrotate state for aide.
+* [`aide::set_schedule`](#aide--set_schedule): Sets a schedule for AIDE to run a check on your system
+* [`aide::syslog`](#aide--syslog): Persist aide syslog log messages, including report output, to a local file.
 
 ### Defined types
 
-* [`aide::rule`](#aiderule): This define adds rules to the AIDE configuration. Rules are added to /etc/aide.conf.d unless otherwise specified.
+* [`aide::rule`](#aide--rule): This define adds rules to the AIDE configuration. Rules are added to /etc/aide.conf.d unless otherwise specified.
 
 ### Data types
 
-* [`Aide::Rotateperiod`](#aiderotateperiod): The AIDE rotation period
-* [`Aide::SyslogFacility`](#aidesyslogfacility): The AIDE syslog facility
+* [`Aide::Rotateperiod`](#Aide--Rotateperiod): The AIDE rotation period
+* [`Aide::SyslogFacility`](#Aide--SyslogFacility): The AIDE syslog facility
 
 ## Classes
 
@@ -34,36 +34,36 @@ man page.
 
 The following parameters are available in the `aide` class:
 
-* [`dbdir`](#dbdir)
-* [`logdir`](#logdir)
-* [`database_name`](#database_name)
-* [`database_out_name`](#database_out_name)
-* [`gzip_dbout`](#gzip_dbout)
-* [`verbose`](#verbose)
-* [`report_urls`](#report_urls)
-* [`aliases`](#aliases)
-* [`ruledir`](#ruledir)
-* [`rules`](#rules)
-* [`enable`](#enable)
-* [`minute`](#minute)
-* [`hour`](#hour)
-* [`monthday`](#monthday)
-* [`month`](#month)
-* [`weekday`](#weekday)
-* [`cron_method`](#cron_method)
-* [`systemd_calendar`](#systemd_calendar)
-* [`cron_command`](#cron_command)
-* [`default_rules`](#default_rules)
-* [`logrotate`](#logrotate)
-* [`rotate_period`](#rotate_period)
-* [`rotate_number`](#rotate_number)
-* [`syslog`](#syslog)
-* [`syslog_facility`](#syslog_facility)
-* [`auditd`](#auditd)
-* [`aide_init_timeout`](#aide_init_timeout)
-* [`package_ensure`](#package_ensure)
+* [`dbdir`](#-aide--dbdir)
+* [`logdir`](#-aide--logdir)
+* [`database_name`](#-aide--database_name)
+* [`database_out_name`](#-aide--database_out_name)
+* [`gzip_dbout`](#-aide--gzip_dbout)
+* [`verbose`](#-aide--verbose)
+* [`report_urls`](#-aide--report_urls)
+* [`aliases`](#-aide--aliases)
+* [`ruledir`](#-aide--ruledir)
+* [`rules`](#-aide--rules)
+* [`enable`](#-aide--enable)
+* [`minute`](#-aide--minute)
+* [`hour`](#-aide--hour)
+* [`monthday`](#-aide--monthday)
+* [`month`](#-aide--month)
+* [`weekday`](#-aide--weekday)
+* [`cron_method`](#-aide--cron_method)
+* [`systemd_calendar`](#-aide--systemd_calendar)
+* [`cron_command`](#-aide--cron_command)
+* [`default_rules`](#-aide--default_rules)
+* [`logrotate`](#-aide--logrotate)
+* [`rotate_period`](#-aide--rotate_period)
+* [`rotate_number`](#-aide--rotate_number)
+* [`syslog`](#-aide--syslog)
+* [`syslog_facility`](#-aide--syslog_facility)
+* [`auditd`](#-aide--auditd)
+* [`aide_init_timeout`](#-aide--aide_init_timeout)
+* [`package_ensure`](#-aide--package_ensure)
 
-##### <a name="dbdir"></a>`dbdir`
+##### <a name="-aide--dbdir"></a>`dbdir`
 
 Data type: `Stdlib::Absolutepath`
 
@@ -71,7 +71,7 @@ The AIDE database directory, DBDIR.
 
 Default value: `'/var/lib/aide'`
 
-##### <a name="logdir"></a>`logdir`
+##### <a name="-aide--logdir"></a>`logdir`
 
 Data type: `Stdlib::Absolutepath`
 
@@ -79,7 +79,7 @@ The AIDE log directory, LOGDIR.
 
 Default value: `'/var/log/aide'`
 
-##### <a name="database_name"></a>`database_name`
+##### <a name="-aide--database_name"></a>`database_name`
 
 Data type: `String`
 
@@ -87,7 +87,7 @@ The name of the database file within DBDIR.
 
 Default value: `'aide.db.gz'`
 
-##### <a name="database_out_name"></a>`database_out_name`
+##### <a name="-aide--database_out_name"></a>`database_out_name`
 
 Data type: `String`
 
@@ -95,7 +95,7 @@ The name of the database out file within DBDIR.
 
 Default value: `'aide.db.new.gz'`
 
-##### <a name="gzip_dbout"></a>`gzip_dbout`
+##### <a name="-aide--gzip_dbout"></a>`gzip_dbout`
 
 Data type: `Variant[Enum['yes','no'],Boolean]`
 
@@ -103,7 +103,7 @@ Whether to compress the output database.
 
 Default value: `'yes'`
 
-##### <a name="verbose"></a>`verbose`
+##### <a name="-aide--verbose"></a>`verbose`
 
 Data type: `Stdlib::Compat::Integer`
 
@@ -111,7 +111,7 @@ The verbosity of the output messages.
 
 Default value: `'5'`
 
-##### <a name="report_urls"></a>`report_urls`
+##### <a name="-aide--report_urls"></a>`report_urls`
 
 Data type: `Array[String]`
 
@@ -121,14 +121,14 @@ set to ``true``.
 
 Default value: `[ 'file:@@{LOGDIR}/aide.report']`
 
-##### <a name="aliases"></a>`aliases`
+##### <a name="-aide--aliases"></a>`aliases`
 
 Data type: `Array[String]`
 
 A set of common aliases that may be used within the AIDE
 configuration file. It is not recommended that these be changed.
 
-##### <a name="ruledir"></a>`ruledir`
+##### <a name="-aide--ruledir"></a>`ruledir`
 
 Data type: `Stdlib::Absolutepath`
 
@@ -136,7 +136,7 @@ The directory to include for all additional rules.
 
 Default value: `'/etc/aide.conf.d'`
 
-##### <a name="rules"></a>`rules`
+##### <a name="-aide--rules"></a>`rules`
 
 Data type: `Variant[Hash,Array[String]]`
 
@@ -148,7 +148,7 @@ removed completely in a future release of this module.
 
 Default value: `{}`
 
-##### <a name="enable"></a>`enable`
+##### <a name="-aide--enable"></a>`enable`
 
 Data type: `Boolean`
 
@@ -159,9 +159,9 @@ This is 'false' by default since AIDE is quite stressful on the
 system and should be enabled after a good understanding of the
 performance impact.
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="minute"></a>`minute`
+##### <a name="-aide--minute"></a>`minute`
 
 Data type: `Simplib::Cron::Minute`
 
@@ -169,7 +169,7 @@ Data type: `Simplib::Cron::Minute`
 
 Default value: `fqdn_rand(59)`
 
-##### <a name="hour"></a>`hour`
+##### <a name="-aide--hour"></a>`hour`
 
 Data type: `Simplib::Cron::Hour`
 
@@ -177,7 +177,7 @@ Data type: `Simplib::Cron::Hour`
 
 Default value: `4`
 
-##### <a name="monthday"></a>`monthday`
+##### <a name="-aide--monthday"></a>`monthday`
 
 Data type: `Simplib::Cron::Monthday`
 
@@ -185,7 +185,7 @@ Data type: `Simplib::Cron::Monthday`
 
 Default value: `'*'`
 
-##### <a name="month"></a>`month`
+##### <a name="-aide--month"></a>`month`
 
 Data type: `Simplib::Cron::Month`
 
@@ -193,7 +193,7 @@ Data type: `Simplib::Cron::Month`
 
 Default value: `'*'`
 
-##### <a name="weekday"></a>`weekday`
+##### <a name="-aide--weekday"></a>`weekday`
 
 Data type: `Simplib::Cron::Weekday`
 
@@ -201,7 +201,7 @@ Data type: `Simplib::Cron::Weekday`
 
 Default value: `0`
 
-##### <a name="cron_method"></a>`cron_method`
+##### <a name="-aide--cron_method"></a>`cron_method`
 
 Data type: `Enum['root', 'etc', 'systemd']`
 
@@ -215,7 +215,7 @@ Set to the preferred method for scheduling the job
 
 Default value: `'systemd'`
 
-##### <a name="systemd_calendar"></a>`systemd_calendar`
+##### <a name="-aide--systemd_calendar"></a>`systemd_calendar`
 
 Data type: `Optional[String[1]]`
 
@@ -224,9 +224,9 @@ An exact systemd calendar string
 * Overrides all other scheduling parameters
 * Will not be validated
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="cron_command"></a>`cron_command`
+##### <a name="-aide--cron_command"></a>`cron_command`
 
 Data type: `String[1]`
 
@@ -234,14 +234,14 @@ Data type: `String[1]`
 
 Default value: `'/bin/nice -n 19 /usr/sbin/aide --check'`
 
-##### <a name="default_rules"></a>`default_rules`
+##### <a name="-aide--default_rules"></a>`default_rules`
 
 Data type: `Variant[Array[String[1]],String]`
 
 A set of default rules to include. If this is set, the internal
 defaults will be overridden.
 
-##### <a name="logrotate"></a>`logrotate`
+##### <a name="-aide--logrotate"></a>`logrotate`
 
 Data type: `Boolean`
 
@@ -250,7 +250,7 @@ used to set the variables in aide::logrotate
 
 Default value: `simplib::lookup('simp_options::logrotate', { 'default_value' => false})`
 
-##### <a name="rotate_period"></a>`rotate_period`
+##### <a name="-aide--rotate_period"></a>`rotate_period`
 
 Data type: `Aide::Rotateperiod`
 
@@ -258,7 +258,7 @@ The logrotate period at which to rotate the logs.
 
 Default value: `'weekly'`
 
-##### <a name="rotate_number"></a>`rotate_number`
+##### <a name="-aide--rotate_number"></a>`rotate_number`
 
 Data type: `Integer`
 
@@ -266,7 +266,7 @@ The number of log files to preserve on the system.
 
 Default value: `4`
 
-##### <a name="syslog"></a>`syslog`
+##### <a name="-aide--syslog"></a>`syslog`
 
 Data type: `Boolean`
 
@@ -276,7 +276,7 @@ appropriately if you don't care for the defaults.
 
 Default value: `simplib::lookup('simp_options::syslog', { 'default_value' => false })`
 
-##### <a name="syslog_facility"></a>`syslog_facility`
+##### <a name="-aide--syslog_facility"></a>`syslog_facility`
 
 Data type: `Aide::SyslogFacility`
 
@@ -284,7 +284,7 @@ The syslog facility to use for the AIDE output syslog messages.
 
 Default value: `'LOG_LOCAL6'`
 
-##### <a name="auditd"></a>`auditd`
+##### <a name="-aide--auditd"></a>`auditd`
 
 Data type: `Boolean`
 
@@ -292,15 +292,15 @@ Whether to add rules for changes to the aide configuration.
 
 Default value: `simplib::lookup('simp_options::auditd', { 'default_value' => false })`
 
-##### <a name="aide_init_timeout"></a>`aide_init_timeout`
+##### <a name="-aide--aide_init_timeout"></a>`aide_init_timeout`
 
 Data type: `Integer`
 
 Maximum time to wait in seconds for AIDE database initialization
 
-Default value: `300`
+Default value: `$facts['processorcount'] ? { 1 => 1200, default => 300`
 
-##### <a name="package_ensure"></a>`package_ensure`
+##### <a name="-aide--package_ensure"></a>`package_ensure`
 
 Data type: `String`
 
@@ -308,7 +308,7 @@ The ensure status of packages to be managed
 
 Default value: `simplib::lookup('simp_options::package_ensure', { 'default_value' => 'installed' })`
 
-### <a name="aidedefault_rules"></a>`aide::default_rules`
+### <a name="aide--default_rules"></a>`aide::default_rules`
 
 A helper class to keep the main AIDE class relatively readable.
 
@@ -316,10 +316,10 @@ A helper class to keep the main AIDE class relatively readable.
 
 The following parameters are available in the `aide::default_rules` class:
 
-* [`default_rules`](#default_rules)
-* [`ruledir`](#ruledir)
+* [`default_rules`](#-aide--default_rules--default_rules)
+* [`ruledir`](#-aide--default_rules--ruledir)
 
-##### <a name="default_rules"></a>`default_rules`
+##### <a name="-aide--default_rules--default_rules"></a>`default_rules`
 
 Data type: `Variant[Array[String[1]],String]`
 
@@ -328,7 +328,7 @@ defaults will be overridden.
 
 Default value: `$aide::default_rules`
 
-##### <a name="ruledir"></a>`ruledir`
+##### <a name="-aide--default_rules--ruledir"></a>`ruledir`
 
 Data type: `Stdlib::Absolutepath`
 
@@ -336,7 +336,7 @@ The directory in which the default rules file will be written.
 
 Default value: `$aide::ruledir`
 
-### <a name="aidelogrotate"></a>`aide::logrotate`
+### <a name="aide--logrotate"></a>`aide::logrotate`
 
 A class that sets up the logrotate state for aide.
 
@@ -344,11 +344,11 @@ A class that sets up the logrotate state for aide.
 
 The following parameters are available in the `aide::logrotate` class:
 
-* [`logdir`](#logdir)
-* [`rotate_period`](#rotate_period)
-* [`rotate_number`](#rotate_number)
+* [`logdir`](#-aide--logrotate--logdir)
+* [`rotate_period`](#-aide--logrotate--rotate_period)
+* [`rotate_number`](#-aide--logrotate--rotate_number)
 
-##### <a name="logdir"></a>`logdir`
+##### <a name="-aide--logrotate--logdir"></a>`logdir`
 
 Data type: `Stdlib::Absolutepath`
 
@@ -357,7 +357,7 @@ The logs in that directory are assumed to end with '.log'.
 
 Default value: `$::aide::logdir`
 
-##### <a name="rotate_period"></a>`rotate_period`
+##### <a name="-aide--logrotate--rotate_period"></a>`rotate_period`
 
 Data type: `Aide::Rotateperiod`
 
@@ -365,7 +365,7 @@ The logrotate period at which to rotate the logs.
 
 Default value: `$::aide::rotate_period`
 
-##### <a name="rotate_number"></a>`rotate_number`
+##### <a name="-aide--logrotate--rotate_number"></a>`rotate_number`
 
 Data type: `Integer`
 
@@ -373,7 +373,7 @@ The number of log files to preserve on the system.
 
 Default value: `$::aide::rotate_number`
 
-### <a name="aideset_schedule"></a>`aide::set_schedule`
+### <a name="aide--set_schedule"></a>`aide::set_schedule`
 
 Sets a schedule for AIDE to run a check on your system
 
@@ -381,16 +381,16 @@ Sets a schedule for AIDE to run a check on your system
 
 The following parameters are available in the `aide::set_schedule` class:
 
-* [`method`](#method)
-* [`systemd_calendar`](#systemd_calendar)
-* [`minute`](#minute)
-* [`hour`](#hour)
-* [`monthday`](#monthday)
-* [`month`](#month)
-* [`weekday`](#weekday)
-* [`command`](#command)
+* [`method`](#-aide--set_schedule--method)
+* [`systemd_calendar`](#-aide--set_schedule--systemd_calendar)
+* [`minute`](#-aide--set_schedule--minute)
+* [`hour`](#-aide--set_schedule--hour)
+* [`monthday`](#-aide--set_schedule--monthday)
+* [`month`](#-aide--set_schedule--month)
+* [`weekday`](#-aide--set_schedule--weekday)
+* [`command`](#-aide--set_schedule--command)
 
-##### <a name="method"></a>`method`
+##### <a name="-aide--set_schedule--method"></a>`method`
 
 Data type: `Enum['root', 'etc', 'systemd']`
 
@@ -398,7 +398,7 @@ How you wish to schedule the run
 
 Default value: `pick(getvar('aide::cron_method'), 'systemd')`
 
-##### <a name="systemd_calendar"></a>`systemd_calendar`
+##### <a name="-aide--set_schedule--systemd_calendar"></a>`systemd_calendar`
 
 Data type: `Optional[String[1]]`
 
@@ -409,7 +409,7 @@ ensure that you have a valid string
 
 Default value: `getvar('aide::systemd_calendar')`
 
-##### <a name="minute"></a>`minute`
+##### <a name="-aide--set_schedule--minute"></a>`minute`
 
 Data type: `Simplib::Cron::Minute`
 
@@ -417,7 +417,7 @@ Data type: `Simplib::Cron::Minute`
 
 Default value: `pick(getvar('aide::minute'), fqdn_rand(59))`
 
-##### <a name="hour"></a>`hour`
+##### <a name="-aide--set_schedule--hour"></a>`hour`
 
 Data type: `Simplib::Cron::Hour`
 
@@ -425,7 +425,7 @@ Data type: `Simplib::Cron::Hour`
 
 Default value: `pick(getvar('aide::hour'), 4)`
 
-##### <a name="monthday"></a>`monthday`
+##### <a name="-aide--set_schedule--monthday"></a>`monthday`
 
 Data type: `Simplib::Cron::Monthday`
 
@@ -433,7 +433,7 @@ Data type: `Simplib::Cron::Monthday`
 
 Default value: `pick(getvar('aide::monthday'), '*')`
 
-##### <a name="month"></a>`month`
+##### <a name="-aide--set_schedule--month"></a>`month`
 
 Data type: `Simplib::Cron::Month`
 
@@ -441,7 +441,7 @@ Data type: `Simplib::Cron::Month`
 
 Default value: `pick(getvar('aide::month'), '*')`
 
-##### <a name="weekday"></a>`weekday`
+##### <a name="-aide--set_schedule--weekday"></a>`weekday`
 
 Data type: `Simplib::Cron::Weekday`
 
@@ -449,7 +449,7 @@ Data type: `Simplib::Cron::Weekday`
 
 Default value: `pick(getvar('aide::weekday'), 0)`
 
-##### <a name="command"></a>`command`
+##### <a name="-aide--set_schedule--command"></a>`command`
 
 Data type: `String`
 
@@ -457,7 +457,7 @@ Data type: `String`
 
 Default value: `pick(getvar('aide::cron_command'), '/bin/nice -n 19 /usr/sbin/aide --check')`
 
-### <a name="aidesyslog"></a>`aide::syslog`
+### <a name="aide--syslog"></a>`aide::syslog`
 
 Persist aide syslog log messages, including report output, to a local
 file.
@@ -466,9 +466,9 @@ file.
 
 The following parameters are available in the `aide::syslog` class:
 
-* [`logdir`](#logdir)
+* [`logdir`](#-aide--syslog--logdir)
 
-##### <a name="logdir"></a>`logdir`
+##### <a name="-aide--syslog--logdir"></a>`logdir`
 
 Data type: `Stdlib::Absolutepath`
 
@@ -478,7 +478,7 @@ Default value: `$::aide::logdir`
 
 ## Defined types
 
-### <a name="aiderule"></a>`aide::rule`
+### <a name="aide--rule"></a>`aide::rule`
 
 This define adds rules to the AIDE configuration. Rules are
 added to /etc/aide.conf.d unless otherwise specified.
@@ -498,16 +498,16 @@ aide::rule { 'tmp':
 
 The following parameters are available in the `aide::rule` defined type:
 
-* [`name`](#name)
-* [`rules`](#rules)
-* [`ruledir`](#ruledir)
-* [`order`](#order)
+* [`name`](#-aide--rule--name)
+* [`rules`](#-aide--rule--rules)
+* [`ruledir`](#-aide--rule--ruledir)
+* [`order`](#-aide--rule--order)
 
-##### <a name="name"></a>`name`
+##### <a name="-aide--rule--name"></a>`name`
 
 
 
-##### <a name="rules"></a>`rules`
+##### <a name="-aide--rule--rules"></a>`rules`
 
 Data type: `String`
 
@@ -515,7 +515,7 @@ The actual string that should be written into the rules file. Leading
 spaces are stripped so that you can format your manifest in a more readable
 fashion.
 
-##### <a name="ruledir"></a>`ruledir`
+##### <a name="-aide--rule--ruledir"></a>`ruledir`
 
 Data type: `Stdlib::Absolutepath`
 
@@ -525,7 +525,7 @@ to work properly.  Default: '/etc/aide.conf.d'
 
 Default value: `'/etc/aide.conf.d'`
 
-##### <a name="order"></a>`order`
+##### <a name="-aide--rule--order"></a>`order`
 
 Data type: `String`
 
@@ -536,23 +536,15 @@ Default value: `'999'`
 
 ## Data types
 
-### <a name="aiderotateperiod"></a>`Aide::Rotateperiod`
+### <a name="Aide--Rotateperiod"></a>`Aide::Rotateperiod`
 
 The AIDE rotation period
 
-Alias of
+Alias of `Enum['daily', 'weekly', 'monthly', 'yearly']`
 
-```puppet
-Enum['daily', 'weekly', 'monthly', 'yearly']
-```
-
-### <a name="aidesyslogfacility"></a>`Aide::SyslogFacility`
+### <a name="Aide--SyslogFacility"></a>`Aide::SyslogFacility`
 
 The AIDE syslog facility
 
-Alias of
-
-```puppet
-Enum['LOG_KERN', 'LOG_USER', 'LOG_MAIL', 'LOG_DAEMON', 'LOG_AUTH', 'LOG_SYSLOG', 'LOG_LPR', 'LOG_NEWS', 'LOG_UUCP', 'LOG_CRON', 'LOG_LOCAL0', 'LOG_LOCAL1', 'LOG_LOCAL2', 'LOG_LOCAL3', 'LOG_LOCAL4', 'LOG_LOCAL5', 'LOG_LOCAL6', 'LOG_LOCAL7']
-```
+Alias of `Enum['LOG_KERN', 'LOG_USER', 'LOG_MAIL', 'LOG_DAEMON', 'LOG_AUTH', 'LOG_SYSLOG', 'LOG_LPR', 'LOG_NEWS', 'LOG_UUCP', 'LOG_CRON', 'LOG_LOCAL0', 'LOG_LOCAL1', 'LOG_LOCAL2', 'LOG_LOCAL3', 'LOG_LOCAL4', 'LOG_LOCAL5', 'LOG_LOCAL6', 'LOG_LOCAL7']`
 
