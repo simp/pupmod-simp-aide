@@ -105,11 +105,18 @@ Default value: `'yes'`
 
 ##### <a name="-aide--verbose"></a>`verbose`
 
-Data type: `Stdlib::Compat::Integer`
+Data type:
+
+```puppet
+Variant[
+    Integer[0, 255],
+    Pattern[/\A(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\z/]
+  ]
+```
 
 The verbosity of the output messages.
 
-Default value: `'5'`
+Default value: `5`
 
 ##### <a name="-aide--report_urls"></a>`report_urls`
 
@@ -298,7 +305,7 @@ Data type: `Integer`
 
 Maximum time to wait in seconds for AIDE database initialization
 
-Default value: `$facts['processorcount'] ? { 1 => 1200, default => 300`
+Default value: `$facts['processors']['count'] ? { 1 => 1200, default => 300`
 
 ##### <a name="-aide--package_ensure"></a>`package_ensure`
 
