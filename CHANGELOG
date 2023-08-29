@@ -1,3 +1,6 @@
+* Fri Jul 28 2023 Trey Dockendorf <tdockendorf@box.com> - 6.8.0
+- Support stdlib 9.x
+
 * Mon Jul 24 2023 Chris Tessmer <chris.tessmer@onyxpoint.com> - 6.7.0
 - Add RockyLinux 8 support
 

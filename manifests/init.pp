@@ -121,7 +121,10 @@ class aide (
   String                                   $database_name     = 'aide.db.gz',
   String                                   $database_out_name = 'aide.db.new.gz',
   Variant[Enum['yes','no'],Boolean]        $gzip_dbout        = 'yes',
-  Integer                                  $verbose           = 5,
+  Variant[
+    Integer[0, 255],
+    Pattern[/\A(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\z/]
+  ]                                        $verbose           = 5,
   Array[String]                            $report_urls       = [ 'file:@@{LOGDIR}/aide.report'],
   Stdlib::Absolutepath                     $ruledir           = '/etc/aide.conf.d',
   Variant[Hash,Array[String]]              $rules             = {},
