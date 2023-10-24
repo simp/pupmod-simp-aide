@@ -1,0 +1,10 @@
+---
+aide::aliases:
+  - 'ALLXTRAHASHES = sha1+sha256+sha512'
+  - 'EVERYTHING = R+ALLXTRAHASHES'
+  - 'NORMAL = R'
+  - 'DIR = p+i+n+u+g+acl+xattrs'
+  - 'PERMS = p+i+u+g+acl'
+  - 'LOG = >'
+  - 'LSPP = R'
+  - 'DATAONLY = p+n+u+g+s+acl+selinux+xattrs+sha512'
