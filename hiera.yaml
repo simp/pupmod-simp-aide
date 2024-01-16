@@ -5,13 +5,13 @@ defaults:
   data_hash: yaml_data
 hierarchy:
   - name: "fips_enabled OS + Release"
-    path: "fips_enabled/is_%{facts.fips_enabled}/os/%{facts.operatingsystem}-%{facts.operatingsystemmajrelease}.yaml"
+    path: "fips_enabled/is_%{facts.fips_enabled}/os/%{facts.os}-%{facts.os.major}.yaml"
   - name: "fips_enabled"
     path: "fips_enabled/is_%{facts.fips_enabled}.yaml"
   - name: "OS + Release"
-    path: "os/%{facts.operatingsystem}-%{facts.operatingsystemmajrelease}.yaml"
+    path: "os/%{facts.os}-%{facts.os.major}.yaml"
   - name: "OS"
-    path: "os/%{facts.operatingsystem}.yaml"
+    path: "os/%{facts.os}.yaml"
   - name: "Kernel"
     path: "os/%{facts.kernel}.yaml"
   - name: "Common"
