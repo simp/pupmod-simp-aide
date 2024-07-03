@@ -134,7 +134,7 @@ describe 'aide' do
 
         context 'with default parameters' do
           it { is_expected.to create_class('aide') }
-          if os_facts[:operatingsystemmajrelease] < '8'
+          if os_facts[:os][:release][:major] < '8'
             it { is_expected.to contain_concat__fragment('aide.conf').with_content(<<~EOM
               @@define DBDIR /var/lib/aide
               @@define LOGDIR /var/log/aide
