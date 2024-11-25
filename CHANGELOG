@@ -1,3 +1,6 @@
+* Mon Nov 25 2024 Steven Pritchard <steve@sicura-us> - 6.12.1
+- Fix use of legacy facts
+
 * Fri Sep 13 2024 Steven Pritchard <steve@sicura.us> - 6.12.0
 - [puppetsync] Update module dependencies to support simp-iptables 7.x
 

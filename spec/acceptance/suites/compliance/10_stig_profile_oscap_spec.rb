@@ -7,7 +7,7 @@ describe 'run the SSG against the appropriate fixtures for stig aide profile' do
   hosts.each do |host|
     context "on #{host}" do
       before(:all) do
-        @os_str = fact_on(host, 'operatingsystem') + ' ' + fact_on(host, 'operatingsystemrelease')
+        @os_str = fact_on(host, 'os.name') + ' ' + fact_on(host, 'os.release.full')
 
         @ssg_supported = true
 

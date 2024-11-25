@@ -92,7 +92,7 @@ checks:
       - SI-7:3
       - SI-7:8
     confine:
-      osfamily: RedHat
+      os.family: RedHat
   oval:com.puppet.forge.simp.aide.aliases.el7:
     settings:
       parameter: aide::aliases
@@ -120,8 +120,8 @@ checks:
       - SRG-OS-000480-GPOS-00227
       - CCI-000366
     confine:
-      osfamily: RedHat
-      operatingsystemmajrelease: '7'
+      os.family: RedHat
+      os.release.major: '7'
   oval:com.puppet.forge.simp.aide.aliases.el8:
     settings:
       parameter: aide::aliases
@@ -146,8 +146,8 @@ checks:
       - SRG-OS-000480-GPOS-00227
       - CCI-000366
     confine:
-      osfamily: RedHat
-      operatingsystemmajrelease: '8'
+      os.family: RedHat
+      os.release.major: '8'
   oval:com.puppet.forge.simp.aide.enable:
     settings:
       parameter: aide::enable
@@ -162,7 +162,7 @@ checks:
       - CCI-001744
       - SRG-OS-000363-GPOS-00150
     confine:
-      osfamily: RedHat
+      os.family: RedHat
   oval:com.puppet.forge.simp.aide.cron_command:
     settings:
       parameter: aide::cron_command
@@ -177,7 +177,7 @@ checks:
       - CCI-001744
       - SRG-OS-000363-GPOS-00150
     confine:
-      osfamily: RedHat
+      os.family: RedHat
   oval:com.puppet.forge.simp.aide.cron_method:
     settings:
       parameter: aide::cron_method
@@ -192,7 +192,7 @@ checks:
       - CCI-001744
       - SRG-OS-000363-GPOS-00150
     confine:
-      osfamily: RedHat
+      os.family: RedHat
   oval:com.puppet.forge.simp.aide.hour:
     settings:
       parameter: aide::hour
@@ -207,8 +207,8 @@ checks:
       - CCI-001744
       - SRG-OS-000363-GPOS-00150
     confine:
-      osfamily: RedHat
-      operatingsystemmajrelease: '7'
+      os.family: RedHat
+      os.release.major: '7'
     oval-ids:
     - xccdf_org:ssgproject:content_rule_aide_periodic_cron_checking
     - aide_periodic_cron_checking
@@ -226,8 +226,8 @@ checks:
       - CCI-001744
       - SRG-OS-000363-GPOS-00150
     confine:
-      osfamily: RedHat
-      operatingsystemmajrelease: '7'
+      os.family: RedHat
+      os.release.major: '7'
     oval-ids:
     - xccdf_org:ssgproject:content_rule_aide_periodic_cron_checking
     - aide_periodic_cron_checking
@@ -245,8 +245,8 @@ checks:
       - CCI-001744
       - SRG-OS-000363-GPOS-00150
     confine:
-      osfamily: RedHat
-      operatingsystemmajrelease: '7'
+      os.family: RedHat
+      os.release.major: '7'
     oval-ids:
     - xccdf_org:ssgproject:content_rule_aide_periodic_cron_checking
     - aide_periodic_cron_checking
