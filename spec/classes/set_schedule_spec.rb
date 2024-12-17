@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'aide::set_schedule' do
   context 'supported operating systems' do
-    on_supported_os.each do |os, os_facts|
+    on_supported_os.each_value do |os_facts|
       let(:pre_condition) do
         <<~PRECOND
           function assert_private(){}
@@ -17,13 +17,13 @@ describe 'aide::set_schedule' do
       it { is_expected.to create_class('aide::set_schedule') }
 
       it do
-        is_expected.to create_systemd__timer('puppet_aide.timer').
-          with_timer_content(/OnCalendar=Sun \*-\* 4:\d+/).
-          with_service_content(/Type=oneshot/).
-          with_service_content(/SuccessExitStatus=1 2 3 4 5 6 7/).
-          with_service_content(%r{ExecStart=/bin/nice -n 19 /usr/sbin/aide --check}).
-          with_active(true).
-          with_enable(true)
+        is_expected.to create_systemd__timer('puppet_aide.timer')
+          .with_timer_content(%r{OnCalendar=Sun \*-\* 4:\d+})
+          .with_service_content(%r{Type=oneshot})
+          .with_service_content(%r{SuccessExitStatus=1 2 3 4 5 6 7})
+          .with_service_content(%r{ExecStart=/bin/nice -n 19 /usr/sbin/aide --check})
+          .with_active(true)
+          .with_enable(true)
       end
 
       it { is_expected.to create_cron('aide_schedule').with_ensure('absent') }
@@ -32,31 +32,32 @@ describe 'aide::set_schedule' do
       context 'root mode' do
         let(:params) do
           {
-            :method => 'root'
+            method: 'root'
           }
         end
+
         it { is_expected.to compile.with_all_deps }
         it { is_expected.to create_class('aide::set_schedule') }
 
         it do
-          is_expected.to create_systemd__timer('puppet_aide.timer').
-            with_timer_content(/OnCalendar=Sun \*-\* 4:\d+/).
-            with_service_content(/Type=oneshot/).
-            with_service_content(/SuccessExitStatus=1 2 3 4 5 6 7/).
-            with_service_content(%r{ExecStart=/bin/nice -n 19 /usr/sbin/aide --check}).
-            with_active(false).
-            with_enable(false)
+          is_expected.to create_systemd__timer('puppet_aide.timer')
+            .with_timer_content(%r{OnCalendar=Sun \*-\* 4:\d+})
+            .with_service_content(%r{Type=oneshot})
+            .with_service_content(%r{SuccessExitStatus=1 2 3 4 5 6 7})
+            .with_service_content(%r{ExecStart=/bin/nice -n 19 /usr/sbin/aide --check})
+            .with_active(false)
+            .with_enable(false)
         end
 
         it do
-          is_expected.to create_cron('aide_schedule').
-            with_command('/bin/nice -n 19 /usr/sbin/aide --check').
-            with_user('root').
-            with_minute(/\d+/).
-            with_hour(4).
-            with_monthday('*').
-            with_month('*').
-            with_weekday(0)
+          is_expected.to create_cron('aide_schedule')
+            .with_command('/bin/nice -n 19 /usr/sbin/aide --check')
+            .with_user('root')
+            .with_minute(%r{\d+})
+            .with_hour(4)
+            .with_monthday('*')
+            .with_month('*')
+            .with_weekday(0)
         end
 
         it { is_expected.to create_augeas('remove_aide_schedule') }
@@ -65,20 +66,21 @@ describe 'aide::set_schedule' do
       context 'etc mode' do
         let(:params) do
           {
-            :method => 'etc'
+            method: 'etc'
           }
         end
+
         it { is_expected.to compile.with_all_deps }
         it { is_expected.to create_class('aide::set_schedule') }
 
         it do
-          is_expected.to create_systemd__timer('puppet_aide.timer').
-            with_timer_content(/OnCalendar=Sun \*-\* 4:\d+/).
-            with_service_content(/Type=oneshot/).
-            with_service_content(/SuccessExitStatus=1 2 3 4 5 6 7/).
-            with_service_content(%r{ExecStart=/bin/nice -n 19 /usr/sbin/aide --check}).
-            with_active(false).
-            with_enable(false)
+          is_expected.to create_systemd__timer('puppet_aide.timer')
+            .with_timer_content(%r{OnCalendar=Sun \*-\* 4:\d+})
+            .with_service_content(%r{Type=oneshot})
+            .with_service_content(%r{SuccessExitStatus=1 2 3 4 5 6 7})
+            .with_service_content(%r{ExecStart=/bin/nice -n 19 /usr/sbin/aide --check})
+            .with_active(false)
+            .with_enable(false)
         end
 
         it { is_expected.to create_cron('aide_schedule').with_ensure('absent') }

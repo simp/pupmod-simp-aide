@@ -2,23 +2,23 @@ require 'spec_helper'
 
 describe 'aide' do
   context 'supported operating systems' do
-    on_supported_os.each do |os, os_facts|
+    on_supported_os.each_value do |os_facts|
       context 'with FIPS enabled' do
-        let(:facts) {
+        let(:facts) do
           facts = os_facts.dup
           facts['fips_enabled'] = true
           facts
-        }
+        end
 
         context 'with default parameters' do
           it { is_expected.to create_class('aide') }
           it { is_expected.to compile.with_all_deps }
           it { is_expected.to contain_class('aide::default_rules') }
-          it { is_expected.to create_file('/etc/aide.conf.d/default.aide').with_content(/\/bin\s+NORMAL/) }
-          it { is_expected.to_not contain_class('aide::set_schedule') }
-          it { is_expected.to_not contain_class('aide::logrotate') }
-          it { is_expected.to_not contain_class('aide::syslog') }
-          it { is_expected.to_not contain_auditd__rule('aide') }
+          it { is_expected.to create_file('/etc/aide.conf.d/default.aide').with_content(%r{/bin\s+NORMAL}) }
+          it { is_expected.not_to contain_class('aide::set_schedule') }
+          it { is_expected.not_to contain_class('aide::logrotate') }
+          it { is_expected.not_to contain_class('aide::syslog') }
+          it { is_expected.not_to contain_auditd__rule('aide') }
           it { is_expected.to contain_package('aide') }
           it { is_expected.to contain_file('/etc/aide.conf.d').with_ensure('directory') }
           it { is_expected.to contain_file('/var/lib/aide').with_ensure('directory') }
@@ -26,7 +26,8 @@ describe 'aide' do
           it { is_expected.to contain_concat('/etc/aide.conf') }
           it { is_expected.to contain_concat__fragment('aide.conf').with_target('/etc/aide.conf') }
 
-          it { is_expected.to contain_concat__fragment('aide.conf').with_content(<<~EOM
+          it {
+            is_expected.to contain_concat__fragment('aide.conf').with_content(<<~EOM,
             @@define DBDIR /var/lib/aide
             @@define LOGDIR /var/log/aide
             database=file:@@{DBDIR}/aide.db.gz
@@ -47,7 +48,8 @@ describe 'aide' do
             LSPP = R
             DATAONLY = p+n+u+g+s+acl+selinux+xattrs+sha1+sha256
             EOM
-          )}
+                                                                             )
+          }
 
           it {
             expected = <<~EOM
@@ -80,31 +82,39 @@ describe 'aide' do
         end
 
         context 'with enabled logrotate, syslog, and auditd set to true' do
-          let(:params) {{
-            :enable        => true,
-            :logrotate     => true,
-            :syslog        => true,
-            :auditd        => true
-          }}
+          let(:params) do
+            {
+              enable: true,
+           logrotate: true,
+           syslog: true,
+           auditd: true
+            }
+          end
 
           it { is_expected.to contain_class('aide::set_schedule') }
 
-          it{ is_expected.to contain_concat__fragment('aide.conf').with_content(
-            /report_url=file:@@{LOGDIR}\/aide.report/ )
+          it {
+            is_expected.to contain_concat__fragment('aide.conf').with_content(
+            %r{report_url=file:@@{LOGDIR}/aide.report},
+          )
           }
 
-          it{ is_expected.to contain_concat__fragment('aide.conf').with_content(
-            /report_url=syslog:LOG_LOCAL6/ )
+          it {
+            is_expected.to contain_concat__fragment('aide.conf').with_content(
+            %r{report_url=syslog:LOG_LOCAL6},
+          )
           }
 
           it { is_expected.to contain_class('aide::logrotate') }
-          it { is_expected.to contain_logrotate__rule('aide').with( {
-            :log_files                 => [ "/var/log/aide/*.log" ],
-            :missingok                 => true,
-            :rotate_period             => 'weekly',
-            :rotate                    => 4,
-            :lastaction_restart_logger => true
-          } ) }
+          it {
+            is_expected.to contain_logrotate__rule('aide').with({
+                                                                  log_files: [ '/var/log/aide/*.log' ],
+            missingok: true,
+            rotate_period: 'weekly',
+            rotate: 4,
+            lastaction_restart_logger: true
+                                                                })
+          }
 
           it { is_expected.to contain_class('aide::syslog') }
           it { is_expected.to contain_class('rsyslog') }
@@ -115,27 +125,31 @@ describe 'aide' do
         end
 
         context 'custom default rules' do
-          let(:params) {{
-            :default_rules => <<~EOM
+          let(:params) do
+            {
+              default_rules: <<~EOM
               /bin HIGH
               /sbin HIGH
               EOM
-          }}
-          it { is_expected.to create_file('/etc/aide.conf.d/default.aide').with_content(/\/bin\s+HIGH/) }
+            }
+          end
+
+          it { is_expected.to create_file('/etc/aide.conf.d/default.aide').with_content(%r{/bin\s+HIGH}) }
         end
       end
 
       context 'with FIPS disabled' do
-        let(:facts) {
+        let(:facts) do
           facts = os_facts.dup
           facts['fips_enabled'] = false
           facts
-        }
+        end
 
         context 'with default parameters' do
           it { is_expected.to create_class('aide') }
           if os_facts[:os][:release][:major] < '8'
-            it { is_expected.to contain_concat__fragment('aide.conf').with_content(<<~EOM
+            it {
+              is_expected.to contain_concat__fragment('aide.conf').with_content(<<~EOM,
               @@define DBDIR /var/lib/aide
               @@define LOGDIR /var/log/aide
               database=file:@@{DBDIR}/aide.db.gz
@@ -156,9 +170,11 @@ describe 'aide' do
               LSPP = R
               DATAONLY = p+n+u+g+s+acl+selinux+xattrs+sha512
               EOM
-            ) }
+                                                                               )
+            }
           else
-            it { is_expected.to contain_concat__fragment('aide.conf').with_content(<<~EOM
+            it {
+              is_expected.to contain_concat__fragment('aide.conf').with_content(<<~EOM,
               @@define DBDIR /var/lib/aide
               @@define LOGDIR /var/log/aide
               database=file:@@{DBDIR}/aide.db.gz
@@ -176,7 +192,8 @@ describe 'aide' do
               LSPP = R
               DATAONLY = p+n+u+g+s+acl+selinux+xattrs+sha512
               EOM
-            ) }
+                                                                               )
+            }
           end
         end
       end

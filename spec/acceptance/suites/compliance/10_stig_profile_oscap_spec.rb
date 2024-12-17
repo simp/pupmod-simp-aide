@@ -3,7 +3,6 @@ require 'spec_helper_acceptance'
 test_name 'Check SCAP for stig profile'
 
 describe 'run the SSG against the appropriate fixtures for stig aide profile' do
-
   hosts.each do |host|
     context "on #{host}" do
       before(:all) do
@@ -18,10 +17,10 @@ describe 'run the SSG against the appropriate fixtures for stig aide profile' do
         end
 
         # If we don't do this, the variable gets reset
-        @ssg_report = { :data => nil }
+        @ssg_report = { data: nil }
       end
 
-      it 'should run the SSG' do
+      it 'runs the SSG' do
         pending("SSG support for #{@os_str}") unless @ssg_supported
 
         profile = 'xccdf_org.ssgproject.content_profile_stig'
@@ -29,25 +28,25 @@ describe 'run the SSG against the appropriate fixtures for stig aide profile' do
         @ssg.evaluate(profile)
       end
 
-      it 'should have an SSG report' do
+      it 'has an SSG report' do
         pending("SSG support for #{@os_str}") unless @ssg_supported
 
         # Filter on records containing '_aide_'
         # This isn't perfect, but it should be partially OK
         @ssg_report[:data] = @ssg.process_ssg_results('rule_aide_')
 
-        expect(@ssg_report[:data]).to_not be_nil
+        expect(@ssg_report[:data]).not_to be_nil
 
         @ssg.write_report(@ssg_report[:data])
       end
 
-      it 'should have run some tests' do
+      it 'has run some tests' do
         pending("SSG support for #{@os_str}") unless @ssg_supported
 
         expect(@ssg_report[:data][:failed].count + @ssg_report[:data][:passed].count).to be > 0
       end
 
-      it 'should not have any failing tests' do
+      it 'does not have any failing tests' do
         pending("SSG support for #{@os_str}") unless @ssg_supported
 
         if @ssg_report[:data][:failed].count > 0
