@@ -1,0 +1,134 @@
+== Skipped ==
+Title: Configure Periodic Execution of AIDE
+  ID: xccdf_org.ssgproject.content_rule_aide_periodic_cron_checking
+Title: Configure AIDE to Use FIPS 140-2 for Validating Hashes
+  ID: xccdf_org.ssgproject.content_rule_aide_use_fips_hashes
+== Passed ==
+Title: Build and Test AIDE Database
+  ID: xccdf_org.ssgproject.content_rule_aide_build_database
+== Failed ==
+Title: Configure AIDE to Verify the Audit Tools
+  ID: xccdf_org.ssgproject.content_rule_aide_check_audit_tools
+  References:
+    *  https://www.cisecurity.org/benchmark/red_hat_linux/
+      * 5.3.3
+    *  https://public.cyber.mil/stigs/cci/
+      * CCI-001496, CCI-001494, CCI-001495, CCI-001493
+    *  http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf
+      * AU-9(3), AU-9(3).1
+    *  https://public.cyber.mil/stigs/downloads/?_dl_facet_stigs=operating-systems%2Cgeneral-purpose-os
+      * SRG-OS-000278-GPOS-00108
+    *  https://public.cyber.mil/stigs/srg-stig-tools/
+      * SV-230475r1017266_rule
+  Description: The operating system file integrity tool must be configured to protect the integrity of the audit tools.
+Title: Configure Notification of Post-AIDE Scan Details
+  ID: xccdf_org.ssgproject.content_rule_aide_scan_notification
+  References:
+    *  https://cyber.gouv.fr/sites/default/files/document/linux_configuration-en-v2.pdf
+      * R76
+    *  https://www.cisecurity.org/controls/
+      * 1, 11, 12, 13, 15, 16, 2, 3, 5, 7, 8, 9
+    *  https://www.isaca.org/resources/cobit
+      * BAI01.06, BAI06.01, BAI10.01, BAI10.02, BAI10.03, BAI10.05, DSS01.03, DSS03.05, DSS05.02, DSS05.05, DSS05.07
+    *  https://public.cyber.mil/stigs/cci/
+      * CCI-002702, CCI-001744, CCI-002699
+    *  https://www.isa.org/products/isa-62443-2-1-2009-security-for-industrial-automat
+      * 4.3.4.3.2, 4.3.4.3.3
+    *  https://www.isa.org/products/ansi-isa-62443-3-3-99-03-03-2013-security-for-indu
+      * SR 6.2, SR 7.6
+    *  https://www.iso.org/contents/data/standard/05/45/54534.html
+      * A.12.1.2, A.12.4.1, A.12.5.1, A.12.6.2, A.14.2.2, A.14.2.3, A.14.2.4, A.14.2.7, A.15.2.1
+    *  http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf
+      * CM-6(a), CM-3(5)
+    *  https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.04162018.pdf
+      * DE.CM-1, DE.CM-7, PR.IP-1, PR.IP-3
+    *  https://public.cyber.mil/stigs/downloads/?_dl_facet_stigs=operating-systems%2Cgeneral-purpose-os
+      * SRG-OS-000363-GPOS-00150, SRG-OS-000446-GPOS-00200, SRG-OS-000447-GPOS-00201
+    *  https://public.cyber.mil/stigs/srg-stig-tools/
+      * SV-230263r1017083_rule
+  Description: AIDE should notify appropriate personnel of the details of a scan after the scan has been run.
+    If AIDE has already been configured for periodic execution in /etc/crontab, append the
+    following line to the existing AIDE line:
+     | /bin/mail -s "$(hostname) - AIDE Integrity Check" root@localhost
+    Otherwise, add the following line to /etc/crontab:
+    05 4 * * * root /usr/sbin/aide --check | /bin/mail -s "$(hostname) - AIDE Integrity Check" root@localhost
+    AIDE can be executed periodically through other means; this is merely one example.
+Title: Configure AIDE to Verify Access Control Lists (ACLs)
+  ID: xccdf_org.ssgproject.content_rule_aide_verify_acls
+  References:
+    *  https://cyber.gouv.fr/sites/default/files/document/linux_configuration-en-v2.pdf
+      * R76
+    *  https://www.cisecurity.org/controls/
+      * 2, 3
+    *  https://www.isaca.org/resources/cobit
+      * APO01.06, BAI03.05, BAI06.01, DSS06.02
+    *  https://public.cyber.mil/stigs/cci/
+      * CCI-000366
+    *  https://www.isa.org/products/isa-62443-2-1-2009-security-for-industrial-automat
+      * 4.3.4.4.4
+    *  https://www.isa.org/products/ansi-isa-62443-3-3-99-03-03-2013-security-for-indu
+      * SR 3.1, SR 3.3, SR 3.4, SR 3.8
+    *  https://www.iso.org/contents/data/standard/05/45/54534.html
+      * A.11.2.4, A.12.2.1, A.12.5.1, A.14.1.2, A.14.1.3, A.14.2.4
+    *  http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf
+      * SI-7, SI-7(1), CM-6(a)
+    *  https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.04162018.pdf
+      * PR.DS-6, PR.DS-8
+    *  https://public.cyber.mil/stigs/downloads/?_dl_facet_stigs=operating-systems%2Cgeneral-purpose-os
+      * SRG-OS-000480-GPOS-00227
+    *  https://public.cyber.mil/stigs/srg-stig-tools/
+      * SV-230552r1017314_rule
+  Description: By default, the acl option is added to the FIPSR ruleset in AIDE.
+    If using a custom ruleset or the acl option is missing, add acl
+    to the appropriate ruleset.
+    For example, add acl to the following line in /etc/aide.conf:
+    FIPSR = p+i+n+u+g+s+m+c+acl+selinux+xattrs+sha256
+    AIDE rules can be configured in multiple ways; this is merely one example that is already
+    configured by default.
+    
+    
+    The remediation provided with this rule adds acl to all rule sets available in
+    /etc/aide.conf
+Title: Configure AIDE to Verify Extended Attributes
+  ID: xccdf_org.ssgproject.content_rule_aide_verify_ext_attributes
+  References:
+    *  https://cyber.gouv.fr/sites/default/files/document/linux_configuration-en-v2.pdf
+      * R76
+    *  https://www.cisecurity.org/controls/
+      * 2, 3
+    *  https://www.isaca.org/resources/cobit
+      * APO01.06, BAI03.05, BAI06.01, DSS06.02
+    *  https://public.cyber.mil/stigs/cci/
+      * CCI-000366
+    *  https://www.isa.org/products/isa-62443-2-1-2009-security-for-industrial-automat
+      * 4.3.4.4.4
+    *  https://www.isa.org/products/ansi-isa-62443-3-3-99-03-03-2013-security-for-indu
+      * SR 3.1, SR 3.3, SR 3.4, SR 3.8
+    *  https://www.iso.org/contents/data/standard/05/45/54534.html
+      * A.11.2.4, A.12.2.1, A.12.5.1, A.14.1.2, A.14.1.3, A.14.2.4
+    *  http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf
+      * SI-7, SI-7(1), CM-6(a)
+    *  https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.04162018.pdf
+      * PR.DS-6, PR.DS-8
+    *  https://public.cyber.mil/stigs/downloads/?_dl_facet_stigs=operating-systems%2Cgeneral-purpose-os
+      * SRG-OS-000480-GPOS-00227
+    *  https://public.cyber.mil/stigs/srg-stig-tools/
+      * SV-230551r1017313_rule
+  Description: By default, the xattrs option is added to the FIPSR ruleset in AIDE.
+    If using a custom ruleset or the xattrs option is missing, add xattrs
+    to the appropriate ruleset.
+    For example, add xattrs to the following line in /etc/aide.conf:
+    FIPSR = p+i+n+u+g+s+m+c+acl+selinux+xattrs+sha256
+    AIDE rules can be configured in multiple ways; this is merely one example that is already
+    configured by default.
+    
+    
+    The remediation provided with this rule adds xattrs to all rule sets available in
+    /etc/aide.conf
+OSCAP Statistics:
+  * Used Filter: 'idref' ~= '["rule_aide_"]'
+  * Passed: 1
+  * Failed: 4
+  * Skipped: 2
+
+ Score: 20%

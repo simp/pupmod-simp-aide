@@ -1,15 +1,15 @@
 ---
 HOSTS:
-  el7:
+  el9:
     roles:
     - client
     - server
     - default
     - master
-    platform: el-7-x86_64
-    box: centos/7
+    platform: el-9-x86_64
+    box: generic/centos9s
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
-    family: centos-cloud/centos-7
+    family: centos-cloud/centos-stream-9
     gce_machine_type: n1-standard-2
   el8:
     roles:
