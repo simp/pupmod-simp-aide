@@ -7,18 +7,18 @@ test_name 'aide scheduling'
 
 describe 'aide scheduling' do
   let(:manifest) do
-    <<-MANIFEST
+    <<~MANIFEST
       include aide
     MANIFEST
   end
 
   let(:core_hieradata) do
     {
-      'aide::enable' => true,
-    'simp_options::auditd'    => false,
-    'simp_options::syslog'    => false,
-    'simp_options::logrotate' => false,
-    'auditd::enable'          => false,
+      'aide::enable'            => true,
+      'simp_options::auditd'    => false,
+      'simp_options::syslog'    => false,
+      'simp_options::logrotate' => false,
+      'auditd::enable'          => false,
     }
   end
 
@@ -55,7 +55,7 @@ describe 'aide scheduling' do
       let(:hieradata) do
         core_hieradata.merge(
           {
-            'aide::cron_method' => 'root'
+            'aide::cron_method' => 'root',
           },
         )
       end
@@ -108,7 +108,7 @@ describe 'aide scheduling' do
         apply_manifest_on(host, manifest, catch_failures: true)
       end
 
-      it 'is idempotent' do
+      it 'is idempotent' do # rubocop:disable RSpec/RepeatedExample, RSpec/RepeatedDescription
         apply_manifest_on(host, manifest, catch_changes: true)
       end
 
@@ -132,7 +132,7 @@ describe 'aide scheduling' do
         expect { cron['ensure'].to eq 'absent' }
       end
 
-      it 'has the expected entry in /etc/crontab' do
+      it 'has the expected entry in /etc/crontab' do # rubocop:disable RSpec/RepeatedExample
         crontab = file_contents_on(host, '/etc/crontab').lines.select { |x| x.include?('aide') }
 
         expect { crontab.size.to eq 1 }
@@ -143,15 +143,15 @@ describe 'aide scheduling' do
         on(host, 'echo "* * * * * root /usr/sbin/aide --check" >> /etc/crontab')
       end
 
-      it 'runs puppet' do
+      it 'runs puppet' do # rubocop:disable RSpec/RepeatedExample, RSpec/RepeatedDescription
         apply_manifest_on(host, manifest, catch_failures: true)
       end
 
-      it 'runs be idempotent' do
+      it 'is idempotent' do # rubocop:disable RSpec/RepeatedExample, RSpec/RepeatedDescription
         apply_manifest_on(host, manifest, catch_changes: true)
       end
 
-      it 'does not have an excess entry' do
+      it 'does not have an excess entry' do # rubocop:disable RSpec/RepeatedExample
         crontab = file_contents_on(host, '/etc/crontab').lines.select { |x| x.include?('aide') }
 
         expect { crontab.size.to eq 1 }
@@ -162,15 +162,15 @@ describe 'aide scheduling' do
         on(host, 'sed -i "s/22/21/g" /etc/crontab')
       end
 
-      it 'runs puppet' do
+      it 'runs puppet' do # rubocop:disable RSpec/RepeatedExample, RSpec/RepeatedDescription
         apply_manifest_on(host, manifest, catch_failures: true)
       end
 
-      it 'runs be idempotent' do
+      it 'is idempotent' do # rubocop:disable RSpec/RepeatedExample, RSpec/RepeatedDescription
         apply_manifest_on(host, manifest, catch_changes: true)
       end
 
-      it 'has a corrected entry' do
+      it 'has a corrected entry' do # rubocop:disable RSpec/RepeatedExample
         crontab = file_contents_on(host, '/etc/crontab').lines.select { |x| x.include?('aide') }
 
         expect { crontab.size.to eq 1 }
