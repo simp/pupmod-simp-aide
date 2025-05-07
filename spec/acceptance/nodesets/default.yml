@@ -2,18 +2,15 @@
 HOSTS:
   el9:
     roles:
-    - client
-    - server
-    - default
-    - master
+      - server
     platform: el-9-x86_64
-    box: generic/centos9s
+    box: generic/rocky9
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
-    family: centos-cloud/centos-stream-9
+    family: rocky-linux-cloud/rocky-linux-9
     gce_machine_type: n1-standard-2
 CONFIG:
   log_level: verbose
   synced_folder: disabled
   type: aio
-  vagrant_cpus: 2
+  vagrant_memsize: 256
   puppet_collection: "<%= ENV.fetch('BEAKER_PUPPET_COLLECTION', 'puppet8') %>"

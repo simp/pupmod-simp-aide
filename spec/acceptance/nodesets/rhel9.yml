@@ -1,11 +1,6 @@
 ---
 HOSTS:
-  rhel9:
-    roles:
-    - client
-    - server
-    - default
-    - master
+  el9:
     platform: el-9-x86_64
     box: generic/rhel9
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"

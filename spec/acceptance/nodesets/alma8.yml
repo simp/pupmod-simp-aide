@@ -1,13 +1,8 @@
 ---
 HOSTS:
-  alma8:
-    roles:
-    - client
-    - server
-    - default
-    - master
+  el8:
     platform: el-8-x86_64
-    box: almalinux/8
+    box: generic/alma8
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
     family: almalinux-cloud/almalinux-8
     gce_machine_type: n1-standard-2
