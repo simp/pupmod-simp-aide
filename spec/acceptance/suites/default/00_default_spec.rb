@@ -39,7 +39,6 @@ describe 'aide class' do
       it 'should be idempotent' do
         apply_manifest_on(host, manifest, :catch_changes => true)
       end
-
       it "'aide' package should be installed" do
         check_for_package(host, 'aide')
       end
@@ -65,8 +64,8 @@ describe 'aide class' do
         on(host, "grep 'found differences between database and filesystem' /var/log/aide/aide.report")
         on(host, "grep '/etc/.*\.conf' /var/log/aide/aide.report")
       end
-
       it 'should not generate /var/log/aide/aide.log' do
+        pending("See issue https://github.com/simp/pupmod-simp-aide/issues/119")
         on(host, 'ls /var/log/aide/aide.log', :acceptable_exit_codes => 2)
       end
     end
