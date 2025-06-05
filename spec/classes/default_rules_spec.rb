@@ -109,14 +109,14 @@ EOM
       end
 
       context 'with custom ruledir' do
-        let(:params) {{ :ruledir  => '/etc/aide.d' }}
+        let(:params) { { ruledir: '/etc/aide.d' } }
 
         it { is_expected.to contain_aide__rule('default').with_ruledir('/etc/aide.d') }
       end
 
       context 'with custom default rules' do
         let(:custom_rules) { "/bin HIGH\n/sbin HIGH" }
-        let(:params) {{ :default_rules => custom_rules }}
+        let(:params) { { default_rules: custom_rules } }
 
         it { is_expected.to contain_aide__rule('default').with_rules(custom_rules) }
       end
