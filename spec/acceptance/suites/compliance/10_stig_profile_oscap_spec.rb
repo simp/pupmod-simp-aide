@@ -5,57 +5,61 @@ test_name 'Check SCAP for stig profile'
 describe 'run the SSG against the appropriate fixtures for stig aide profile' do
   hosts.each do |host|
     context "on #{host}" do
-      before(:all) do
-        @os_str = fact_on(host, 'os.name') + ' ' + fact_on(host, 'os.release.full')
+      let(:os_str) { fact_on(host, 'os.name') + ' ' + fact_on(host, 'os.release.full') }
 
-        @ssg_supported = true
+      let(:ssg_supported) do
+        Simp::BeakerHelpers::SSG.new(host)
+        true
+      rescue
+        false
+      end
 
-        begin
-          @ssg = Simp::BeakerHelpers::SSG.new(host)
-        rescue
-          @ssg_supported = false
-        end
+      let(:ssg_runner) do
+        Simp::BeakerHelpers::SSG.new(host) if ssg_supported
+      end
 
-        # If we don't do this, the variable gets reset
-        @ssg_report = { data: nil }
+      let(:ssg_report_data) do
+        return nil unless ssg_supported
+
+        profile = 'xccdf_org.ssgproject.content_profile_stig'
+        ssg_runner.evaluate(profile)
+        # Filter on records containing '_aide_'
+        # This isn't perfect, but it should be partially OK
+        ssg_runner.process_ssg_results('rule_aide_')
       end
 
       it 'runs the SSG' do
-        pending("SSG support for #{@os_str}") unless @ssg_supported
+        pending("SSG support for #{os_str}") unless ssg_supported
 
         profile = 'xccdf_org.ssgproject.content_profile_stig'
 
-        @ssg.evaluate(profile)
+        expect { ssg_runner.evaluate(profile) }.not_to raise_error
       end
 
       it 'has an SSG report' do
-        pending("SSG support for #{@os_str}") unless @ssg_supported
+        pending("SSG support for #{os_str}") unless ssg_supported
 
-        # Filter on records containing '_aide_'
-        # This isn't perfect, but it should be partially OK
-        @ssg_report[:data] = @ssg.process_ssg_results('rule_aide_')
+        expect(ssg_report_data).not_to be_nil
 
-        expect(@ssg_report[:data]).not_to be_nil
-
-        @ssg.write_report(@ssg_report[:data])
+        ssg_runner.write_report(ssg_report_data)
       end
 
       it 'has run some tests' do
-        pending("SSG support for #{@os_str}") unless @ssg_supported
+        pending("SSG support for #{os_str}") unless ssg_supported
 
-        expect(@ssg_report[:data][:failed].count + @ssg_report[:data][:passed].count).to be > 0
+        expect(ssg_report_data[:failed].count + ssg_report_data[:passed].count).to be > 0
       end
 
       it 'does not have any failing tests' do
-        pending("SSG support for #{@os_str}") unless @ssg_supported
+        pending("SSG support for #{os_str}") unless ssg_supported
 
-        if @ssg_report[:data][:failed].count > 0
-          puts @ssg_report[:data][:report]
+        if ssg_report_data[:failed].count > 0
+          puts ssg_report_data[:report]
         end
 
         # TODO: See if we can get the SSG to update to a more reasonable set of checks
         pending('SSG Checks Getting Fixed')
-        expect(@ssg_report[:data][:score]).to eq(100)
+        expect(ssg_report_data[:score]).to eq(100)
       end
     end
   end
