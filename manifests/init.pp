@@ -125,7 +125,7 @@ class aide (
     Integer[0, 255],
     Pattern[/\A(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\z/]
   ]                                        $verbose           = 5,
-  Array[String]                            $report_urls       = [ 'file:@@{LOGDIR}/aide.report'],
+  Array[String]                            $report_urls       = ['file:@@{LOGDIR}/aide.report'],
   Stdlib::Absolutepath                     $ruledir           = '/etc/aide.conf.d',
   Variant[Hash,Array[String]]              $rules             = {},
   Boolean                                  $enable            = false,
@@ -137,16 +137,15 @@ class aide (
   Enum['root', 'etc', 'systemd']           $cron_method       = 'systemd',
   Optional[String[1]]                      $systemd_calendar  = undef,
   String[1]                                $cron_command      = '/bin/nice -n 19 /usr/sbin/aide --check',
-  Boolean                                  $logrotate         = simplib::lookup('simp_options::logrotate', { 'default_value' => false}),
+  Boolean                                  $logrotate         = false,
   Aide::Rotateperiod                       $rotate_period     = 'weekly',
   Integer                                  $rotate_number     = 4,
-  Boolean                                  $syslog            = simplib::lookup('simp_options::syslog', { 'default_value' => false }),
+  Boolean                                  $syslog            = false,
   Aide::SyslogFacility                     $syslog_facility   = 'LOG_LOCAL6',
-  Boolean                                  $auditd            = simplib::lookup('simp_options::auditd', { 'default_value' => false }),
+  Boolean                                  $auditd            = false,
   Integer                                  $aide_init_timeout = $facts['processors']['count'] ? { 1 => 1200, default => 300 },
-  String                                   $package_ensure    = simplib::lookup('simp_options::package_ensure', { 'default_value' => 'installed' }),
+  String                                   $package_ensure    = 'installed',
 ) {
-
   include 'aide::default_rules'
 
   if $rules =~ Hash {
