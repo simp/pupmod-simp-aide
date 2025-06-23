@@ -13,7 +13,6 @@ class aide::default_rules (
   Variant[Array[String[1]],String] $default_rules = $aide::default_rules,
   Stdlib::Absolutepath             $ruledir       = $aide::ruledir
 ) {
-
   assert_private()
 
   if $default_rules =~ String {
