@@ -53,7 +53,7 @@ describe 'run the SSG against the appropriate fixtures for stig aide profile' do
       it 'does not have any failing tests' do
         pending("SSG support for #{os_str}") unless ssg_supported
 
-        if ssg_report_data[:failed].count > 0
+        if ssg_report_data[:failed].any?
           puts ssg_report_data[:report]
         end
 
