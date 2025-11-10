@@ -74,7 +74,7 @@ describe 'aide' do
               LSPP = R
               DATAONLY = p+n+u+g+s+acl+selinux+xattrs+sha1+sha256
               EOM
-                                                                              )
+                                                                               )
             }
           end
 
