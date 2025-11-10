@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe 'aide' do
   context 'supported operating systems' do
-    on_supported_os.each_value do |os_facts|
-      context 'with FIPS enabled' do
+    on_supported_os.each do |os, os_facts|
+      context "on #{os} with FIPS enabled" do
         let(:facts) do
           facts = os_facts.dup
           facts['fips_enabled'] = true
@@ -85,9 +85,9 @@ describe 'aide' do
           let(:params) do
             {
               enable: true,
-           logrotate: true,
-           syslog: true,
-           auditd: true
+              logrotate: true,
+              syslog: true,
+              auditd: true
             }
           end
 
@@ -138,7 +138,7 @@ describe 'aide' do
         end
       end
 
-      context 'with FIPS disabled' do
+      context "on #{os} with FIPS disabled" do
         let(:facts) do
           facts = os_facts.dup
           facts['fips_enabled'] = false

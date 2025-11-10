@@ -10,7 +10,7 @@
 | -%>
 @@define DBDIR <%= $dbdir %>
 @@define LOGDIR <%= $logdir %>
-database=file:@@{DBDIR}/<%= $database_name %>
+database_in=file:@@{DBDIR}/<%= $database_name %>
 database_out=file:@@{DBDIR}/<%= $database_out_name %>
 gzip_dbout=<%= $gzip_dbout %>
 verbose=<%= $verbose %>

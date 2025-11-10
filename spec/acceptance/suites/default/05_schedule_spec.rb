@@ -14,11 +14,11 @@ describe 'aide scheduling' do
 
   let(:core_hieradata) do
     {
-      'aide::enable'            => true,
-      'simp_options::auditd'    => false,
-      'simp_options::syslog'    => false,
-      'simp_options::logrotate' => false,
-      'auditd::enable'          => false,
+      'aide::enable'    => true,
+      'aide::auditd'    => false,
+      'aide::syslog'    => false,
+      'aide::logrotate' => false,
+      'auditd::enable'  => false,
     }
   end
 
@@ -28,6 +28,7 @@ describe 'aide scheduling' do
 
   hosts.each do |host|
     context 'with defaults' do
+      on(host, 'dnf install -y cronie')
       it 'works with no errors' do
         set_hieradata_on(host, hieradata)
         apply_manifest_on(host, manifest, catch_failures: true)
