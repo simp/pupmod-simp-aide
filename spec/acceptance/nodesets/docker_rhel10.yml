@@ -18,6 +18,7 @@ HOSTS:
     dockeropts:
       HostConfig:
         Memory: 536870912
+        Privileged: true
 CONFIG:
   log_level: verbose
   type: aio
