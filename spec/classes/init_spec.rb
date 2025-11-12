@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe 'aide' do
   context 'supported operating systems' do
-    on_supported_os.each_value do |os_facts|
-      context 'with FIPS enabled' do
+    on_supported_os.each do |os, os_facts|
+      context "on #{os} with FIPS enabled" do
         let(:facts) do
           facts = os_facts.dup
           facts['fips_enabled'] = true
@@ -26,30 +26,57 @@ describe 'aide' do
           it { is_expected.to contain_concat('/etc/aide.conf') }
           it { is_expected.to contain_concat__fragment('aide.conf').with_target('/etc/aide.conf') }
 
-          it {
-            is_expected.to contain_concat__fragment('aide.conf').with_content(<<~EOM,
-            @@define DBDIR /var/lib/aide
-            @@define LOGDIR /var/log/aide
-            database=file:@@{DBDIR}/aide.db.gz
-            database_out=file:@@{DBDIR}/aide.db.new.gz
-            gzip_dbout=yes
-            verbose=5
-            report_url=file:@@{LOGDIR}/aide.report
+          if os_facts[:os][:release][:major].to_i > 9
+            it {
+              is_expected.to contain_concat__fragment('aide.conf').with_content(<<~EOM,
+              @@define DBDIR /var/lib/aide
+              @@define LOGDIR /var/log/aide
+              database_in=file:@@{DBDIR}/aide.db.gz
+              database_out=file:@@{DBDIR}/aide.db.new.gz
+              gzip_dbout=yes
+              verbose=5
+              report_url=file:@@{LOGDIR}/aide.report
 
-            R = p+i+l+n+u+g+s+m+c+sha1+sha256
-            L = p+i+l+n+u+g+acl+xattrs
-            > = p+i+l+n+u+g+S+acl+xattrs
-            ALLXTRAHASHES = sha1+sha256
-            EVERYTHING = R+ALLXTRAHASHES
-            NORMAL = R
-            DIR = p+i+n+u+g+acl+xattrs
-            PERMS = p+i+u+g+acl
-            LOG = >
-            LSPP = R
-            DATAONLY = p+n+u+g+s+acl+selinux+xattrs+sha1+sha256
-            EOM
-                                                                             )
-          }
+              R = p+i+l+n+u+g+s+m+c+sha1+sha256
+              L = p+i+l+n+u+g+acl+xattrs
+              > = p+i+l+n+u+g+S+acl+xattrs
+              ALLXTRAHASHES = sha1+sha256
+              EVERYTHING = R+ALLXTRAHASHES
+              NORMAL = R
+              DIR = p+i+n+u+g+acl+xattrs
+              PERMS = p+i+u+g+acl
+              LOG = >
+              LSPP = R
+              DATAONLY = p+n+u+g+s+acl+selinux+xattrs+sha1+sha256
+              EOM
+                                                                               )
+            }
+          else
+            it {
+              is_expected.to contain_concat__fragment('aide.conf').with_content(<<~EOM,
+              @@define DBDIR /var/lib/aide
+              @@define LOGDIR /var/log/aide
+              database=file:@@{DBDIR}/aide.db.gz
+              database_out=file:@@{DBDIR}/aide.db.new.gz
+              gzip_dbout=yes
+              verbose=5
+              report_url=file:@@{LOGDIR}/aide.report
+
+              R = p+i+l+n+u+g+s+m+c+sha1+sha256
+              L = p+i+l+n+u+g+acl+xattrs
+              > = p+i+l+n+u+g+S+acl+xattrs
+              ALLXTRAHASHES = sha1+sha256
+              EVERYTHING = R+ALLXTRAHASHES
+              NORMAL = R
+              DIR = p+i+n+u+g+acl+xattrs
+              PERMS = p+i+u+g+acl
+              LOG = >
+              LSPP = R
+              DATAONLY = p+n+u+g+s+acl+selinux+xattrs+sha1+sha256
+              EOM
+                                                                               )
+            }
+          end
 
           it {
             expected = <<~EOM
@@ -85,9 +112,9 @@ describe 'aide' do
           let(:params) do
             {
               enable: true,
-           logrotate: true,
-           syslog: true,
-           auditd: true
+              logrotate: true,
+              syslog: true,
+              auditd: true
             }
           end
 
@@ -138,7 +165,7 @@ describe 'aide' do
         end
       end
 
-      context 'with FIPS disabled' do
+      context "on #{os} with FIPS disabled" do
         let(:facts) do
           facts = os_facts.dup
           facts['fips_enabled'] = false
@@ -147,20 +174,17 @@ describe 'aide' do
 
         context 'with default parameters' do
           it { is_expected.to create_class('aide') }
-          if os_facts[:os][:release][:major] < '8'
+          if os_facts[:os][:release][:major].to_i > 9
             it {
               is_expected.to contain_concat__fragment('aide.conf').with_content(<<~EOM,
               @@define DBDIR /var/lib/aide
               @@define LOGDIR /var/log/aide
-              database=file:@@{DBDIR}/aide.db.gz
+              database_in=file:@@{DBDIR}/aide.db.gz
               database_out=file:@@{DBDIR}/aide.db.new.gz
               gzip_dbout=yes
               verbose=5
               report_url=file:@@{LOGDIR}/aide.report
 
-              R = p+i+l+n+u+g+s+m+c+sha512
-              L = p+i+l+n+u+g+acl+xattrs
-              > = p+i+l+n+u+g+S+acl+xattrs
               ALLXTRAHASHES = sha1+sha256+sha512
               EVERYTHING = R+ALLXTRAHASHES
               NORMAL = R

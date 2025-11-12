@@ -1,6 +1,6 @@
 {
   "name": "simp-aide",
-  "version": "6.12.1",
+  "version": "7.0.0",
   "author": "SIMP Team",
   "summary": "manages AIDE",
   "license": "Apache-2.0",
@@ -33,7 +33,7 @@
     "optional_dependencies": [
       {
         "name": "simp/auditd",
-        "version_requirement": ">= 8.5.0 < 9.0.0"
+        "version_requirement": ">= 8.5.0 < 10.0.0"
       },
       {
         "name": "simp/logrotate",
@@ -49,39 +49,41 @@
     {
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
-        "7",
         "8",
-        "9"
+        "9",
+        "10"
       ]
     },
     {
       "operatingsystem": "RedHat",
       "operatingsystemrelease": [
-        "7",
         "8",
-        "9"
+        "9",
+        "10"
       ]
     },
     {
       "operatingsystem": "OracleLinux",
       "operatingsystemrelease": [
-        "7",
         "8",
-        "9"
+        "9",
+        "10"
       ]
     },
     {
       "operatingsystem": "Rocky",
       "operatingsystemrelease": [
         "8",
-        "9"
+        "9",
+        "10"
       ]
     },
     {
       "operatingsystem": "AlmaLinux",
       "operatingsystemrelease": [
         "8",
-        "9"
+        "9",
+        "10"
       ]
     }
   ],

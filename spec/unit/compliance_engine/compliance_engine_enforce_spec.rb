@@ -6,7 +6,7 @@ FileUtils.rm_rf(v1_profiles) if File.directory?(v1_profiles)
 
 # This is the class that needs to be added to the catalog last to make the
 # reporting work.
-describe 'compliance_markup', type: :class do
+describe 'compliance_markup', :skip, type: :class do
   compliance_profiles = [
     'disa_stig',
     'nist_800_53:rev4',

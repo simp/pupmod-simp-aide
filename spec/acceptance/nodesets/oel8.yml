@@ -1,19 +1,12 @@
 ---
 HOSTS:
-  oel7:
+  server-oel8.simp.beaker:
     roles:
-    - client
     - server
     - default
     - master
-    platform: el-7-x86_64
-    box: generic/oracle7
-    hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
-    family: sicura-image-build/oracle-linux-7
-    gce_machine_type: n1-standard-2
-  oel8:
-    roles:
-    - client
+    - simp_server
+    - el8
     platform: el-8-x86_64
     box: generic/oracle8
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
@@ -21,6 +14,5 @@ HOSTS:
     gce_machine_type: n1-standard-2
 CONFIG:
   log_level: verbose
-  synced_folder: disabled
   type: aio
   puppet_collection: "<%= ENV.fetch('BEAKER_PUPPET_COLLECTION', 'puppet7') %>"

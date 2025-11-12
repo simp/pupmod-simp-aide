@@ -26,9 +26,6 @@ on:
   pull_request:
     types: [opened, reopened, synchronize]
 
-env:
-  PUPPET_VERSION: '~> 7'
-
 jobs:
   puppet-syntax:
     name: 'Puppet Syntax'
@@ -130,12 +127,34 @@ jobs:
       - run: 'bundle exec rake spec'
         continue-on-error: ${{matrix.puppet.experimental}}
 
-#  dump_contexts:
-#    name: 'Examine Context contents'
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Dump contexts
-#        env:
-#          GITHUB_CONTEXT: ${{ toJson(github) }}
-#        run: echo "$GITHUB_CONTEXT"
-#
+  acceptance:
+    runs-on:
+      - ubuntu-latest
+    strategy:
+      matrix:
+        node:
+          - almalinux9
+          - almalinux10
+      fail-fast: false
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v5
+      - name: setup ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3
+      - name: bundle install
+        run: |
+          bundle install
+      - name: Setup libvirt for Vagrant
+        run: |
+          sudo add-apt-repository ppa:evgeni/vagrant
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends vagrant vagrant-libvirt libvirt-daemon-system libvirt-daemon qemu-system-x86 qemu-utils dnsmasq
+          sudo chmod 666 /var/run/libvirt/libvirt-sock
+      - name: beaker
+        env:
+          BEAKER_HYPERVISOR: 'vagrant_libvirt'
+          VAGRANT_DEFAULT_PROVIDER: 'libvirt'
+        run: |
+          bundle exec rake beaker:suites[default,${{ matrix.node }}]

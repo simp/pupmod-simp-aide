@@ -21,10 +21,10 @@ describe 'aide class' do
     context 'with defaults' do
       let(:hieradata) do
         {
-          'simp_options::auditd' => false,
-       'simp_options::syslog'    => false,
-       'simp_options::logrotate' => false,
-       'auditd::enable'          => false,
+          'aide::auditd'    => false,
+          'aide::syslog'    => false,
+          'aide::logrotate' => false,
+          'auditd::enable'  => false,
         }
       end
 
@@ -55,17 +55,17 @@ describe 'aide class' do
       end
 
       it 'generates an empty or clean report when no problems are found' do
-        on(host, '/usr/local/sbin/update_aide')
-        on(host, '/usr/sbin/aide --check')
+        on(host, '/usr/local/sbin/update_aide; /usr/sbin/aide --check')
         report = on(host, 'cat /var/log/aide/aide.report').stdout
         expect(report).to match(%r{^(.+NO differences.+)?$})
       end
 
       it 'generates a valid report when problems are found' do
-        on(host, 'touch /etc/yum.conf')
+        on(host, 'mv /etc/yum.conf /etc/yum.conf.bak')
         on(host, '/usr/sbin/aide --check', acceptable_exit_codes: changes_detected)
         on(host, "grep 'found differences between database and filesystem' /var/log/aide/aide.report")
         on(host, "grep '/etc/.*\.conf' /var/log/aide/aide.report")
+        on(host, 'mv /etc/yum.conf.bak /etc/yum.conf')
       end
 
       it 'does not generate /var/log/aide/aide.log' do
@@ -76,15 +76,16 @@ describe 'aide class' do
     context 'with syslog and logrotate enabled' do
       let(:hieradata) do
         {
-          'simp_options::auditd' => false,
-       'simp_options::syslog'    => true,
-       'simp_options::logrotate' => true,
-       'aide::syslog_format'     => true,
-       'auditd::enable'          => false,
+          'aide::auditd' => false,
+          'aide::syslog'    => true,
+          'aide::logrotate' => true,
+          'aide::syslog_format' => true,
+          'auditd::enable' => false,
         }
       end
 
       it 'works with no errors' do
+        on(host, '/usr/bin/dnf install -y logrotate')
         set_hieradata_on(host, hieradata)
         apply_manifest_on(host, manifest, catch_failures: true)
         # rsyslog changes require a second run
@@ -96,8 +97,8 @@ describe 'aide class' do
       end
 
       it 'generates an empty or clean report and log nothing when no problems are found' do
-        on(host, '/usr/local/sbin/update_aide')
         on(host, 'logrotate --force /etc/logrotate.simp.d/aide')
+        on(host, '/usr/local/sbin/update_aide')
         on(host, '/usr/sbin/aide --check')
         report = on(host, 'cat /var/log/aide/aide.report').stdout
         expect(report).to match(%r{^(.+NO differences.+)?$})
@@ -106,7 +107,7 @@ describe 'aide class' do
       end
 
       it 'generates a valid report and log that report when problems are found' do
-        on(host, 'touch /etc/yum.conf')
+        on(host, 'mv /etc/yum.conf /etc/yum.conf.bak')
         on(host, '/usr/sbin/aide --check', acceptable_exit_codes: changes_detected)
 
         on(host, "grep 'found differences between database and filesystem' /var/log/aide/aide.report")
@@ -114,6 +115,7 @@ describe 'aide class' do
 
         on(host, "grep 'found differences between database and filesystem' /var/log/aide/aide.log")
         on(host, "grep '/etc/.*\.conf' /var/log/aide/aide.log")
+        on(host, 'mv /etc/yum.conf.bak /etc/yum.conf')
       end
     end
   end

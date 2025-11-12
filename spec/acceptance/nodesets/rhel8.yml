@@ -1,19 +1,18 @@
 ---
 HOSTS:
-  el8:
+  server-el8.simp.beaker:
     roles:
-    - client
     - server
     - default
     - master
+    - simp_server
     platform: el-8-x86_64
-    box: generic/centos8
+    box: generic/rhel8
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
-    family: centos-cloud/centos-stream-8
+    family: rhel-cloud/rhel-8
     gce_machine_type: n1-standard-2
 CONFIG:
+  validate: false
   log_level: verbose
-  synced_folder: disabled
   type: aio
-  vagrant_cpus: 2
-  puppet_collection: "<%= ENV.fetch('BEAKER_PUPPET_COLLECTION', 'puppet7') %>"
+  puppet_collection: <%= ENV.fetch('BEAKER_PUPPET_COLLECTION', '~') %>

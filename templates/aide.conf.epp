@@ -10,7 +10,11 @@
 | -%>
 @@define DBDIR <%= $dbdir %>
 @@define LOGDIR <%= $logdir %>
+<% if Integer($facts['os']['release']['major']) > 9 { -%>
+database_in=file:@@{DBDIR}/<%= $database_name %>
+<% } else { -%>
 database=file:@@{DBDIR}/<%= $database_name %>
+<% } -%>
 database_out=file:@@{DBDIR}/<%= $database_out_name %>
 gzip_dbout=<%= $gzip_dbout %>
 verbose=<%= $verbose %>
