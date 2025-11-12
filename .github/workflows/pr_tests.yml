@@ -138,11 +138,23 @@ jobs:
       fail-fast: false
     steps:
       - name: checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: setup ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3
+      - name: bundle install
+        run: |
+          bundle install
+      - name: Setup libvirt for Vagrant
+        run: |
+          sudo add-apt-repository ppa:evgeni/vagrant
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends vagrant vagrant-libvirt libvirt-daemon-system libvirt-daemon qemu-system-x86 qemu-utils dnsmasq
+          sudo chmod 666 /var/run/libvirt/libvirt-sock
       - name: beaker
+        env:
+          BEAKER_HYPERVISOR: 'vagrant_libvirt'
+          VAGRANT_DEFAULT_PROVIDER: 'libvirt'
         run: |
           bundle exec rake beaker:suites[default,${{ matrix.node }}]
