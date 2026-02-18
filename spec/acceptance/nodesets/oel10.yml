@@ -1,21 +1,21 @@
 ---
 HOSTS:
-  el10:
+  server-oel10.simp.beaker:
     roles:
-    - client
     - server
     - default
     - master
+    - simp_server
+    - el10
     platform: el-10-x86_64
-    box: almalinux/10
+    box: generic/oracle10
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
     vagrant_memsize: 2048
     vagrant_cpus: 2
     # There are not currently any el10 images available on google cloud
-    # family: almalinux-cloud/almalinux-10
+    # family: sicura-image-build/oracle-linux-10
     # gce_machine_type: n1-standard-2
 CONFIG:
   log_level: verbose
-  synced_folder: disabled
   type: aio
-  puppet_collection: "<%= ENV.fetch('BEAKER_PUPPET_COLLECTION', 'openvox8') %>"
+  puppet_collection: <%= ENV.fetch('BEAKER_PUPPET_COLLECTION', 'openvox8') %>
