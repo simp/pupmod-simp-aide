@@ -1,3 +1,6 @@
+* Mon May 11 2026 Steven Pritchard <steve@sicura.us> - 8.0.0
+- Remove unmaintained Compliance Engine data
+
 * Mon Jun 23 2025 Mike Riddle <mike@sicura.us> - 7.0.0
 - Removed support for el7 operating systems
 - Added support for el10 operating systems
