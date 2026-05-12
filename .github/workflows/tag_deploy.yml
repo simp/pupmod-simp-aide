@@ -180,7 +180,7 @@ jobs:
           clean: true
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7.8
+          ruby-version: 3.4.9
           bundler-cache: true
       - name: Build Puppet module (PDK)
         run: bundle exec pdk build --force
