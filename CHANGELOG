@@ -1,3 +1,11 @@
+* Mon May 11 2026 Steven Pritchard <steve@sicura.us> - 8.0.0
+- Remove unmaintained Compliance Engine data
+- Remove unmaintained Inspec tests
+- Drop support for puppet 7 & 8
+- Include support for openvox 8
+- Drop EOL CentOS 8
+- Update module dependencies
+
 * Mon Jun 23 2025 Mike Riddle <mike@sicura.us> - 7.0.0
 - Removed support for el7 operating systems
 - Added support for el10 operating systems
