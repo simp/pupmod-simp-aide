@@ -2,10 +2,8 @@
 HOSTS:
   el10:
     roles:
-    - client
-    - server
     - default
-    - master
+    - el10
     platform: el-10-x86_64
     box: almalinux/10
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"

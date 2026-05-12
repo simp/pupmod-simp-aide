@@ -5,6 +5,11 @@
 - Include support for openvox 8
 - Drop EOL CentOS 8
 - Update module dependencies
+- Promote EL10 to the default acceptance nodeset; add Rocky Linux 10 and
+  Oracle Linux 10 vagrant/docker nodesets; standardize the Beaker
+  puppet_collection default on openvox8 across all nodesets
+- Source Oracle Linux vagrant boxes from oracle.github.io upstream JSON
+  metadata instead of the deprecated generic/oracle* boxes
 
 * Mon Jun 23 2025 Mike Riddle <mike@sicura.us> - 7.0.0
 - Removed support for el7 operating systems

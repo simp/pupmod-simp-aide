@@ -2,11 +2,7 @@
 HOSTS:
   server-almalinux10.simp.beaker:
     roles:
-    - server
-    - default
-    - master
-    - simp_server
-    - el9
+    - el10
     platform: el-10-x86_64
     box: almalinux/10
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"

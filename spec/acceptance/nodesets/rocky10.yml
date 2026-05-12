@@ -2,10 +2,6 @@
 HOSTS:
   server-rocky10.simp.beaker:
     roles:
-    - server
-    - default
-    - master
-    - simp_server
     - el10
     platform: el-10-x86_64
     box: rockylinux/10
