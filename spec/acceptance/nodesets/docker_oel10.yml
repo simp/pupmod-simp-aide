@@ -1,15 +1,15 @@
 ---
 HOSTS:
-  rocky9:
+  oel10:
     roles:
     - server
     - default
     - master
     - simp_server
-    - el9
-    platform: el-9-x86_64
+    - el10
+    platform: el-10-x86_64
     hypervisor: docker
-    image: rockylinux/rockylinux:9
+    image: oraclelinux:10
     docker_cmd: '/usr/sbin/init'
     docker_preserve_image: true
     docker_image_commands:
