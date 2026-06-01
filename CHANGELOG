@@ -1,3 +1,6 @@
+* Mon Jun 01 2026 Mike Riddle <mike@sicura.us> - 8.0.1
+- Support aide 0.17 and newer
+
 * Mon May 11 2026 Steven Pritchard <steve@sicura.us> - 8.0.0
 - Remove unmaintained Compliance Engine data
 - Remove unmaintained Inspec tests

@@ -21,6 +21,26 @@
 # @param verbose
 #   The verbosity of the output messages.
 #
+#   * Only applies to AIDE versions **older than 0.17**. The `verbose` option
+#     was removed in AIDE 0.17; on 0.17 and later use `log_level` and
+#     `report_level` instead. The installed version is detected via the
+#     `aide_version` fact and the appropriate directive is emitted
+#     automatically.
+#
+# @param log_level
+#   The AIDE log level (the `log_level` directive).
+#
+#   * Only applies to AIDE **0.17 and later**. Ignored on older versions,
+#     which use `verbose` instead.
+#   * When `undef`, AIDE's built-in default is used.
+#
+# @param report_level
+#   The AIDE report level (the `report_level` directive).
+#
+#   * Only applies to AIDE **0.17 and later**. Ignored on older versions,
+#     which use `verbose` instead.
+#   * When `undef`, AIDE's built-in default is used.
+#
 # @param report_urls
 #   An array of report URLs. A syslog report URL will be
 #   automatically added to this list when ``syslog`` is
@@ -125,6 +145,8 @@ class aide (
     Integer[0, 255],
     Pattern[/\A(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\z/]
   ]                                        $verbose           = 5,
+  Optional[String[1]]                      $log_level         = undef,
+  Optional[String[1]]                      $report_level      = undef,
   Array[String]                            $report_urls       = ['file:@@{LOGDIR}/aide.report'],
   Stdlib::Absolutepath                     $ruledir           = '/etc/aide.conf.d',
   Variant[Hash,Array[String]]              $rules             = {},
@@ -172,6 +194,36 @@ class aide (
   }
   else {
     $_report_urls = $report_urls
+  }
+
+  # The `verbose` directive was removed in AIDE 0.17 and replaced by the
+  # `log_level` and `report_level` directives. The installed version is only
+  # knowable after the `aide` package is present, so it is read from the
+  # `aide_version` fact and used to select which directive(s) to emit.
+  #
+  # On the first run of a fresh install the fact is unavailable. In that case
+  # no verbosity directive is emitted, leaving the generated config valid
+  # (AIDE falls back to its built-in defaults); the correct directive is
+  # written on the next run, once the package - and therefore the fact - is
+  # present.
+  $_aide_version = $facts['aide_version']
+
+  if $_aide_version =~ NotUndef {
+    if versioncmp(String($_aide_version), '0.17') >= 0 {
+      $_verbose      = undef
+      $_log_level    = $log_level
+      $_report_level = $report_level
+    }
+    else {
+      $_verbose      = $verbose
+      $_log_level    = undef
+      $_report_level = undef
+    }
+  }
+  else {
+    $_verbose      = undef
+    $_log_level    = undef
+    $_report_level = undef
   }
 
   if $auditd {
@@ -227,7 +279,9 @@ class aide (
         'database_name'     => $database_name,
         'database_out_name' => $database_out_name,
         'gzip_dbout'        => $gzip_dbout,
-        'verbose'           => $verbose,
+        'verbose'           => $_verbose,
+        'log_level'         => $_log_level,
+        'report_level'      => $_report_level,
         'report_urls'       => $_report_urls,
         'aliases'           => $aliases
       }

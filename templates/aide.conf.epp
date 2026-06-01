@@ -5,6 +5,8 @@
   $database_out_name,
   $gzip_dbout,
   $verbose,
+  $log_level,
+  $report_level,
   $report_urls,
   $aliases
 | -%>
@@ -17,7 +19,15 @@ database=file:@@{DBDIR}/<%= $database_name %>
 <% } -%>
 database_out=file:@@{DBDIR}/<%= $database_out_name %>
 gzip_dbout=<%= $gzip_dbout %>
+<% if $verbose =~ NotUndef { -%>
 verbose=<%= $verbose %>
+<% } -%>
+<% if $log_level =~ NotUndef { -%>
+log_level=<%= $log_level %>
+<% } -%>
+<% if $report_level =~ NotUndef { -%>
+report_level=<%= $report_level %>
+<% } -%>
 <% $report_urls.each |$report_url| { -%>
 report_url=<%= $report_url %>
 <% } -%>
