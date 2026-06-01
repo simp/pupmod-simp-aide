@@ -1,0 +1,18 @@
+---
+HOSTS:
+  el10:
+    roles:
+    - el10
+    platform: el-10-x86_64
+    box: rockylinux/10
+    hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
+    vagrant_memsize: 2048
+    vagrant_cpus: 2
+    box_url: <%= (ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') =~ /libvirt/) && 'https://dl.rockylinux.org/pub/rocky/10/images/x86_64/Rocky-10-Vagrant-Libvirt.latest.x86_64.vagrant.libvirt.box' || nil %>
+    machine_virtual_size: <%= (ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') =~ /libvirt/) && 20 || nil %>
+    family: rocky-linux-cloud/rocky-linux-10
+    gce_machine_type: n1-standard-2
+CONFIG:
+  log_level: verbose
+  type: aio
+  puppet_collection: <%= ENV.fetch('BEAKER_PUPPET_COLLECTION', '~') %>

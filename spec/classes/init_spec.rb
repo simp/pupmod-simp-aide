@@ -7,6 +7,8 @@ describe 'aide' do
         let(:facts) do
           facts = os_facts.dup
           facts['fips_enabled'] = true
+          # AIDE < 0.17 still uses the `verbose` directive
+          facts['aide_version'] = '0.16'
           facts
         end
 
@@ -169,6 +171,8 @@ describe 'aide' do
         let(:facts) do
           facts = os_facts.dup
           facts['fips_enabled'] = false
+          # AIDE < 0.17 still uses the `verbose` directive
+          facts['aide_version'] = '0.16'
           facts
         end
 
@@ -219,6 +223,55 @@ describe 'aide' do
                                                                                )
             }
           end
+        end
+      end
+
+      context "on #{os} verbosity directive selection" do
+        let(:base_facts) do
+          facts = os_facts.dup
+          facts['fips_enabled'] = false
+          facts
+        end
+
+        context 'with AIDE older than 0.17 installed' do
+          let(:facts) { base_facts.merge('aide_version' => '0.16') }
+
+          it { is_expected.to compile.with_all_deps }
+          it { is_expected.to contain_concat__fragment('aide.conf').with_content(%r{^verbose=5$}) }
+          it { is_expected.to contain_concat__fragment('aide.conf').without_content(%r{^log_level=}) }
+          it { is_expected.to contain_concat__fragment('aide.conf').without_content(%r{^report_level=}) }
+        end
+
+        context 'with AIDE 0.17 or later installed and default parameters' do
+          let(:facts) { base_facts.merge('aide_version' => '0.17.4') }
+
+          it { is_expected.to compile.with_all_deps }
+          # verbose was removed in 0.17 and would be a fatal config error
+          it { is_expected.to contain_concat__fragment('aide.conf').without_content(%r{^verbose=}) }
+          # default params leave log_level/report_level unset -> AIDE defaults
+          it { is_expected.to contain_concat__fragment('aide.conf').without_content(%r{^log_level=}) }
+          it { is_expected.to contain_concat__fragment('aide.conf').without_content(%r{^report_level=}) }
+        end
+
+        context 'with AIDE 0.17 or later installed and log_level/report_level set' do
+          let(:facts) { base_facts.merge('aide_version' => '0.17.4') }
+          let(:params) { { log_level: 'info', report_level: 'summary' } }
+
+          it { is_expected.to compile.with_all_deps }
+          it { is_expected.to contain_concat__fragment('aide.conf').without_content(%r{^verbose=}) }
+          it { is_expected.to contain_concat__fragment('aide.conf').with_content(%r{^log_level=info$}) }
+          it { is_expected.to contain_concat__fragment('aide.conf').with_content(%r{^report_level=summary$}) }
+        end
+
+        context 'with the aide_version fact absent (first run on a fresh install)' do
+          let(:facts) { base_facts }
+
+          it { is_expected.to compile.with_all_deps }
+          # No version known yet: emit no verbosity directive so the config
+          # stays valid regardless of which AIDE version gets installed
+          it { is_expected.to contain_concat__fragment('aide.conf').without_content(%r{^verbose=}) }
+          it { is_expected.to contain_concat__fragment('aide.conf').without_content(%r{^log_level=}) }
+          it { is_expected.to contain_concat__fragment('aide.conf').without_content(%r{^report_level=}) }
         end
       end
     end
