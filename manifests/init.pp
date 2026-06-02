@@ -291,8 +291,9 @@ class aide (
   # reports the pending change instead of failing.
   # ---------------------------------------------------------------------------
   if $dbdir =~ NotUndef {
+    $_dbdir_ensure = $dbdir ? { 'absent' => 'absent', default => 'present' }
     file_line { 'aide.conf DBDIR':
-      ensure            => $dbdir ? { 'absent' => 'absent', default => 'present' },
+      ensure            => $_dbdir_ensure,
       path              => '/etc/aide.conf',
       line              => "@@define DBDIR ${dbdir}",
       match             => '^@@define DBDIR\b',
@@ -303,8 +304,9 @@ class aide (
   }
 
   if $logdir =~ NotUndef {
+    $_logdir_ensure = $logdir ? { 'absent' => 'absent', default => 'present' }
     file_line { 'aide.conf LOGDIR':
-      ensure            => $logdir ? { 'absent' => 'absent', default => 'present' },
+      ensure            => $_logdir_ensure,
       path              => '/etc/aide.conf',
       line              => "@@define LOGDIR ${logdir}",
       match             => '^@@define LOGDIR\b',
@@ -317,8 +319,9 @@ class aide (
   # `database` (AIDE <= 0.18) and `database_in` (AIDE >= 0.19) are mutually
   # exclusive across AIDE versions; each is managed only when explicitly set.
   if $database =~ NotUndef {
+    $_database_ensure = $database ? { 'absent' => 'absent', default => 'present' }
     file_line { 'aide.conf database':
-      ensure            => $database ? { 'absent' => 'absent', default => 'present' },
+      ensure            => $_database_ensure,
       path              => '/etc/aide.conf',
       line              => "database=${database}",
       match             => '^database=',
@@ -329,8 +332,9 @@ class aide (
   }
 
   if $database_in =~ NotUndef {
+    $_database_in_ensure = $database_in ? { 'absent' => 'absent', default => 'present' }
     file_line { 'aide.conf database_in':
-      ensure            => $database_in ? { 'absent' => 'absent', default => 'present' },
+      ensure            => $_database_in_ensure,
       path              => '/etc/aide.conf',
       line              => "database_in=${database_in}",
       match             => '^database_in=',
@@ -341,8 +345,9 @@ class aide (
   }
 
   if $database_out =~ NotUndef {
+    $_database_out_ensure = $database_out ? { 'absent' => 'absent', default => 'present' }
     file_line { 'aide.conf database_out':
-      ensure            => $database_out ? { 'absent' => 'absent', default => 'present' },
+      ensure            => $_database_out_ensure,
       path              => '/etc/aide.conf',
       line              => "database_out=${database_out}",
       match             => '^database_out=',
@@ -353,8 +358,9 @@ class aide (
   }
 
   if $gzip_dbout =~ NotUndef {
+    $_gzip_dbout_ensure = $gzip_dbout ? { 'absent' => 'absent', default => 'present' }
     file_line { 'aide.conf gzip_dbout':
-      ensure            => $gzip_dbout ? { 'absent' => 'absent', default => 'present' },
+      ensure            => $_gzip_dbout_ensure,
       path              => '/etc/aide.conf',
       line              => "gzip_dbout=${gzip_dbout}",
       match             => '^gzip_dbout=',
@@ -367,8 +373,9 @@ class aide (
   # `verbose` (AIDE <= 0.16) was replaced by `log_level` + `report_level`
   # (AIDE >= 0.17); each is managed only when explicitly set.
   if $verbose =~ NotUndef {
+    $_verbose_ensure = $verbose ? { 'absent' => 'absent', default => 'present' }
     file_line { 'aide.conf verbose':
-      ensure            => $verbose ? { 'absent' => 'absent', default => 'present' },
+      ensure            => $_verbose_ensure,
       path              => '/etc/aide.conf',
       line              => "verbose=${verbose}",
       match             => '^verbose=',
@@ -379,8 +386,9 @@ class aide (
   }
 
   if $log_level =~ NotUndef {
+    $_log_level_ensure = $log_level ? { 'absent' => 'absent', default => 'present' }
     file_line { 'aide.conf log_level':
-      ensure            => $log_level ? { 'absent' => 'absent', default => 'present' },
+      ensure            => $_log_level_ensure,
       path              => '/etc/aide.conf',
       line              => "log_level=${log_level}",
       match             => '^log_level=',
@@ -391,8 +399,9 @@ class aide (
   }
 
   if $report_level =~ NotUndef {
+    $_report_level_ensure = $report_level ? { 'absent' => 'absent', default => 'present' }
     file_line { 'aide.conf report_level':
-      ensure            => $report_level ? { 'absent' => 'absent', default => 'present' },
+      ensure            => $_report_level_ensure,
       path              => '/etc/aide.conf',
       line              => "report_level=${report_level}",
       match             => '^report_level=',
