@@ -1,3 +1,27 @@
+* Tue Jun 02 2026 Mike Riddle <mike@sicura.us> - 9.0.0
+- BREAKING: A bare `include aide` now installs the `aide` package only. It no
+  longer overwrites `/etc/aide.conf`, writes default rules, creates the
+  database/log/rule directories, or initializes the AIDE database.
+- `/etc/aide.conf` settings are now managed as individual lines via `file_line`.
+  Each setting is a strongly-typed, `undef`-by-default class parameter; only the
+  fields you set are managed. Removed the `aide.conf` ERB/EPP template and the
+  `puppetlabs/concat` dependency.
+- Added per-field deletion: scalar fields accept an `'absent'` sentinel, and the
+  `report_urls_purge` / `aliases_purge` array parameters remove open-ended
+  entries.
+- Added version-specific aide.conf parameters: `database_in` (AIDE 0.19+,
+  replaces `database`) and `log_level` + `report_level` (AIDE 0.17+, replace
+  `verbose`). The `database` parameter no longer auto-switches to `database_in`
+  by OS; set the parameter matching the AIDE version on your nodes.
+- AIDE database bootstrap (directories, `update_aide` script, and init/update
+  execs) is now gated behind the new `manage_database` parameter (default
+  `false`).
+- The shipped FIPS/OS-aware `aide::aliases` and curated `aide::default_rules`
+  data are no longer auto-applied; example values now live in the README.
+- The catalog is noop-safe: `/etc/aide.conf` edits require `Package['aide']`, so
+  a `--noop` run on a host without the package reports the pending changes
+  instead of failing.
+
 * Mon May 11 2026 Steven Pritchard <steve@sicura.us> - 8.0.0
 - Remove unmaintained Compliance Engine data
 - Remove unmaintained Inspec tests

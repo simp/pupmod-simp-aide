@@ -7,7 +7,7 @@
 # @author https://github.com/simp/pupmod-simp-aide/graphs/contributors
 #
 class aide::syslog (
-  Stdlib::Absolutepath $logdir = $::aide::logdir
+  Stdlib::Absolutepath $logdir = ($aide::logdir =~ Stdlib::Absolutepath) ? { true => $aide::logdir, default => '/var/log/aide' }
 ) {
   assert_private()
 
