@@ -22,12 +22,13 @@ describe 'aide class' do
   # operator opts in explicitly.
   #
   # The aide.conf option names changed across AIDE versions, so the config is
-  # chosen per-host: EL > 9 ships AIDE 0.19+ (database_in, log_level/report_level)
-  # while EL <= 9 ships AIDE 0.16 (database, verbose).
+  # chosen per-host: EL > 8 ships AIDE 0.19+ (database_in, log_level/report_level)
+  # while EL 8 ships AIDE 0.16 (database, verbose). (AlmaLinux 9 ships aide
+  # 0.19.2, which rejects the legacy `database`/`verbose` options.)
   def full_config(host)
     major = host[:platform].to_s.split('-')[1].to_i
 
-    version_opts = if major > 9
+    version_opts = if major > 8
                      {
                        'aide::database_in'  => 'file:@@{DBDIR}/aide.db.gz',
                        'aide::log_level'    => 'warning',
@@ -47,7 +48,12 @@ describe 'aide class' do
       'aide::database_out'    => 'file:@@{DBDIR}/aide.db.new.gz',
       'aide::gzip_dbout'      => 'yes',
       'aide::report_urls'     => ['file:@@{LOGDIR}/aide.report'],
-      'aide::aliases'         => [
+      # The package-shipped /etc/aide.conf ships `report_url=file:@@{LOGDIR}/aide.log`
+      # (true on both EL8 AIDE 0.16 and EL9/EL10 AIDE 0.19). The new module manages
+      # individual lines and leaves that one untouched, so AIDE would also write
+      # aide.log. Purge it so the report goes only to the configured aide.report.
+      'aide::report_urls_purge' => ['file:@@{LOGDIR}/aide.log'],
+      'aide::aliases' => [
         'R = p+i+l+n+u+g+s+m+c+sha512',
         'NORMAL = R',
         'PERMS = p+i+u+g+acl',
@@ -143,6 +149,10 @@ describe 'aide class' do
         full_config(host).merge(
           'aide::syslog'    => true,
           'aide::logrotate' => true,
+          # Unlike the no-logging full_config above, keep the package-shipped
+          # report_url=file:@@{LOGDIR}/aide.log so AIDE writes aide.log for the
+          # logrotate test below to rotate.
+          'aide::report_urls_purge' => [],
         )
       end
 
