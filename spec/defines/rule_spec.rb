@@ -12,7 +12,7 @@ describe 'aide::rule' do
       it { is_expected.to compile.with_all_deps }
 
       it {
-        is_expected.to contain_file('/etc/aide.conf.d/test_rules.aide')
+        is_expected.to contain_file('/etc/aide.conf.d/test_rules_simp.conf')
           .with_content(%r{test_rules})
           .that_requires('Package[aide]')
       }
@@ -22,7 +22,7 @@ describe 'aide::rule' do
       it {
         is_expected.to contain_file_line('aide.conf include test_rules')
           .with_path('/etc/aide.conf')
-          .with_line('@@include /etc/aide.conf.d/test_rules.aide')
+          .with_line('@@include /etc/aide.conf.d/test_rules_simp.conf')
           .that_requires('Package[aide]')
       }
 

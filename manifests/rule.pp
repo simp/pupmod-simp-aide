@@ -45,7 +45,7 @@ define aide::rule (
       'require' => Package['aide'],
   })
 
-  file { "${ruledir}/${name}.aide":
+  file { "${ruledir}/${name}_simp.conf":
     ensure  => file,
     owner   => 'root',
     group   => 'root',
@@ -57,9 +57,9 @@ define aide::rule (
 
   file_line { "aide.conf include ${name}":
     path    => '/etc/aide.conf',
-    line    => "@@include ${ruledir}/${name}.aide",
-    match   => "^@@include ${ruledir}/${name}.aide\$",
-    require => [Package['aide'], File["${ruledir}/${name}.aide"]],
+    line    => "@@include ${ruledir}/${name}_simp.conf",
+    match   => "^@@include ${ruledir}/${name}_simp.conf\$",
+    require => [Package['aide'], File["${ruledir}/${name}_simp.conf"]],
     notify  => $aide::_db_notify,
   }
 
@@ -67,8 +67,8 @@ define aide::rule (
     simplib::assert_optional_dependency($module_name, 'simp/auditd')
 
     # Add auditing rules for the aide configuration.
-    auditd::rule { "${name}.aide":
-      content => "-w ${ruledir}/${name}.aide -p wa -k CFG_aide",
+    auditd::rule { "${name}_simp.conf":
+      content => "-w ${ruledir}/${name}_simp.conf -p wa -k CFG_aide",
     }
   }
 }
