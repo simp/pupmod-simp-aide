@@ -21,6 +21,8 @@
 - The catalog is noop-safe: `/etc/aide.conf` edits require `Package['aide']`, so
   a `--noop` run on a host without the package reports the pending changes
   instead of failing.
+- Point `issues_url` at GitHub Issues instead of the retired Atlassian instance.
+- Allow `simp-auditd` 10.x as an optional dependency.
 
 * Mon May 11 2026 Steven Pritchard <steve@sicura.us> - 8.0.0
 - Remove unmaintained Compliance Engine data
