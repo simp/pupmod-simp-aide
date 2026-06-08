@@ -1,6 +1,6 @@
 {
   "name": "simp-aide",
-  "version": "8.0.0",
+  "version": "9.0.0",
   "author": "SIMP Team",
   "summary": "manages AIDE",
   "license": "Apache-2.0",
@@ -23,10 +23,6 @@
     {
       "name": "puppetlabs/stdlib",
       "version_requirement": ">= 8.0.0 < 10.0.0"
-    },
-    {
-      "name": "puppetlabs/concat",
-      "version_requirement": ">= 6.4.0 < 10.0.0"
     }
   ],
   "simp": {
@@ -37,11 +33,11 @@
       },
       {
         "name": "simp/logrotate",
-        "version_requirement": ">= 6.5.0 < 7.0.0"
+        "version_requirement": ">= 6.5.0 < 8.0.0"
       },
       {
         "name": "simp/rsyslog",
-        "version_requirement": ">= 7.6.0 < 9.0.0"
+        "version_requirement": ">= 7.6.0 < 10.0.0"
       }
     ]
   },

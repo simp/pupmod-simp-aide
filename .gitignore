@@ -25,3 +25,5 @@ dist
 /log
 /doc
 /Gemfile.lock
+/Gemfile.local
+/CLAUDE.md

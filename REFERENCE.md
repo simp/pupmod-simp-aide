@@ -6,7 +6,7 @@
 
 ### Classes
 
-* [`aide`](#aide): Sets up a functioning AIDE system.  Many parameters were plucked directly from the aide.conf(5) man page.
+* [`aide`](#aide): Manage the AIDE package and, optionally, individual settings in /etc/aide.conf
 * [`aide::default_rules`](#aide--default_rules): A helper class to keep the main AIDE class relatively readable.
 * [`aide::logrotate`](#aide--logrotate): A class that sets up the logrotate state for aide.
 * [`aide::set_schedule`](#aide--set_schedule): Sets a schedule for AIDE to run a check on your system
@@ -14,10 +14,12 @@
 
 ### Defined types
 
-* [`aide::rule`](#aide--rule): This define adds rules to the AIDE configuration. Rules are added to /etc/aide.conf.d unless otherwise specified.
+* [`aide::rule`](#aide--rule): Add a rule file to the AIDE configuration
 
 ### Data types
 
+* [`Aide::LogLevel`](#Aide--LogLevel): The AIDE log_level (AIDE 0.17 and newer)
+* [`Aide::ReportLevel`](#Aide--ReportLevel): The AIDE report_level (AIDE 0.17 and newer)
 * [`Aide::Rotateperiod`](#Aide--Rotateperiod): The AIDE rotation period
 * [`Aide::SyslogFacility`](#Aide--SyslogFacility): The AIDE syslog facility
 
@@ -25,10 +27,15 @@
 
 ### <a name="aide"></a>`aide`
 
-Sets up a functioning AIDE system.
+Manage the AIDE package and, when explicitly told to, individual settings in
+``/etc/aide.conf``.
 
-Many parameters were plucked directly from the aide.conf(5)
-man page.
+A bare ``include aide`` only installs the ``aide`` package. It does **not**
+overwrite ``/etc/aide.conf``, manage the AIDE database, create directories, or
+schedule anything. Every configuration field is exposed as its own parameter
+that defaults to ``undef``; only the fields you set are managed (as individual
+lines via ``file_line``), leaving the rest of the package-provided
+configuration untouched.
 
 #### Parameters
 
@@ -36,14 +43,24 @@ The following parameters are available in the `aide` class:
 
 * [`dbdir`](#-aide--dbdir)
 * [`logdir`](#-aide--logdir)
-* [`database_name`](#-aide--database_name)
-* [`database_out_name`](#-aide--database_out_name)
+* [`database`](#-aide--database)
+* [`database_in`](#-aide--database_in)
+* [`database_out`](#-aide--database_out)
 * [`gzip_dbout`](#-aide--gzip_dbout)
 * [`verbose`](#-aide--verbose)
+* [`log_level`](#-aide--log_level)
+* [`report_level`](#-aide--report_level)
 * [`report_urls`](#-aide--report_urls)
+* [`report_urls_purge`](#-aide--report_urls_purge)
 * [`aliases`](#-aide--aliases)
+* [`aliases_purge`](#-aide--aliases_purge)
 * [`ruledir`](#-aide--ruledir)
 * [`rules`](#-aide--rules)
+* [`default_rules`](#-aide--default_rules)
+* [`manage_database`](#-aide--manage_database)
+* [`database_name`](#-aide--database_name)
+* [`database_out_name`](#-aide--database_out_name)
+* [`aide_init_timeout`](#-aide--aide_init_timeout)
 * [`enable`](#-aide--enable)
 * [`minute`](#-aide--minute)
 * [`hour`](#-aide--hour)
@@ -53,118 +70,229 @@ The following parameters are available in the `aide` class:
 * [`cron_method`](#-aide--cron_method)
 * [`systemd_calendar`](#-aide--systemd_calendar)
 * [`cron_command`](#-aide--cron_command)
-* [`default_rules`](#-aide--default_rules)
 * [`logrotate`](#-aide--logrotate)
 * [`rotate_period`](#-aide--rotate_period)
 * [`rotate_number`](#-aide--rotate_number)
 * [`syslog`](#-aide--syslog)
 * [`syslog_facility`](#-aide--syslog_facility)
 * [`auditd`](#-aide--auditd)
-* [`aide_init_timeout`](#-aide--aide_init_timeout)
 * [`package_ensure`](#-aide--package_ensure)
 
 ##### <a name="-aide--dbdir"></a>`dbdir`
 
-Data type: `Stdlib::Absolutepath`
+Data type: `Optional[Variant[Stdlib::Absolutepath, Enum['absent']]]`
 
-The AIDE database directory, DBDIR.
+Manage the ``@@define DBDIR`` line (the AIDE database directory).
 
-Default value: `'/var/lib/aide'`
+* Set to ``'absent'`` to remove the line entirely.
+
+Default value: `undef`
 
 ##### <a name="-aide--logdir"></a>`logdir`
 
-Data type: `Stdlib::Absolutepath`
+Data type: `Optional[Variant[Stdlib::Absolutepath, Enum['absent']]]`
 
-The AIDE log directory, LOGDIR.
+Manage the ``@@define LOGDIR`` line (the AIDE log directory).
 
-Default value: `'/var/log/aide'`
+* Set to ``'absent'`` to remove the line entirely.
 
-##### <a name="-aide--database_name"></a>`database_name`
+Default value: `undef`
 
-Data type: `String`
+##### <a name="-aide--database"></a>`database`
 
-The name of the database file within DBDIR.
+Data type: `Optional[Variant[Pattern[/\A\w+:/], Enum['absent']]]`
 
-Default value: `'aide.db.gz'`
+Manage the ``database`` line. This is the full value, e.g.
+``'file:@@{DBDIR}/aide.db.gz'``.
 
-##### <a name="-aide--database_out_name"></a>`database_out_name`
+* Only use on **AIDE 0.18 and older**. The ``database`` option was removed
+  in AIDE 0.19 in favor of ``database_in`` (see the ``database_in``
+  parameter).
+* Set to ``'absent'`` to remove the line entirely.
 
-Data type: `String`
+Default value: `undef`
 
-The name of the database out file within DBDIR.
+##### <a name="-aide--database_in"></a>`database_in`
 
-Default value: `'aide.db.new.gz'`
+Data type: `Optional[Variant[Pattern[/\A\w+:/], Enum['absent']]]`
+
+Manage the ``database_in`` line. This is the full value, e.g.
+``'file:@@{DBDIR}/aide.db.gz'``.
+
+* Only use on **AIDE 0.19 and newer**, where it replaces ``database``.
+* Set to ``'absent'`` to remove the line entirely.
+
+Default value: `undef`
+
+##### <a name="-aide--database_out"></a>`database_out`
+
+Data type: `Optional[Variant[Pattern[/\A\w+:/], Enum['absent']]]`
+
+Manage the ``database_out`` line. This is the full value, e.g.
+``'file:@@{DBDIR}/aide.db.new.gz'``.
+
+* Set to ``'absent'`` to remove the line entirely.
+
+Default value: `undef`
 
 ##### <a name="-aide--gzip_dbout"></a>`gzip_dbout`
 
-Data type: `Variant[Enum['yes','no'],Boolean]`
+Data type: `Optional[Enum['yes', 'no', 'absent']]`
 
-Whether to compress the output database.
+Manage the ``gzip_dbout`` line (whether to compress the output database).
 
-Default value: `'yes'`
+* Set to ``'absent'`` to remove the line entirely.
+
+Default value: `undef`
 
 ##### <a name="-aide--verbose"></a>`verbose`
 
-Data type:
+Data type: `Optional[Variant[Integer[0, 255], Enum['absent']]]`
 
-```puppet
-Variant[
-    Integer[0, 255],
-    Pattern[/\A(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\z/]
-  ]
-```
+Manage the ``verbose`` line (verbosity of the output messages).
 
-The verbosity of the output messages.
+* Only use on **AIDE 0.16 and older**. The ``verbose`` option was removed in
+  AIDE 0.17 in favor of a combination of ``log_level`` and ``report_level``
+  (see those parameters).
+* Set to ``'absent'`` to remove the line entirely.
 
-Default value: `5`
+Default value: `undef`
+
+##### <a name="-aide--log_level"></a>`log_level`
+
+Data type: `Optional[Variant[Aide::LogLevel, Enum['absent']]]`
+
+Manage the ``log_level`` line (the level of log messages).
+
+* Only use on **AIDE 0.17 and newer**, where (together with ``report_level``)
+  it replaces ``verbose``.
+* Set to ``'absent'`` to remove the line entirely.
+
+Default value: `undef`
+
+##### <a name="-aide--report_level"></a>`report_level`
+
+Data type: `Optional[Variant[Aide::ReportLevel, Enum['absent']]]`
+
+Manage the ``report_level`` line (the detail level of the report).
+
+* Only use on **AIDE 0.17 and newer**, where (together with ``log_level``)
+  it replaces ``verbose``.
+* Set to ``'absent'`` to remove the line entirely.
+
+Default value: `undef`
 
 ##### <a name="-aide--report_urls"></a>`report_urls`
 
-Data type: `Array[String]`
+Data type: `Optional[Array[Pattern[/\A\w+:/]]]`
 
-An array of report URLs. A syslog report URL will be
-automatically added to this list when ``syslog`` is
-set to ``true``.
+Manage a set of ``report_url`` lines. One line is written per array element.
+Because a report URL is an open-ended string, removals are handled by
+``report_urls_purge`` rather than a sentinel value.
 
-Default value: `[ 'file:@@{LOGDIR}/aide.report']`
+Default value: `undef`
+
+##### <a name="-aide--report_urls_purge"></a>`report_urls_purge`
+
+Data type: `Array[String[1]]`
+
+A list of ``report_url`` values to ensure are **absent** from the
+configuration. Each entry is the value only (without the ``report_url=``
+prefix).
+
+Default value: `[]`
 
 ##### <a name="-aide--aliases"></a>`aliases`
 
-Data type: `Array[String]`
+Data type: `Optional[Array[Pattern[/\A\S+\s*=.+/]]]`
 
-A set of common aliases that may be used within the AIDE
-configuration file. It is not recommended that these be changed.
+Manage AIDE group/macro definitions (e.g. ``'NORMAL = R'``). One line is
+written per array element, keyed on the group name to the left of the
+``=``. Because the right-hand side is an open-ended string, removals are
+handled by ``aliases_purge`` rather than a sentinel value.
+
+Default value: `undef`
+
+##### <a name="-aide--aliases_purge"></a>`aliases_purge`
+
+Data type: `Array[String[1]]`
+
+A list of group/macro names to ensure are **absent** from the
+configuration (e.g. ``['NORMAL', 'LSPP']``).
+
+Default value: `[]`
 
 ##### <a name="-aide--ruledir"></a>`ruledir`
 
 Data type: `Stdlib::Absolutepath`
 
-The directory to include for all additional rules.
+The directory in which `aide::rule` resources write their rule files and
+which is referenced by the ``@@include`` lines they add.
 
 Default value: `'/etc/aide.conf.d'`
 
 ##### <a name="-aide--rules"></a>`rules`
 
-Data type: `Variant[Hash,Array[String]]`
+Data type: `Hash`
 
 A hash of `aide::rule` resources to create.
-In previous versions, this parameter was used to specify an array
-of rule files to include.  This is now automatic. Passing an
-array to this parameter is deprecated, does nothing, and may be
-removed completely in a future release of this module.
 
 Default value: `{}`
+
+##### <a name="-aide--default_rules"></a>`default_rules`
+
+Data type: `Optional[Variant[Array[String[1]], String]]`
+
+When set, the curated default ruleset is written via
+`aide::default_rules`. Accepts a newline-joined string or an array of rule
+lines. When ``undef`` (the default) no default rules are managed.
+
+Default value: `undef`
+
+##### <a name="-aide--manage_database"></a>`manage_database`
+
+Data type: `Boolean`
+
+When ``true``, manage the AIDE database lifecycle: create the database/log
+directories, install ``/usr/local/sbin/update_aide``, and initialize/update
+the database. This is **disruptive** (it builds the AIDE database) and is
+therefore off by default.
+
+Default value: `false`
+
+##### <a name="-aide--database_name"></a>`database_name`
+
+Data type: `String[1]`
+
+The name of the database file within the database directory. Only consumed
+when ``manage_database`` is ``true``.
+
+Default value: `'aide.db.gz'`
+
+##### <a name="-aide--database_out_name"></a>`database_out_name`
+
+Data type: `String[1]`
+
+The name of the database out file within the database directory. Only
+consumed when ``manage_database`` is ``true``.
+
+Default value: `'aide.db.new.gz'`
+
+##### <a name="-aide--aide_init_timeout"></a>`aide_init_timeout`
+
+Data type: `Integer`
+
+Maximum time to wait in seconds for AIDE database initialization. Only
+consumed when ``manage_database`` is ``true``.
+
+Default value: `$facts['processors']['count'] ? { 1 => 1200, default => 300`
 
 ##### <a name="-aide--enable"></a>`enable`
 
 Data type: `Boolean`
 
-Whether or not to enable AIDE to run on a periodic schedule.
-Enabling this meets CCE-27222-9.
-
-This is 'false' by default since AIDE is quite stressful on the
-system and should be enabled after a good understanding of the
-performance impact.
+Whether to enable AIDE to run on a periodic schedule (via
+`aide::set_schedule`). Enabling this meets CCE-27222-9.
 
 Default value: `false`
 
@@ -241,13 +369,6 @@ Data type: `String[1]`
 
 Default value: `'/bin/nice -n 19 /usr/sbin/aide --check'`
 
-##### <a name="-aide--default_rules"></a>`default_rules`
-
-Data type: `Variant[Array[String[1]],String]`
-
-A set of default rules to include. If this is set, the internal
-defaults will be overridden.
-
 ##### <a name="-aide--logrotate"></a>`logrotate`
 
 Data type: `Boolean`
@@ -255,7 +376,7 @@ Data type: `Boolean`
 Whether to use logrotate. If set to 'true', Hiera can be
 used to set the variables in aide::logrotate
 
-Default value: `simplib::lookup('simp_options::logrotate', { 'default_value' => false})`
+Default value: `false`
 
 ##### <a name="-aide--rotate_period"></a>`rotate_period`
 
@@ -278,10 +399,11 @@ Default value: `4`
 Data type: `Boolean`
 
 Whether to send the AIDE output to syslog, in addition to the
-local report file. Use Hiera to set the parameters on aide::syslog
-appropriately if you don't care for the defaults.
+local report file. When ``true`` a ``report_url=syslog:<facility>`` line is
+managed in ``/etc/aide.conf``. Use Hiera to set the parameters on
+aide::syslog appropriately if you don't care for the defaults.
 
-Default value: `simplib::lookup('simp_options::syslog', { 'default_value' => false })`
+Default value: `false`
 
 ##### <a name="-aide--syslog_facility"></a>`syslog_facility`
 
@@ -297,15 +419,7 @@ Data type: `Boolean`
 
 Whether to add rules for changes to the aide configuration.
 
-Default value: `simplib::lookup('simp_options::auditd', { 'default_value' => false })`
-
-##### <a name="-aide--aide_init_timeout"></a>`aide_init_timeout`
-
-Data type: `Integer`
-
-Maximum time to wait in seconds for AIDE database initialization
-
-Default value: `$facts['processors']['count'] ? { 1 => 1200, default => 300`
+Default value: `false`
 
 ##### <a name="-aide--package_ensure"></a>`package_ensure`
 
@@ -313,7 +427,7 @@ Data type: `String`
 
 The ensure status of packages to be managed
 
-Default value: `simplib::lookup('simp_options::package_ensure', { 'default_value' => 'installed' })`
+Default value: `'installed'`
 
 ### <a name="aide--default_rules"></a>`aide::default_rules`
 
@@ -362,7 +476,7 @@ Data type: `Stdlib::Absolutepath`
 Directory containing the logs to be rotated.
 The logs in that directory are assumed to end with '.log'.
 
-Default value: `$::aide::logdir`
+Default value: `($aide::logdir =~ Stdlib::Absolutepath) ? { true => $aide::logdir, default => '/var/log/aide'`
 
 ##### <a name="-aide--logrotate--rotate_period"></a>`rotate_period`
 
@@ -370,7 +484,7 @@ Data type: `Aide::Rotateperiod`
 
 The logrotate period at which to rotate the logs.
 
-Default value: `$::aide::rotate_period`
+Default value: `$aide::rotate_period`
 
 ##### <a name="-aide--logrotate--rotate_number"></a>`rotate_number`
 
@@ -378,7 +492,7 @@ Data type: `Integer`
 
 The number of log files to preserve on the system.
 
-Default value: `$::aide::rotate_number`
+Default value: `$aide::rotate_number`
 
 ### <a name="aide--set_schedule"></a>`aide::set_schedule`
 
@@ -481,7 +595,7 @@ Data type: `Stdlib::Absolutepath`
 
 The AIDE log directory.
 
-Default value: `$::aide::logdir`
+Default value: `($aide::logdir =~ Stdlib::Absolutepath) ? { true => $aide::logdir, default => '/var/log/aide'`
 
 ## Defined types
 
@@ -489,6 +603,11 @@ Default value: `$::aide::logdir`
 
 This define adds rules to the AIDE configuration. Rules are
 added to /etc/aide.conf.d unless otherwise specified.
+
+Declaring an `aide::rule` is an explicit caller action, so it writes the rule
+file and adds an `@@include` line to `/etc/aide.conf` (via `file_line`). Both
+require `Package['aide']` so the configuration the package ships is in place
+first and the catalog stays noop-safe.
 
 #### Examples
 
@@ -536,12 +655,24 @@ Default value: `'/etc/aide.conf.d'`
 
 Data type: `String`
 
-Order of aide rules can be significant. This parameter can be used to
-control the order of included rule files.
+Order of aide rules can be significant. This parameter is retained for
+backwards compatibility; it no longer affects the generated configuration.
 
 Default value: `'999'`
 
 ## Data types
+
+### <a name="Aide--LogLevel"></a>`Aide::LogLevel`
+
+The AIDE log_level (AIDE 0.17 and newer)
+
+Alias of `Enum['error', 'warning', 'notice', 'info', 'compare', 'config', 'rule', 'phase', 'thread', 'debug', 'limit', 'trace']`
+
+### <a name="Aide--ReportLevel"></a>`Aide::ReportLevel`
+
+The AIDE report_level (AIDE 0.17 and newer)
+
+Alias of `Enum['minimal', 'summary', 'database_attributes', 'list_entries', 'changed_attributes', 'added_removed_entries', 'added_removed_attributes']`
 
 ### <a name="Aide--Rotateperiod"></a>`Aide::Rotateperiod`
 
