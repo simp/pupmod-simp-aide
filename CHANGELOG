@@ -23,6 +23,11 @@
   instead of failing.
 - Point `issues_url` at GitHub Issues instead of the retired Atlassian instance.
 - Allow `simp-auditd` 10.x as an optional dependency.
+- Added a `simp:defaults` Sicura Compliance Engine profile (under
+  `SIMP/compliance_profiles/`) that restores the full pre-9.0.0 configuration —
+  including database management — in one step. Activate it by setting Hiera
+  `compliance_engine::enforcement: [simp:defaults]`. The Compliance Engine is
+  not a hard dependency; `metadata.json` is unchanged.
 
 * Mon May 11 2026 Steven Pritchard <steve@sicura.us> - 8.0.0
 - Remove unmaintained Compliance Engine data

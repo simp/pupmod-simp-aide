@@ -25,6 +25,44 @@
 
 Sets up a functioning AIDE system.
 
+## Breaking changes in 9.0.0
+
+In 9.0.0 the module's blast radius was reduced: a bare `include aide` now
+installs **only** the `aide` package. It no longer overwrites `/etc/aide.conf`,
+writes default rules, creates the database/log/rule directories, or initializes
+the AIDE database. Everything beyond the package is opt-in.
+
+If you relied on the pre-9.0.0 behavior, there are two ways to restore it:
+
+* **Path 1 — set the parameters yourself.** Configure the individual
+  `/etc/aide.conf` parameters (and `manage_database => true`) as shown under
+  [Usage](#usage). Best when you want explicit, granular control of exactly
+  which settings the module manages.
+
+* **Path 2 — enforce the `simp:defaults` compliance profile.** Set a single
+  Hiera key:
+
+  ```yaml
+  compliance_engine::enforcement:
+    - simp:defaults
+  ```
+
+  This requires the [Sicura Compliance Engine][compliance_engine] Hiera backend
+  (it is **not** a hard dependency of this module — `metadata.json` is
+  unchanged). The profile, shipped in `SIMP/compliance_profiles/`, restores the
+  full pre-refactor configuration in one step: all `/etc/aide.conf` settings,
+  the curated default ruleset, the FIPS/non-FIPS group/macro aliases, and
+  **database management** (`manage_database`). Values are chosen per OS release
+  (e.g. `verbose`/`database` on EL8 vs `log_level`/`report_level`/`database_in`
+  on EL9+) and per FIPS state.
+
+  This profile is **opinionated for SIMP sites**: enforcing it initializes and
+  updates the AIDE database, which scans the filesystem and is I/O intensive on
+  the first run. Because the profile's values sit at middle Hiera priority, any
+  parameter you set explicitly in your own site Hiera still wins.
+
+[compliance_engine]: https://github.com/simp/rubygem-simp-compliance_engine
+
 ## Setup
 
 ### What aide affects
