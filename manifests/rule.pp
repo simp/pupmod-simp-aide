@@ -1,3 +1,5 @@
+# @summary Add a rule file to the AIDE configuration
+#
 # This define adds rules to the AIDE configuration. Rules are
 # added to /etc/aide.conf.d unless otherwise specified.
 #
@@ -55,10 +57,14 @@ define aide::rule (
     notify  => $aide::_db_notify,
   }
 
+  # Match on the rule file name rather than the full `${ruledir}` path so that
+  # changing `ruledir` updates the existing include line in place instead of
+  # leaving a stale one behind. The leading `/` anchor keeps the match scoped to
+  # this exact file name (so e.g. rule `foo` does not also match `barfoo`).
   file_line { "aide.conf include ${name}":
     path    => '/etc/aide.conf',
     line    => "@@include ${ruledir}/${name}_simp.conf",
-    match   => "^@@include ${ruledir}/${name}_simp.conf\$",
+    match   => "^@@include\\s+\\S*/${name}_simp.conf\$",
     require => [Package['aide'], File["${ruledir}/${name}_simp.conf"]],
     notify  => $aide::_db_notify,
   }

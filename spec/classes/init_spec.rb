@@ -177,7 +177,11 @@ describe 'aide' do
         let(:params) { { syslog: true } }
 
         it { is_expected.to contain_class('aide::syslog') }
-        it { is_expected.to contain_file_line('aide.conf report_url syslog').with_line('report_url=syslog:LOG_LOCAL6') }
+        it {
+          is_expected.to contain_file_line('aide.conf report_url syslog')
+            .with_line('report_url=syslog:LOG_LOCAL6')
+            .with_match('^report_url=syslog:')
+        }
       end
 
       context 'with manage_database => true' do

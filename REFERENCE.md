@@ -6,7 +6,7 @@
 
 ### Classes
 
-* [`aide`](#aide): Manage the AIDE package and, when explicitly told to, individual settings in ``/etc/aide.conf``.  A bare ``include aide`` only installs the `
+* [`aide`](#aide): Manage the AIDE package and, optionally, individual settings in /etc/aide.conf
 * [`aide::default_rules`](#aide--default_rules): A helper class to keep the main AIDE class relatively readable.
 * [`aide::logrotate`](#aide--logrotate): A class that sets up the logrotate state for aide.
 * [`aide::set_schedule`](#aide--set_schedule): Sets a schedule for AIDE to run a check on your system
@@ -14,7 +14,7 @@
 
 ### Defined types
 
-* [`aide::rule`](#aide--rule): This define adds rules to the AIDE configuration. Rules are added to /etc/aide.conf.d unless otherwise specified.  Declaring an `aide::rule` 
+* [`aide::rule`](#aide--rule): Add a rule file to the AIDE configuration
 
 ### Data types
 

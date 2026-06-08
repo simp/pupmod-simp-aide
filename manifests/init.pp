@@ -1,3 +1,5 @@
+# @summary Manage the AIDE package and, optionally, individual settings in /etc/aide.conf
+#
 # Manage the AIDE package and, when explicitly told to, individual settings in
 # ``/etc/aide.conf``.
 #
@@ -433,9 +435,14 @@ class aide (
   }
 
   if $syslog {
+    # syslog is a single managed value (unlike the open-ended `report_urls`
+    # array), so key the line on the `report_url=syslog:` prefix. This keeps the
+    # line idempotent and replaces it in place if `syslog_facility` changes
+    # rather than leaving a stale duplicate.
     file_line { 'aide.conf report_url syslog':
       path    => '/etc/aide.conf',
       line    => "report_url=syslog:${syslog_facility}",
+      match   => '^report_url=syslog:',
       require => Package['aide'],
       notify  => $_db_notify,
     }

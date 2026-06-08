@@ -23,6 +23,7 @@ describe 'aide::rule' do
         is_expected.to contain_file_line('aide.conf include test_rules')
           .with_path('/etc/aide.conf')
           .with_line('@@include /etc/aide.conf.d/test_rules_simp.conf')
+          .with_match('^@@include\s+\S*/test_rules_simp.conf$')
           .that_requires('Package[aide]')
       }
 
