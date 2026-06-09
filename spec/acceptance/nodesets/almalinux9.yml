@@ -2,10 +2,6 @@
 HOSTS:
   server-almalinux9.simp.beaker:
     roles:
-    - server
-    - default
-    - master
-    - simp_server
     - el9
     platform: el-9-x86_64
     box: almalinux/9
