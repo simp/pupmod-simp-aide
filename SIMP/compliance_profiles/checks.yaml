@@ -1,0 +1,258 @@
+# Sicura Compliance Engine checks that restore the AIDE configuration this
+# module managed by default *before* the v9 blast-radius refactor (where a bare
+# `include aide` installs only the package). One `puppet-class-parameter` check
+# per restored `aide` parameter; the `simp:defaults` profile lists them
+# directly (see profile-simp_defaults.yaml).
+#
+# Scope is intentionally limited to this module's own parameters.
+#
+# Version-specific options are split with `confine:`. The discriminator here is
+# the EL release (which determines the AIDE version), and `os.family: RedHat`
+# keeps the scope to all supported EL distros (RedHat/CentOS/Alma/Oracle/Rocky),
+# not just literal RedHat. The engine evaluates `confine` against node facts at
+# compile time and drops the non-matching checks.
+---
+version: 2.0.0
+checks:
+  # ---------------------------------------------------------------------------
+  # Common (all supported releases)
+  # ---------------------------------------------------------------------------
+  simp:defaults.aide.dbdir:
+    type: puppet-class-parameter
+    settings:
+      parameter: aide::dbdir
+      value: /var/lib/aide
+  simp:defaults.aide.logdir:
+    type: puppet-class-parameter
+    settings:
+      parameter: aide::logdir
+      value: /var/log/aide
+  simp:defaults.aide.database_out:
+    type: puppet-class-parameter
+    settings:
+      parameter: aide::database_out
+      value: 'file:@@{DBDIR}/aide.db.new.gz'
+  simp:defaults.aide.gzip_dbout:
+    type: puppet-class-parameter
+    settings:
+      parameter: aide::gzip_dbout
+      value: 'yes'
+  simp:defaults.aide.report_urls:
+    type: puppet-class-parameter
+    settings:
+      parameter: aide::report_urls
+      value:
+        - 'file:@@{LOGDIR}/aide.report'
+  # Restoring the pre-refactor behavior means initializing/updating the AIDE
+  # database; this is I/O intensive on first run.
+  simp:defaults.aide.manage_database:
+    type: puppet-class-parameter
+    settings:
+      parameter: aide::manage_database
+      value: true
+  simp:defaults.aide.default_rules:
+    type: puppet-class-parameter
+    settings:
+      parameter: aide::default_rules
+      value:
+        - '/boot   NORMAL'
+        - '/bin    NORMAL'
+        - '/sbin   NORMAL'
+        - '/lib    NORMAL'
+        - '/opt    NORMAL'
+        - '/usr    NORMAL'
+        - '/root   NORMAL'
+        - '!/usr/src'
+        - '!/usr/tmp'
+        - '/etc    PERMS'
+        - '!/etc/mtab'
+        - '!/etc/.*~'
+        - '/etc/exports  NORMAL'
+        - '/etc/fstab    NORMAL'
+        - '/etc/passwd   NORMAL'
+        - '/etc/group    NORMAL'
+        - '/etc/gshadow  NORMAL'
+        - '/etc/shadow   NORMAL'
+        - '/etc/security/opasswd   NORMAL'
+        - '/etc/hosts.allow   NORMAL'
+        - '/etc/hosts.deny    NORMAL'
+        - '/etc/sudoers NORMAL'
+        - '/etc/skel NORMAL'
+        - '/etc/logrotate.d NORMAL'
+        - '/etc/logrotate.simp.d NORMAL'
+        - '/etc/resolv.conf DATAONLY'
+        - '/etc/nscd.conf NORMAL'
+        - '/etc/securetty NORMAL'
+        - '/etc/profile NORMAL'
+        - '/etc/bashrc NORMAL'
+        - '/etc/bash_completion.d/ NORMAL'
+        - '/etc/login.defs NORMAL'
+        - '/etc/zprofile NORMAL'
+        - '/etc/zshrc NORMAL'
+        - '/etc/zlogin NORMAL'
+        - '/etc/zlogout NORMAL'
+        - '/etc/profile.d/ NORMAL'
+        - '/etc/X11/ NORMAL'
+        - '/etc/yum.conf NORMAL'
+        - '/etc/dnf/dnf.conf NORMAL'
+        - '/etc/yumex.conf NORMAL'
+        - '/etc/yumex.profiles.conf NORMAL'
+        - '/etc/yum/ NORMAL'
+        - '/etc/yum.repos.d/ NORMAL'
+        - '/var/log   LOG'
+        - '!/var/log/sa'
+        - '!/var/log/aide/aide.log'
+        - '!/var/log/aide/aide.report'
+        - '/etc/audit/ LSPP'
+        - '/etc/libaudit.conf LSPP'
+        - '/usr/sbin/stunnel LSPP'
+        - '/var/spool/at LSPP'
+        - '/etc/at.allow LSPP'
+        - '/etc/at.deny LSPP'
+        - '/etc/cron.allow LSPP'
+        - '/etc/cron.deny LSPP'
+        - '/etc/cron.d/ LSPP'
+        - '/etc/cron.daily/ LSPP'
+        - '/etc/cron.hourly/ LSPP'
+        - '/etc/cron.monthly/ LSPP'
+        - '/etc/cron.weekly/ LSPP'
+        - '/etc/crontab LSPP'
+        - '/var/spool/cron/root LSPP'
+        - '/etc/login.defs LSPP'
+        - '/etc/securetty LSPP'
+        - '/var/log/faillog LOG'
+        - '/var/log/lastlog LOG'
+        - '/etc/hosts LSPP'
+        - '/etc/sysconfig LSPP'
+        - '/etc/inittab LSPP'
+        - '/etc/grub LSPP'
+        - '/etc/rc.d LSPP'
+        - '/etc/ld.so.conf LSPP'
+        - '/etc/localtime LSPP'
+        - '/etc/sysctl.conf LSPP'
+        - '/etc/modprobe.d/00_simp_blacklist.conf LSPP'
+        - '/etc/pam.d LSPP'
+        - '/etc/security LSPP'
+        - '/etc/aliases LSPP'
+        - '/etc/postfix LSPP'
+        - '/etc/ssh/sshd_config LSPP'
+        - '/etc/ssh/ssh_config LSPP'
+        - '/etc/stunnel LSPP'
+        - '/etc/vsftpd.ftpusers LSPP'
+        - '/etc/vsftpd LSPP'
+        - '/etc/issue LSPP'
+        - '/etc/issue.net LSPP'
+        - '/etc/cups LSPP'
+        - '!/var/log/and-httpd'
+  # ---------------------------------------------------------------------------
+  # AIDE 0.16 (EL8): verbose + database
+  # ---------------------------------------------------------------------------
+  simp:defaults.aide.verbose.RedHat-8:
+    type: puppet-class-parameter
+    settings:
+      parameter: aide::verbose
+      value: 5
+    confine:
+      os.family: RedHat
+      os.release.major: '8'
+  simp:defaults.aide.database.RedHat-8:
+    type: puppet-class-parameter
+    settings:
+      parameter: aide::database
+      value: 'file:@@{DBDIR}/aide.db.gz'
+    confine:
+      os.family: RedHat
+      os.release.major: '8'
+  # ---------------------------------------------------------------------------
+  # AIDE 0.19.2 (EL9/EL10): log_level + report_level + database_in.
+  # `warning`/`summary` are the module's documented equivalents of `verbose=5`.
+  # ---------------------------------------------------------------------------
+  simp:defaults.aide.log_level.RedHat-9:
+    type: puppet-class-parameter
+    settings:
+      parameter: aide::log_level
+      value: warning
+    confine:
+      os.family: RedHat
+      os.release.major: '9'
+  simp:defaults.aide.log_level.RedHat-10:
+    type: puppet-class-parameter
+    settings:
+      parameter: aide::log_level
+      value: warning
+    confine:
+      os.family: RedHat
+      os.release.major: '10'
+  simp:defaults.aide.report_level.RedHat-9:
+    type: puppet-class-parameter
+    settings:
+      parameter: aide::report_level
+      value: summary
+    confine:
+      os.family: RedHat
+      os.release.major: '9'
+  simp:defaults.aide.report_level.RedHat-10:
+    type: puppet-class-parameter
+    settings:
+      parameter: aide::report_level
+      value: summary
+    confine:
+      os.family: RedHat
+      os.release.major: '10'
+  simp:defaults.aide.database_in.RedHat-9:
+    type: puppet-class-parameter
+    settings:
+      parameter: aide::database_in
+      value: 'file:@@{DBDIR}/aide.db.gz'
+    confine:
+      os.family: RedHat
+      os.release.major: '9'
+  simp:defaults.aide.database_in.RedHat-10:
+    type: puppet-class-parameter
+    settings:
+      parameter: aide::database_in
+      value: 'file:@@{DBDIR}/aide.db.gz'
+    confine:
+      os.family: RedHat
+      os.release.major: '10'
+  # ---------------------------------------------------------------------------
+  # Group/macro aliases. FIPS nodes may only use FIPS-approved hashes
+  # (sha1/sha256), so the alias set is split on the `fips_enabled` fact exactly
+  # as the module's pre-refactor Hiera data did.
+  # ---------------------------------------------------------------------------
+  simp:defaults.aide.aliases.non_fips:
+    type: puppet-class-parameter
+    settings:
+      parameter: aide::aliases
+      value:
+        - 'R = p+i+l+n+u+g+s+m+c+sha512'
+        - 'L = p+i+l+n+u+g+acl+xattrs'
+        - '> = p+i+l+n+u+g+S+acl+xattrs'
+        - 'ALLXTRAHASHES = sha1+sha256+sha512'
+        - 'EVERYTHING = R+ALLXTRAHASHES'
+        - 'NORMAL = R'
+        - 'DIR = p+i+n+u+g+acl+xattrs'
+        - 'PERMS = p+i+u+g+acl'
+        - 'LOG = >'
+        - 'LSPP = R'
+        - 'DATAONLY = p+n+u+g+s+acl+selinux+xattrs+sha512'
+    confine:
+      fips_enabled: false
+  simp:defaults.aide.aliases.fips:
+    type: puppet-class-parameter
+    settings:
+      parameter: aide::aliases
+      value:
+        - 'R = p+i+l+n+u+g+s+m+c+sha1+sha256'
+        - 'L = p+i+l+n+u+g+acl+xattrs'
+        - '> = p+i+l+n+u+g+S+acl+xattrs'
+        - 'ALLXTRAHASHES = sha1+sha256'
+        - 'EVERYTHING = R+ALLXTRAHASHES'
+        - 'NORMAL = R'
+        - 'DIR = p+i+n+u+g+acl+xattrs'
+        - 'PERMS = p+i+u+g+acl'
+        - 'LOG = >'
+        - 'LSPP = R'
+        - 'DATAONLY = p+n+u+g+s+acl+selinux+xattrs+sha1+sha256'
+    confine:
+      fips_enabled: true

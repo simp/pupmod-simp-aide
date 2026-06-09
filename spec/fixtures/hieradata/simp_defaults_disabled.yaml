@@ -1,0 +1,5 @@
+---
+# Compliance enforcement explicitly empty: the `compliance_engine::enforcement`
+# lookup_key backend returns nothing, so `aide` parameters fall back to their
+# (undef) module defaults -- the bare-include no-op.
+compliance_engine::enforcement: []

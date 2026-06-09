@@ -1,0 +1,31 @@
+# The `simp:defaults` Sicura Compliance Engine profile.
+#
+# Enforcing it (Hiera `compliance_engine::enforcement: [simp:defaults]`) restores
+# the AIDE configuration this module managed by default before the v9
+# blast-radius refactor, without re-introducing any auto-opt-in into the
+# module's own defaults. The profile lists its checks directly (no controls/CE
+# indirection); the checks are defined in checks.yaml. Version- and FIPS-specific
+# checks are all listed here -- the engine drops the non-matching ones via their
+# `confine:` keys at compile time.
+---
+version: 2.0.0
+profiles:
+  simp:defaults:
+    checks:
+      simp:defaults.aide.dbdir: true
+      simp:defaults.aide.logdir: true
+      simp:defaults.aide.database_out: true
+      simp:defaults.aide.gzip_dbout: true
+      simp:defaults.aide.report_urls: true
+      simp:defaults.aide.manage_database: true
+      simp:defaults.aide.default_rules: true
+      simp:defaults.aide.verbose.RedHat-8: true
+      simp:defaults.aide.database.RedHat-8: true
+      simp:defaults.aide.log_level.RedHat-9: true
+      simp:defaults.aide.log_level.RedHat-10: true
+      simp:defaults.aide.report_level.RedHat-9: true
+      simp:defaults.aide.report_level.RedHat-10: true
+      simp:defaults.aide.database_in.RedHat-9: true
+      simp:defaults.aide.database_in.RedHat-10: true
+      simp:defaults.aide.aliases.non_fips: true
+      simp:defaults.aide.aliases.fips: true
