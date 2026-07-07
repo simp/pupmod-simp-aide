@@ -199,6 +199,34 @@ describe 'aide' do
         }
       end
 
+      # The `$_db_notify` gating is a central safety invariant: editing an
+      # aide.conf line must trigger the (disruptive) database rebuild *only*
+      # when the module also owns the database (`manage_database => true`). On a
+      # bare config edit the notify resolves to undef, so no rebuild fires.
+      # Neither direction of this wiring was previously asserted.
+      context 'database-rebuild notification gating' do
+        context 'a config edit with manage_database => false (default)' do
+          let(:params) { { dbdir: '/var/lib/aide' } }
+
+          it { is_expected.to compile.with_all_deps }
+          it { is_expected.not_to contain_exec('update_aide_db') }
+
+          it 'does not notify a rebuild from the managed aide.conf line' do
+            expect(catalogue.resource('File_line', 'aide.conf DBDIR')[:notify]).to be_nil
+          end
+        end
+
+        context 'a config edit with manage_database => true' do
+          let(:params) { { dbdir: '/var/lib/aide', manage_database: true } }
+
+          it { is_expected.to compile.with_all_deps }
+
+          it 'notifies the database rebuild from the managed aide.conf line' do
+            is_expected.to contain_file_line('aide.conf DBDIR').that_notifies('Exec[update_aide_db]')
+          end
+        end
+      end
+
       context 'with enable => true' do
         let(:params) { { enable: true } }
 
