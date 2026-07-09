@@ -21,7 +21,7 @@ class aide::logrotate (
   simplib::assert_optional_dependency($module_name, 'simp/logrotate')
 
   logrotate::rule { 'aide':
-    log_files                 => [ "${logdir}/*.log" ],
+    log_files                 => ["${logdir}/*.log"],
     missingok                 => true,
     rotate_period             => $rotate_period,
     rotate                    => $rotate_number,

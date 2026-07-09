@@ -40,11 +40,11 @@ define aide::rule (
   include 'aide'
 
   ensure_resource('file', $ruledir, {
-      'ensure'  => 'directory',
-      'owner'   => 'root',
-      'group'   => 'root',
-      'mode'    => '0700',
-      'require' => Package['aide'],
+    'ensure'  => 'directory',
+    'owner'   => 'root',
+    'group'   => 'root',
+    'mode'    => '0700',
+    'require' => Package['aide'],
   })
 
   file { "${ruledir}/${name}_simp.conf":
