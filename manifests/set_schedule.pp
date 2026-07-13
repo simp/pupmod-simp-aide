@@ -112,7 +112,7 @@ class aide::set_schedule (
         "set entry[. = '${command}'][user = 'root']/time/month '${month}",
         "set entry[. = '${command}'][user = 'root']/time/dayofweek '${weekday}"
       ],
-      onlyif  =>  "match entry[. =~ ${_regex}][user = 'root'] size == 1"
+      onlyif  => "match entry[. =~ ${_regex}][user = 'root'] size == 1"
     }
 
     # If it does not exist, create it
@@ -127,7 +127,7 @@ class aide::set_schedule (
         "set entry[last()]/time/dayofweek '${weekday}'",
         'set entry[last()]/user "root"'
       ],
-      onlyif  =>  "match entry[. =~ ${_regex}][user = 'root'] size == 0"
+      onlyif  => "match entry[. =~ ${_regex}][user = 'root'] size == 0"
     }
 
     # If more than one exists, remove all of them and recreate it correctly
@@ -143,7 +143,7 @@ class aide::set_schedule (
         "set entry[last()]/time/dayofweek '${weekday}'",
         'set entry[last()]/user "root"'
       ],
-      onlyif  =>  "match entry[. =~ ${_regex}][user = 'root'] size > 1"
+      onlyif  => "match entry[. =~ ${_regex}][user = 'root'] size > 1"
     }
   }
   else {
