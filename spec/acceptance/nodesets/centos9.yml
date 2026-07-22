@@ -1,16 +1,17 @@
 ---
 HOSTS:
-  server-oel8.simp.beaker:
+  centos9:
     roles:
-    - server
     - default
     - master
-    - simp_server
-    - el8
-    platform: el-8-x86_64
-    box: generic/oracle8
+    - server
+    - el9
+    platform: el-9-x86_64
+    box: generic/centos9s
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
-    family: sicura-image-build/oracle-linux-8
+    vagrant_memsize: 2048
+    vagrant_cpus: 2
+    family: centos-cloud/centos-stream-9
     gce_machine_type: n1-standard-2
 CONFIG:
   log_level: verbose
