@@ -2,10 +2,7 @@
 HOSTS:
   server-el8.simp.beaker:
     roles:
-    - server
-    - default
-    - master
-    - simp_server
+    - el8
     platform: el-8-x86_64
     box: generic/rhel8
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
@@ -15,4 +12,4 @@ CONFIG:
   validate: false
   log_level: verbose
   type: aio
-  puppet_collection: <%= ENV.fetch('BEAKER_PUPPET_COLLECTION', '~') %>
+  puppet_collection: <%= ENV.fetch('BEAKER_PUPPET_COLLECTION', 'openvox8') %>

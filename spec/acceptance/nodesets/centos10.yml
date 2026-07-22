@@ -2,11 +2,7 @@
 HOSTS:
   server-centos10.simp.beaker:
     roles:
-    - server
-    - default
-    - master
-    - simp_server
-    - el8
+    - el10
     platform: el-10-x86_64
     box: generic/centos10
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"

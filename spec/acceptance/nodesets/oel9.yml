@@ -2,13 +2,10 @@
 HOSTS:
   server-oel9.simp.beaker:
     roles:
-    - server
-    - default
-    - master
-    - simp_server
     - el9
     platform: el-9-x86_64
-    box: generic/oracle9
+    box: oraclelinux/9
+    box_url: https://oracle.github.io/vagrant-projects/boxes/oraclelinux/9.json
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
     vagrant_memsize: 2048
     vagrant_cpus: 2
@@ -17,4 +14,4 @@ HOSTS:
 CONFIG:
   log_level: verbose
   type: aio
-  puppet_collection: <%= ENV.fetch('BEAKER_PUPPET_COLLECTION', '~') %>
+  puppet_collection: <%= ENV.fetch('BEAKER_PUPPET_COLLECTION', 'openvox8') %>
