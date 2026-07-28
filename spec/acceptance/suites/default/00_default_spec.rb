@@ -91,6 +91,10 @@ describe 'aide class' do
         apply_manifest_on(host, manifest, catch_changes: true)
       end
 
+      it 'reports no pending changes in noop mode after convergence' do
+        apply_manifest_on(host, manifest, catch_changes: true, noop: true)
+      end
+
       it "'aide' package should be installed" do
         check_for_package(host, 'aide')
       end
@@ -114,6 +118,10 @@ describe 'aide class' do
 
       it 'is idempotent' do
         apply_manifest_on(host, manifest, catch_changes: true)
+      end
+
+      it 'reports no pending changes in noop mode after convergence' do
+        apply_manifest_on(host, manifest, catch_changes: true, noop: true)
       end
 
       it 'generates the database' do
