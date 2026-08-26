@@ -106,11 +106,11 @@ class aide::set_schedule (
     augeas { 'aide_schedule':
       context => '/files/etc/crontab',
       changes => [
-        "set entry[. = '${command}'][user = 'root']/time/minute '${minute}",
-        "set entry[. = '${command}'][user = 'root']/time/hour '${hour}",
-        "set entry[. = '${command}'][user = 'root']/time/dayofmonth '${monthday}",
-        "set entry[. = '${command}'][user = 'root']/time/month '${month}",
-        "set entry[. = '${command}'][user = 'root']/time/dayofweek '${weekday}"
+        "set entry[. = '${command}'][user = 'root']/time/minute '${minute}'",
+        "set entry[. = '${command}'][user = 'root']/time/hour '${hour}'",
+        "set entry[. = '${command}'][user = 'root']/time/dayofmonth '${monthday}'",
+        "set entry[. = '${command}'][user = 'root']/time/month '${month}'",
+        "set entry[. = '${command}'][user = 'root']/time/dayofweek '${weekday}'"
       ],
       onlyif  => "match entry[. =~ ${_regex}][user = 'root'] size == 1"
     }
