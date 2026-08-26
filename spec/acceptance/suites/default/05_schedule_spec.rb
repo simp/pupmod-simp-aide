@@ -42,13 +42,34 @@ describe 'aide scheduling' do
         output = on(host, 'puppet resource service puppet_aide.timer --to_yaml').stdout
         service = YAML.safe_load(output)['service']['puppet_aide.timer']
         expect(service['ensure']).to eq 'running'
-        expect(service['enable']).to eq 'true'
+        # `enable` is deliberately not asserted via puppet resource: both units
+        # ship no [Install] section, so they are static and the systemd
+        # provider reports enable => 'true' unconditionally (see the cron-mode
+        # notes below). Real enablement state is asserted on `systemctl
+        # is-enabled` stdout instead -- never exit codes, which are 0 for
+        # static units -- following the pattern from
+        # https://github.com/simp/pupmod-simp-pupmod/pull/253.
       end
 
-      it 'has puppet_aide.service loaded' do
-        output = on(host, 'puppet resource service puppet_aide.service --to_yaml').stdout
-        service = YAML.safe_load(output)['service']['puppet_aide.service']
-        expect(service['enable']).to eq 'true'
+      it 'has puppet_aide.timer loaded into systemd' do
+        result = on(host, 'systemctl list-timers --all --no-legend puppet_aide.timer').stdout
+        expect(result).to include('puppet_aide.timer')
+      end
+
+      # These two pin the current, known-deficient enablement state: 'static'
+      # means no [Install] section, so the timer is never linked into
+      # timers.target.wants and will not come back after a reboot. When
+      # https://github.com/simp/pupmod-simp-aide/issues/169 adds [Install]
+      # sections, these will fail on that improvement and should be updated
+      # (timer -> 'enabled').
+      it 'reports puppet_aide.timer as static (no [Install] section, #169)' do
+        result = on(host, 'systemctl is-enabled puppet_aide.timer', accept_all_exit_codes: true)
+        expect(result.stdout.strip).to eq 'static'
+      end
+
+      it 'reports puppet_aide.service as static (no [Install] section, #169)' do
+        result = on(host, 'systemctl is-enabled puppet_aide.service', accept_all_exit_codes: true)
+        expect(result.stdout.strip).to eq 'static'
       end
     end
 
@@ -85,16 +106,15 @@ describe 'aide scheduling' do
         # https://github.com/simp/pupmod-simp-aide/issues/169.
       end
 
-      it 'does not have puppet_aide.service loaded' do
-        output = on(host, 'puppet resource service puppet_aide.service --to_yaml').stdout
-        service = YAML.safe_load(output)['service']['puppet_aide.service']
-        expect(service['ensure']).to eq 'stopped'
-        # NOTE: the oneshot unit has no [Install] section either, so it is also
-        # static and `enable` always reports 'true'; `enable => false` cannot be
-        # enforced on a static unit. Assert only the deterministic guarantee
-        # (stopped); tracked with the timer fix in
-        # https://github.com/simp/pupmod-simp-aide/issues/169.
-      end
+      # No assertion on puppet_aide.service (the oneshot): nothing in the
+      # catalog manages its run state (systemd::timer applies active/enable to
+      # the timer unit only), and a oneshot reports `running` while
+      # `aide --check` executes -- an `ensure` check here would measure
+      # ambient state and flake if the live defaults-context timer fired
+      # mid-suite. The enforced guarantee is the stopped timer above: a
+      # stopped timer never triggers the oneshot. (Its `enable` is also
+      # unassertable while the unit is static -- see
+      # https://github.com/simp/pupmod-simp-aide/issues/169.)
 
       it 'has the root cron entry' do
         output = on(host, 'puppet resource cron aide_schedule --to_yaml').stdout
@@ -138,13 +158,7 @@ describe 'aide scheduling' do
         # stopped in cron modes but stays static, so `enable` cannot be false.
       end
 
-      it 'does not have puppet_aide.service loaded' do
-        output = on(host, 'puppet resource service puppet_aide.service --to_yaml').stdout
-        service = YAML.safe_load(output)['service']['puppet_aide.service']
-        expect(service['ensure']).to eq 'stopped'
-        # NOTE: see the root-mode service note above and
-        # https://github.com/simp/pupmod-simp-aide/issues/169.
-      end
+      # No assertion on puppet_aide.service -- see the root-mode note above.
 
       it 'does not have the root cron entry' do
         output = on(host, 'puppet resource cron aide_schedule --to_yaml').stdout
@@ -179,7 +193,10 @@ describe 'aide scheduling' do
       end
 
       it 'changes the current entry' do
-        on(host, 'sed -i "s/22/21/g" /etc/crontab')
+        # Anchored to the aide entry: an unanchored global s/22/21/ would also
+        # rewrite any unrelated '22' elsewhere in /etc/crontab, and the
+        # aide-filtered assertions below would never detect that corruption.
+        on(host, %q{sed -i -E 's|^22 (.*aide --check)$|21 \1|' /etc/crontab})
       end
 
       it 'runs puppet' do # rubocop:disable RSpec/RepeatedExample, RSpec/RepeatedDescription
