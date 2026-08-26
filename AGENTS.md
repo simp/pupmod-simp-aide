@@ -2,7 +2,7 @@
 
 This file provides guidance to AI agents when working with code in this repository.
 
-`simp-aide` is a SIMP Puppet module that manages AIDE (Advanced Intrusion Detection Environment). It targets EL8/9/10 (RedHat/CentOS/Alma/Oracle/Rocky) and OpenVox/Puppet 8.
+`simp-aide` is a SIMP Puppet module that manages AIDE (Advanced Intrusion Detection Environment). It targets EL8/9/10 (RedHat/Alma/Oracle/Rocky) plus CentOS 9/10, on OpenVox 8.
 
 ## Ruby / toolchain (read first)
 
