@@ -230,13 +230,23 @@ describe 'aide' do
           it { is_expected.not_to contain_file_line('aide.conf database_in').that_notifies('Exec[update_aide_db]') }
         end
 
-        context 'a config edit with manage_database => true' do
+        context 'a DBDIR edit with manage_database => true' do
           let(:params) { { dbdir: '/var/lib/aide', manage_database: true } }
 
           it { is_expected.to compile.with_all_deps }
 
           it 'notifies the database rebuild from the managed aide.conf line' do
             is_expected.to contain_file_line('aide.conf DBDIR').that_notifies('Exec[update_aide_db]')
+          end
+        end
+
+        context 'a database_in edit with manage_database => true' do
+          let(:params) { { database_in: 'file:@@{DBDIR}/aide.db.gz', manage_database: true } }
+
+          it { is_expected.to compile.with_all_deps }
+
+          it 'notifies the database rebuild from the managed aide.conf line' do
+            is_expected.to contain_file_line('aide.conf database_in').that_notifies('Exec[update_aide_db]')
           end
         end
       end
