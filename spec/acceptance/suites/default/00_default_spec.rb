@@ -82,6 +82,17 @@ describe 'aide class' do
         install_package(host, 'psmisc')
       end
 
+      # Clean-state noop preview (must stay the FIRST apply in the suite):
+      # a bare `include aide` under --noop on a fresh node must compile and
+      # evaluate without error (exit 0 or 2, never 1/4/6). This guards the
+      # `puppet apply --noop` preview path. A post-convergence noop check is
+      # deliberately NOT included anywhere in this suite: once a catalog has
+      # converged (catch_changes passed), --noop trivially exits 0, so such a
+      # check cannot fail and adds no coverage.
+      it 'previews with no errors under --noop from a clean state' do
+        apply_manifest_on(host, manifest, noop: true, catch_failures: true)
+      end
+
       it 'applies with no errors' do
         set_hieradata_on(host, hieradata)
         apply_manifest_on(host, manifest, catch_failures: true)

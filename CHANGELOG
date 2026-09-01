@@ -1,3 +1,8 @@
+* Wed Aug 26 2026 Hazel Caballero <hazel@sicura.us> - 9.0.3
+- Fix unterminated quotes in the single-entry update path of aide::set_schedule's
+  augeas changes (worked only because augeas tolerates a missing closing delimiter
+  at end-of-string)
+
 * Mon Aug 24 2026 Steven Pritchard <steve@sicura.us> - 9.0.2
 - [puppetsync] Update metadata.json dependency ranges from the Forge
 
