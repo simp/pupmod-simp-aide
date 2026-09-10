@@ -1,3 +1,6 @@
+* Thu Sep 10 2026 Chris Tessmer <chris.tessmer@onyxpoint.com> - 9.0.3
+- Fix malformed Hiera yaml syntax
+
 * Mon Aug 24 2026 Steven Pritchard <steve@sicura.us> - 9.0.2
 - [puppetsync] Update metadata.json dependency ranges from the Forge
 
