@@ -2,3 +2,4 @@
 # This module ships no auto-applied data. A bare `include aide` installs the
 # package only. See the README for example `aide::aliases` / `aide::default_rules`
 # values to opt into via Hiera.
+{}
