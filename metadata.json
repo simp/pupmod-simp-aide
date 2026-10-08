@@ -1,6 +1,6 @@
 {
   "name": "simp-aide",
-  "version": "9.0.3",
+  "version": "9.1.0",
   "author": "SIMP Team",
   "summary": "manages AIDE",
   "license": "Apache-2.0",
@@ -29,7 +29,7 @@
     "optional_dependencies": [
       {
         "name": "simp/auditd",
-        "version_requirement": ">= 8.5.0 < 11.0.0"
+        "version_requirement": ">= 8.5.0 < 12.0.0"
       },
       {
         "name": "simp/logrotate",
@@ -37,7 +37,7 @@
       },
       {
         "name": "simp/rsyslog",
-        "version_requirement": ">= 7.6.0 < 10.0.0"
+        "version_requirement": ">= 7.6.0 < 11.0.0"
       }
     ]
   },
@@ -85,7 +85,7 @@
   "requirements": [
     {
       "name": "openvox",
-      "version_requirement": ">= 8.0.0 < 9.0.0"
+      "version_requirement": ">= 8.0.0 < 10.0.0"
     }
   ]
 }
