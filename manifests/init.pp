@@ -1,10 +1,11 @@
-# @summary Manage the AIDE package and, optionally, individual settings in /etc/aide.conf
+# @summary Manage the AIDE package and, optionally, individual settings in the AIDE configuration file
 #
 # Manage the AIDE package and, when explicitly told to, individual settings in
-# ``/etc/aide.conf``.
+# the AIDE configuration file (``/etc/aide.conf`` on EL, ``/etc/aide/aide.conf``
+# on Ubuntu; see ``config_file``).
 #
-# A bare ``include aide`` only installs the ``aide`` package. It does **not**
-# overwrite ``/etc/aide.conf``, manage the AIDE database, create directories, or
+# A bare ``include aide`` only installs the AIDE package(s). It does **not**
+# overwrite the configuration file, manage the AIDE database, create directories, or
 # schedule anything. Every configuration field is exposed as its own parameter
 # that defaults to ``undef``; only the fields you set are managed (as individual
 # lines via ``file_line``), leaving the rest of the package-provided
@@ -33,7 +34,8 @@
 #   Manage the ``database_in`` line. This is the full value, e.g.
 #   ``'file:@@{DBDIR}/aide.db.gz'``.
 #
-#   * Only use on **AIDE 0.19 and newer**, where it replaces ``database``.
+#   * Only use on **AIDE 0.17 and newer** (Ubuntu's packaged configuration
+#     already uses it). It replaces ``database``, which AIDE 0.19 removed.
 #   * Set to ``'absent'`` to remove the line entirely.
 #
 # @param database_out
@@ -89,9 +91,21 @@
 #   A list of group/macro names to ensure are **absent** from the
 #   configuration (e.g. ``['NORMAL', 'LSPP']``).
 #
+# @param config_file
+#   The AIDE configuration file whose settings this class manages, and to
+#   which `aide::rule` adds its ``@@include`` lines.
+#
+# @param package_name
+#   The package(s) to install. On Ubuntu, the configuration file and the
+#   ``aideinit`` helper are in ``aide-common``, which ``aide`` only recommends.
+#
 # @param ruledir
 #   The directory in which `aide::rule` resources write their rule files and
 #   which is referenced by the ``@@include`` lines they add.
+#
+# @param ruledir_attributes
+#   The ``owner``, ``group`` and ``mode`` of ``ruledir``, which `aide::rule`
+#   creates when it writes a rule file.
 #
 # @param rules
 #   A hash of `aide::rule` resources to create.
@@ -106,6 +120,24 @@
 #   directories, install ``/usr/local/sbin/update_aide``, and initialize/update
 #   the database. This is **disruptive** (it builds the AIDE database) and is
 #   therefore off by default.
+#
+# @param database_update_command
+#   The command that initializes or updates the AIDE database when
+#   ``manage_database`` is ``true``.
+#
+#   * When ``undef``, the module installs ``/usr/local/sbin/update_aide`` and
+#     runs it.
+#   * Ubuntu sets this to its ``aideinit`` helper, which runs AIDE as the
+#     ``_aide`` user where the package expects it and copies the new database
+#     into place.
+#
+# @param database_dir_attributes
+#   The ``owner``, ``group`` and ``mode`` of the database directory. Only
+#   consumed when ``manage_database`` is ``true``.
+#
+# @param logdir_attributes
+#   The ``owner``, ``group`` and ``mode`` of the log directory. Only consumed
+#   when ``manage_database`` is ``true``.
 #
 # @param database_name
 #   The name of the database file within the database directory. Only consumed
@@ -169,7 +201,7 @@
 # @param syslog
 #   Whether to send the AIDE output to syslog, in addition to the
 #   local report file. When ``true`` a ``report_url=syslog:<facility>`` line is
-#   managed in ``/etc/aide.conf``. Use Hiera to set the parameters on
+#   managed in ``config_file``. Use Hiera to set the parameters on
 #   aide::syslog appropriately if you don't care for the defaults.
 #
 # @param syslog_facility
@@ -198,16 +230,24 @@ class aide (
   Optional[Array[Pattern[/\A\S+\s*=.+/]]]                 $aliases           = undef,
   Array[String[1]]                                        $aliases_purge     = [],
 
+  # Package and configuration file locations
+  Stdlib::Absolutepath                     $config_file  = '/etc/aide.conf',
+  Variant[String[1], Array[String[1], 1]]  $package_name = 'aide',
+
   # Rules
-  Stdlib::Absolutepath                     $ruledir       = '/etc/aide.conf.d',
-  Hash                                     $rules         = {},
-  Optional[Variant[Array[String[1]], String]] $default_rules = undef,
+  Stdlib::Absolutepath                     $ruledir            = '/etc/aide.conf.d',
+  Aide::DirAttributes                      $ruledir_attributes = { 'owner' => 'root', 'group' => 'root', 'mode' => '0700' },
+  Hash                                     $rules              = {},
+  Optional[Variant[Array[String[1]], String]] $default_rules      = undef,
 
   # Database bootstrap (disruptive; off by default)
-  Boolean                                  $manage_database   = false,
-  String[1]                                $database_name     = 'aide.db.gz',
-  String[1]                                $database_out_name = 'aide.db.new.gz',
-  Integer                                  $aide_init_timeout = $facts['processors']['count'] ? { 1 => 1200, default => 300 },
+  Boolean                                  $manage_database         = false,
+  Optional[String[1]]                      $database_update_command = undef,
+  Aide::DirAttributes                      $database_dir_attributes = { 'owner' => 'root', 'group' => 'root', 'mode' => '0700' },
+  Aide::DirAttributes                      $logdir_attributes       = { 'owner' => 'root', 'group' => 'root', 'mode' => '0700' },
+  String[1]                                $database_name           = 'aide.db.gz',
+  String[1]                                $database_out_name       = 'aide.db.new.gz',
+  Integer                                  $aide_init_timeout       = $facts['processors']['count'] ? { 1 => 1200, default => 300 },
 
   # Scheduling
   Boolean                                  $enable           = false,
@@ -242,7 +282,7 @@ class aide (
   }
 
   # CCE-27024-9
-  package { 'aide':
+  package { $package_name:
     ensure => $package_ensure,
   }
 
@@ -278,16 +318,16 @@ class aide (
 
   if $auditd {
     auditd::rule { 'aide':
-      content => '-w /etc/aide.conf -p wa -k CFG_aide',
+      content => "-w ${config_file} -p wa -k CFG_aide",
     }
   }
 
   # ---------------------------------------------------------------------------
-  # Individual /etc/aide.conf field management. Each field is only touched when
+  # Individual aide.conf field management. Each field is only touched when
   # its parameter is set; an 'absent' sentinel removes the line.
   #
-  # Every line is managed with `file_line` and requires `Package['aide']`. The
-  # package ships `/etc/aide.conf`, so this both orders the edits after the
+  # Every line is managed with `file_line` and requires the package(s). The
+  # package ships `$config_file`, so this both orders the edits after the
   # package install and keeps the catalog noop-safe: on a node where the
   # package (and therefore the file) does not yet exist, a `--noop` run simply
   # reports the pending change instead of failing.
@@ -296,11 +336,11 @@ class aide (
     $_dbdir_ensure = $dbdir ? { 'absent' => 'absent', default => 'present' }
     file_line { 'aide.conf DBDIR':
       ensure            => $_dbdir_ensure,
-      path              => '/etc/aide.conf',
+      path              => $config_file,
       line              => "@@define DBDIR ${dbdir}",
       match             => '^@@define DBDIR\b',
       match_for_absence => true,
-      require           => Package['aide'],
+      require           => Package[$package_name],
       notify            => $_db_notify,
     }
   }
@@ -309,11 +349,11 @@ class aide (
     $_logdir_ensure = $logdir ? { 'absent' => 'absent', default => 'present' }
     file_line { 'aide.conf LOGDIR':
       ensure            => $_logdir_ensure,
-      path              => '/etc/aide.conf',
+      path              => $config_file,
       line              => "@@define LOGDIR ${logdir}",
       match             => '^@@define LOGDIR\b',
       match_for_absence => true,
-      require           => Package['aide'],
+      require           => Package[$package_name],
       notify            => $_db_notify,
     }
   }
@@ -324,11 +364,11 @@ class aide (
     $_database_ensure = $database ? { 'absent' => 'absent', default => 'present' }
     file_line { 'aide.conf database':
       ensure            => $_database_ensure,
-      path              => '/etc/aide.conf',
+      path              => $config_file,
       line              => "database=${database}",
       match             => '^database=',
       match_for_absence => true,
-      require           => Package['aide'],
+      require           => Package[$package_name],
       notify            => $_db_notify,
     }
   }
@@ -337,11 +377,11 @@ class aide (
     $_database_in_ensure = $database_in ? { 'absent' => 'absent', default => 'present' }
     file_line { 'aide.conf database_in':
       ensure            => $_database_in_ensure,
-      path              => '/etc/aide.conf',
+      path              => $config_file,
       line              => "database_in=${database_in}",
       match             => '^database_in=',
       match_for_absence => true,
-      require           => Package['aide'],
+      require           => Package[$package_name],
       notify            => $_db_notify,
     }
   }
@@ -350,11 +390,11 @@ class aide (
     $_database_out_ensure = $database_out ? { 'absent' => 'absent', default => 'present' }
     file_line { 'aide.conf database_out':
       ensure            => $_database_out_ensure,
-      path              => '/etc/aide.conf',
+      path              => $config_file,
       line              => "database_out=${database_out}",
       match             => '^database_out=',
       match_for_absence => true,
-      require           => Package['aide'],
+      require           => Package[$package_name],
       notify            => $_db_notify,
     }
   }
@@ -363,11 +403,11 @@ class aide (
     $_gzip_dbout_ensure = $gzip_dbout ? { 'absent' => 'absent', default => 'present' }
     file_line { 'aide.conf gzip_dbout':
       ensure            => $_gzip_dbout_ensure,
-      path              => '/etc/aide.conf',
+      path              => $config_file,
       line              => "gzip_dbout=${gzip_dbout}",
       match             => '^gzip_dbout=',
       match_for_absence => true,
-      require           => Package['aide'],
+      require           => Package[$package_name],
       notify            => $_db_notify,
     }
   }
@@ -378,11 +418,11 @@ class aide (
     $_verbose_ensure = $verbose ? { 'absent' => 'absent', default => 'present' }
     file_line { 'aide.conf verbose':
       ensure            => $_verbose_ensure,
-      path              => '/etc/aide.conf',
+      path              => $config_file,
       line              => "verbose=${verbose}",
       match             => '^verbose=',
       match_for_absence => true,
-      require           => Package['aide'],
+      require           => Package[$package_name],
       notify            => $_db_notify,
     }
   }
@@ -391,11 +431,11 @@ class aide (
     $_log_level_ensure = $log_level ? { 'absent' => 'absent', default => 'present' }
     file_line { 'aide.conf log_level':
       ensure            => $_log_level_ensure,
-      path              => '/etc/aide.conf',
+      path              => $config_file,
       line              => "log_level=${log_level}",
       match             => '^log_level=',
       match_for_absence => true,
-      require           => Package['aide'],
+      require           => Package[$package_name],
       notify            => $_db_notify,
     }
   }
@@ -404,11 +444,11 @@ class aide (
     $_report_level_ensure = $report_level ? { 'absent' => 'absent', default => 'present' }
     file_line { 'aide.conf report_level':
       ensure            => $_report_level_ensure,
-      path              => '/etc/aide.conf',
+      path              => $config_file,
       line              => "report_level=${report_level}",
       match             => '^report_level=',
       match_for_absence => true,
-      require           => Package['aide'],
+      require           => Package[$package_name],
       notify            => $_db_notify,
     }
   }
@@ -416,9 +456,9 @@ class aide (
   if $report_urls =~ NotUndef {
     $report_urls.each |$url| {
       file_line { "aide.conf report_url ${url}":
-        path    => '/etc/aide.conf',
+        path    => $config_file,
         line    => "report_url=${url}",
-        require => Package['aide'],
+        require => Package[$package_name],
         notify  => $_db_notify,
       }
     }
@@ -427,9 +467,9 @@ class aide (
   $report_urls_purge.each |$url| {
     file_line { "aide.conf report_url ${url} absent":
       ensure  => 'absent',
-      path    => '/etc/aide.conf',
+      path    => $config_file,
       line    => "report_url=${url}",
-      require => Package['aide'],
+      require => Package[$package_name],
       notify  => $_db_notify,
     }
   }
@@ -440,10 +480,10 @@ class aide (
     # line idempotent and replaces it in place if `syslog_facility` changes
     # rather than leaving a stale duplicate.
     file_line { 'aide.conf report_url syslog':
-      path    => '/etc/aide.conf',
+      path    => $config_file,
       line    => "report_url=syslog:${syslog_facility}",
       match   => '^report_url=syslog:',
-      require => Package['aide'],
+      require => Package[$package_name],
       notify  => $_db_notify,
     }
   }
@@ -452,10 +492,10 @@ class aide (
     $aliases.each |$alias| {
       $_alias_name = strip(split($alias, '=')[0])
       file_line { "aide.conf alias ${_alias_name}":
-        path    => '/etc/aide.conf',
+        path    => $config_file,
         line    => $alias,
         match   => "^${_alias_name}\\s*=",
-        require => Package['aide'],
+        require => Package[$package_name],
         notify  => $_db_notify,
       }
     }
@@ -464,10 +504,10 @@ class aide (
   $aliases_purge.each |$alias_name| {
     file_line { "aide.conf alias ${alias_name} absent":
       ensure            => 'absent',
-      path              => '/etc/aide.conf',
+      path              => $config_file,
       match             => "^${alias_name}\\s*=",
       match_for_absence => true,
-      require           => Package['aide'],
+      require           => Package[$package_name],
       notify            => $_db_notify,
     }
   }
@@ -476,66 +516,72 @@ class aide (
   # Database bootstrap. Disruptive: builds the AIDE database. Off by default.
   # ---------------------------------------------------------------------------
   if $manage_database {
+    # On Ubuntu 24.04 the directories belong to `_aide`, which the package
+    # creates, so they are managed after the package.
     $_dbdir  = $dbdir  =~ Stdlib::Absolutepath ? { true => $dbdir,  default => '/var/lib/aide' }
     $_logdir = $logdir =~ Stdlib::Absolutepath ? { true => $logdir, default => '/var/log/aide' }
 
     file { $_dbdir:
-      ensure => 'directory',
-      owner  => 'root',
-      group  => 'root',
-      mode   => '0700',
+      ensure  => 'directory',
+      require => Package[$package_name],
+      *       => $database_dir_attributes,
     }
 
     file { $_logdir:
-      ensure => 'directory',
-      owner  => 'root',
-      group  => 'root',
-      mode   => '0700',
+      ensure  => 'directory',
+      require => Package[$package_name],
+      *       => $logdir_attributes,
     }
 
-    $_update_aide_script = @("EOF")
-      #!/bin/sh
-      /usr/bin/killall -9 aide;
-      wait;
+    if $database_update_command =~ Undef {
+      $_update_aide_script = @("EOF")
+        #!/bin/sh
+        /usr/bin/killall -9 aide;
+        wait;
 
-      if [ -f ${_dbdir}/${database_name} ]; then
-        /bin/nice -n 19 /usr/sbin/aide -c /etc/aide.conf -u;
-      else
-        /bin/nice -n 19 /usr/sbin/aide -c /etc/aide.conf -i;
-      fi
+        if [ -f ${_dbdir}/${database_name} ]; then
+          /bin/nice -n 19 /usr/sbin/aide -c ${config_file} -u;
+        else
+          /bin/nice -n 19 /usr/sbin/aide -c ${config_file} -i;
+        fi
 
-      wait;
-      cp ${_dbdir}/${database_out_name} ${_dbdir}/${database_name}
+        wait;
+        cp ${_dbdir}/${database_out_name} ${_dbdir}/${database_name}
 
-      # Need to report aide initialize/update failure. Since aide
-      # update returns non-zero error codes even upon success, (return
-      # codes 0 - 7), an easy way to determine an aide failure for
-      # either initialization or update is to detect a copy failure. The
-      # database out will not be created if the initialize/update fails.
-      exit $?
-      | EOF
+        # Need to report aide initialize/update failure. Since aide
+        # update returns non-zero error codes even upon success, (return
+        # codes 0 - 7), an easy way to determine an aide failure for
+        # either initialization or update is to detect a copy failure. The
+        # database out will not be created if the initialize/update fails.
+        exit $?
+        | EOF
 
-    # In update_aide, retain output database for the SCAP Security Guide
-    # OVAL check xccdf_org.ssgproject.content_rule_aide_build_database
-    file { '/usr/local/sbin/update_aide':
-      ensure  => 'file',
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0700',
-      content => $_update_aide_script,
+      # In update_aide, retain output database for the SCAP Security Guide
+      # OVAL check xccdf_org.ssgproject.content_rule_aide_build_database
+      file { '/usr/local/sbin/update_aide':
+        ensure  => 'file',
+        owner   => 'root',
+        group   => 'root',
+        mode    => '0700',
+        content => $_update_aide_script,
+      }
+
+      $_db_command  = '/usr/local/sbin/update_aide'
+      $_db_requires = [File['/usr/local/sbin/update_aide']]
     }
+    else {
+      $_db_command  = $database_update_command
+      $_db_requires = []
+    }
+
+    $_db_exec_requires = flatten([Package[$package_name], $_db_requires, File[$_dbdir], File[$_logdir]])
 
     # This is used to automatically update the database when the user
     # changes AIDE configuration.
     exec { 'update_aide_db':
-      command     => '/usr/local/sbin/update_aide',
+      command     => $_db_command,
       refreshonly => true,
-      require     => [
-        Package['aide'],
-        File['/usr/local/sbin/update_aide'],
-        File[$_dbdir],
-        File[$_logdir],
-      ],
+      require     => $_db_exec_requires,
       timeout     => $aide_init_timeout,
     }
 
@@ -543,14 +589,9 @@ class aide (
     # This makes sure the database is initialized, even if no
     # AIDE configuration has changed.
     exec { 'verify_aide_db_presence':
-      command => '/usr/local/sbin/update_aide',
+      command => $_db_command,
       onlyif  => "/usr/bin/test ! -f ${_dbdir}/${database_name}",
-      require => [
-        Package['aide'],
-        File['/usr/local/sbin/update_aide'],
-        File[$_dbdir],
-        File[$_logdir],
-      ],
+      require => $_db_exec_requires,
       timeout => $aide_init_timeout,
     }
   }

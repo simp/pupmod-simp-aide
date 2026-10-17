@@ -6,6 +6,10 @@
 #
 # Scope is intentionally limited to this module's own parameters.
 #
+# Every check is confined to `os.family: RedHat`: the pre-refactor module only
+# supported EL, and several of these values (the database names and paths, the
+# EL-specific ruleset) do not match the configuration Ubuntu ships.
+#
 # Version-specific options are split with `confine:`. The discriminator here is
 # the EL release (which determines the AIDE version), and `os.family: RedHat`
 # keeps the scope to all supported EL distros (RedHat/CentOS/Alma/Oracle/Rocky),
@@ -15,34 +19,44 @@
 version: 2.0.0
 checks:
   # ---------------------------------------------------------------------------
-  # Common (all supported releases)
+  # Common (all supported EL releases)
   # ---------------------------------------------------------------------------
   simp:defaults.aide.dbdir:
     type: puppet-class-parameter
     settings:
       parameter: aide::dbdir
       value: /var/lib/aide
+    confine:
+      os.family: RedHat
   simp:defaults.aide.logdir:
     type: puppet-class-parameter
     settings:
       parameter: aide::logdir
       value: /var/log/aide
+    confine:
+      os.family: RedHat
   simp:defaults.aide.database_out:
     type: puppet-class-parameter
     settings:
       parameter: aide::database_out
       value: 'file:@@{DBDIR}/aide.db.new.gz'
+    confine:
+      os.family: RedHat
   simp:defaults.aide.gzip_dbout:
     type: puppet-class-parameter
     settings:
       parameter: aide::gzip_dbout
       value: 'yes'
+    confine:
+      os.family: RedHat
   simp:defaults.aide.report_urls:
     type: puppet-class-parameter
     settings:
       parameter: aide::report_urls
       value:
         - 'file:@@{LOGDIR}/aide.report'
+    confine:
+      os.family: RedHat
   # Restoring the pre-refactor behavior means initializing/updating the AIDE
   # database; this is I/O intensive on first run.
   simp:defaults.aide.manage_database:
@@ -50,6 +64,8 @@ checks:
     settings:
       parameter: aide::manage_database
       value: true
+    confine:
+      os.family: RedHat
   simp:defaults.aide.default_rules:
     type: puppet-class-parameter
     settings:
@@ -144,6 +160,8 @@ checks:
         - '/etc/issue.net LSPP'
         - '/etc/cups LSPP'
         - '!/var/log/and-httpd'
+    confine:
+      os.family: RedHat
   # ---------------------------------------------------------------------------
   # AIDE 0.16 (EL8): verbose + database
   # ---------------------------------------------------------------------------
@@ -237,6 +255,7 @@ checks:
         - 'LSPP = R'
         - 'DATAONLY = p+n+u+g+s+acl+selinux+xattrs+sha512'
     confine:
+      os.family: RedHat
       fips_enabled: false
   simp:defaults.aide.aliases.fips:
     type: puppet-class-parameter
@@ -255,4 +274,5 @@ checks:
         - 'LSPP = R'
         - 'DATAONLY = p+n+u+g+s+acl+selinux+xattrs+sha1+sha256'
     confine:
+      os.family: RedHat
       fips_enabled: true

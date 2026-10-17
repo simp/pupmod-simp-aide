@@ -5,17 +5,25 @@ describe 'aide' do
     context "on #{os}" do
       let(:facts) { os_facts }
 
+      let(:debian) { os_facts[:os][:family] == 'Debian' }
+      let(:config_file) { debian ? '/etc/aide/aide.conf' : '/etc/aide.conf' }
+      let(:packages) { debian ? ['aide', 'aide-common'] : ['aide'] }
+
       context 'with default parameters (bare include)' do
         it { is_expected.to compile.with_all_deps }
         it { is_expected.to create_class('aide') }
         it { is_expected.to contain_package('aide').with_ensure('installed') }
 
-        it 'manages only the aide package' do
+        if os_facts[:os][:family] == 'Debian'
+          it { is_expected.to contain_package('aide-common').with_ensure('installed') }
+        end
+
+        it 'manages only the aide package(s)' do
           # Resource types Puppet always adds to a catalog, which are not
           # interesting when asserting a bare include manages nothing else.
           always_present = ['Class', 'Stage', 'Node', 'Filebucket', 'Schedule']
           managed = catalogue.resources.reject { |r| always_present.include?(r.type) }
-          expect(managed.map(&:ref)).to eq(['Package[aide]'])
+          expect(managed.map(&:ref)).to eq(packages.map { |pkg| "Package[#{pkg}]" })
         end
 
         # Explicitly assert none of the previously-always-on behavior fires.
@@ -52,7 +60,8 @@ describe 'aide' do
             .with_line('@@define DBDIR /var/lib/aide')
             .with_match('^@@define DBDIR\b')
             .with_ensure('present')
-            .that_requires('Package[aide]')
+            .with_path(config_file)
+            .that_requires(packages.map { |pkg| "Package[#{pkg}]" })
         }
 
         it { is_expected.to contain_file_line('aide.conf LOGDIR').with_line('@@define LOGDIR /var/log/aide') }
@@ -187,15 +196,79 @@ describe 'aide' do
       context 'with manage_database => true' do
         let(:params) { { manage_database: true } }
 
+        # aide-common on Ubuntu 24.04 runs AIDE as `_aide`; EL and Ubuntu 22.04
+        # run it as root.
+        let(:aide_user) { (debian && os_facts[:os][:release][:major] != '22.04') ? '_aide' : nil }
+        let(:dbdir_attrs) { aide_user ? { owner: '_aide', group: 'root', mode: '0700' } : { owner: 'root', group: 'root', mode: '0700' } }
+        let(:logdir_attrs) { aide_user ? { owner: '_aide', group: 'adm', mode: '2755' } : { owner: 'root', group: 'root', mode: '0700' } }
+
         it { is_expected.to compile.with_all_deps }
-        it { is_expected.to contain_file('/var/lib/aide').with_ensure('directory') }
-        it { is_expected.to contain_file('/var/log/aide').with_ensure('directory') }
-        it { is_expected.to contain_file('/usr/local/sbin/update_aide').with_content(%r{/usr/sbin/aide -c /etc/aide.conf}) }
-        it { is_expected.to contain_exec('update_aide_db').with_command('/usr/local/sbin/update_aide').with_refreshonly(true) }
+        it { is_expected.to contain_file('/var/lib/aide').with_ensure('directory').with(dbdir_attrs).that_requires(packages.map { |pkg| "Package[#{pkg}]" }) }
+        it { is_expected.to contain_file('/var/log/aide').with_ensure('directory').with(logdir_attrs).that_requires(packages.map { |pkg| "Package[#{pkg}]" }) }
+
+        if os_facts[:os][:family] == 'Debian'
+          it { is_expected.not_to contain_file('/usr/local/sbin/update_aide') }
+          it {
+            is_expected.to contain_exec('update_aide_db')
+              .with_command('/usr/sbin/aideinit --yes --force')
+              .with_refreshonly(true)
+              .that_requires(['Package[aide]', 'Package[aide-common]', 'File[/var/lib/aide]', 'File[/var/log/aide]'])
+          }
+          it {
+            is_expected.to contain_exec('verify_aide_db_presence')
+              .with_command('/usr/sbin/aideinit --yes --force')
+              .with_onlyif('/usr/bin/test ! -f /var/lib/aide/aide.db')
+          }
+        else
+          it { is_expected.to contain_file('/usr/local/sbin/update_aide').with_content(%r{/usr/sbin/aide -c /etc/aide.conf}) }
+
+          it 'writes the update_aide script' do
+            is_expected.to contain_file('/usr/local/sbin/update_aide').with_content(<<~'SCRIPT')
+              #!/bin/sh
+              /usr/bin/killall -9 aide;
+              wait;
+
+              if [ -f /var/lib/aide/aide.db.gz ]; then
+                /bin/nice -n 19 /usr/sbin/aide -c /etc/aide.conf -u;
+              else
+                /bin/nice -n 19 /usr/sbin/aide -c /etc/aide.conf -i;
+              fi
+
+              wait;
+              cp /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
+
+              # Need to report aide initialize/update failure. Since aide
+              # update returns non-zero error codes even upon success, (return
+              # codes 0 - 7), an easy way to determine an aide failure for
+              # either initialization or update is to detect a copy failure. The
+              # database out will not be created if the initialize/update fails.
+              exit $?
+            SCRIPT
+          end
+
+          it { is_expected.to contain_exec('update_aide_db').with_command('/usr/local/sbin/update_aide').with_refreshonly(true) }
+          it {
+            is_expected.to contain_exec('verify_aide_db_presence')
+              .with_command('/usr/local/sbin/update_aide')
+              .with_onlyif('/usr/bin/test ! -f /var/lib/aide/aide.db.gz')
+              .that_requires(['Package[aide]', 'File[/usr/local/sbin/update_aide]', 'File[/var/lib/aide]', 'File[/var/log/aide]'])
+          }
+        end
+      end
+
+      context 'with auditd => true' do
+        let(:params) { { auditd: true } }
+
+        it { is_expected.to contain_auditd__rule('aide').with_content("-w #{config_file} -p wa -k CFG_aide") }
+      end
+
+      context 'with enable => true on the OS default command' do
+        let(:params) { { enable: true } }
+
         it {
-          is_expected.to contain_exec('verify_aide_db_presence')
-            .with_command('/usr/local/sbin/update_aide')
-            .with_onlyif('/usr/bin/test ! -f /var/lib/aide/aide.db.gz')
+          aide_bin = debian ? '/usr/bin/aide --config=/etc/aide/aide.conf' : '/usr/sbin/aide'
+          is_expected.to contain_systemd__timer('puppet_aide.timer')
+            .with_service_content(%r{ExecStart=/bin/nice -n 19 #{aide_bin} --check})
         }
       end
 

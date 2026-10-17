@@ -1,0 +1,38 @@
+---
+# What the module needs to work with Debian-family AIDE packaging (Ubuntu
+# 22.04/24.04). Values target the newest supported release (Ubuntu 24.04);
+# older releases override them in os/<name>-<release>.yaml.
+
+# `aide` only recommends `aide-common`, which ships /etc/aide/aide.conf,
+# /etc/aide/aide.conf.d/ and `aideinit`.
+aide::package_name:
+  - aide
+  - aide-common
+aide::config_file: /etc/aide/aide.conf
+aide::ruledir: /etc/aide/aide.conf.d
+# As aide-common ships it (22.04 and 24.04).
+aide::ruledir_attributes:
+  owner: root
+  group: root
+  mode: '0755'
+# The Debian-built binary has no compiled-in default configuration file.
+aide::cron_command: /bin/nice -n 19 /usr/bin/aide --config=/etc/aide/aide.conf --check
+
+# Database names used by the packaged configuration and `aideinit`.
+aide::database_name: aide.db
+aide::database_out_name: aide.db.new
+
+# `aideinit` runs `aide --init` as `_aide` (when `capsh` is available) and
+# copies the new database into place.
+aide::database_update_command: /usr/sbin/aideinit --yes --force
+
+# Match aide-common's tmpfiles.d entries; the packaged daily check runs as
+# `_aide` and writes to both directories.
+aide::database_dir_attributes:
+  owner: _aide
+  group: root
+  mode: '0700'
+aide::logdir_attributes:
+  owner: _aide
+  group: adm
+  mode: '2755'

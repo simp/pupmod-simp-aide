@@ -71,6 +71,10 @@ A bare `include aide` manages **only** the `aide` package. It does not modify
 `/etc/aide.conf`, manage the AIDE database, create directories, or schedule
 anything.
 
+Paths below are the EL defaults. On Ubuntu the module manages the
+configuration the `aide-common` package ships instead; see
+[Ubuntu](#ubuntu).
+
 When you set the corresponding parameters, the module additionally manages:
 
 * Individual settings in `/etc/aide.conf` (one managed line per parameter you
@@ -88,6 +92,43 @@ This module requires the following:
 * [simp-logrotate](https://forge.puppet.com/simp/logrotate)
 * [simp-rsyslog](https://forge.puppet.com/simp/rsyslog)
 * [simp-simplib](https://forge.puppet.com/simp/simplib)
+
+### Ubuntu
+
+Ubuntu 22.04 (AIDE 0.17) and 24.04 (AIDE 0.18) are supported. The module's
+OS data sets these defaults there:
+
+| Parameter                 | Ubuntu value                                                     |
+|---------------------------|------------------------------------------------------------------|
+| `package_name`            | `['aide', 'aide-common']` (`aide` only recommends `aide-common`) |
+| `config_file`             | `/etc/aide/aide.conf`                                            |
+| `ruledir`                 | `/etc/aide/aide.conf.d`                                          |
+| `ruledir_attributes`      | `root:root 0755` (as `aide-common` ships it)                     |
+| `cron_command`            | `/bin/nice -n 19 /usr/bin/aide --config=/etc/aide/aide.conf --check` |
+| `database_name`           | `aide.db`                                                        |
+| `database_out_name`       | `aide.db.new`                                                    |
+| `database_update_command` | `/usr/sbin/aideinit --yes --force`                               |
+| `database_dir_attributes` | `_aide:root 0700` (24.04), `root:root 0700` (22.04)              |
+| `logdir_attributes`       | `_aide:adm 2755` (24.04), `root:root 0700` (22.04)               |
+
+Notes:
+
+* The packaged `aide.conf` already uses `database_in` and
+  `log_level`/`report_level`. Don't set `database` or `verbose` there:
+  AIDE 0.17 and later reject `verbose`.
+* Ubuntu's `aide.conf` includes `/etc/aide/aide.conf.d` with
+  `@@x_include`, which only reads file names matching `^[a-zA-Z0-9_-]+$`.
+  `aide::rule` files (`<name>_simp.conf`) don't match, so each is read
+  once, through the `@@include` line the module adds to `aide.conf`.
+* With `manage_database => true`, the database is built with Ubuntu's
+  `aideinit`. On 24.04 it runs AIDE as the `_aide` user, as the packaged
+  `dailyaidecheck` timer does.
+* `aide-common` schedules its own daily check (`dailyaidecheck.timer` on
+  24.04, `/etc/cron.daily/aide` on 22.04). Its behavior, including
+  `SILENTREPORTS`, is set in `/etc/default/aide`, which this module doesn't
+  manage. `enable => true` adds the module's own schedule alongside it.
+* The `simp:defaults` profile restores pre-9.0.0 EL behavior and its checks
+  are confined to EL; it sets nothing on Ubuntu.
 
 ## Usage
 
@@ -213,8 +254,8 @@ See [REFERENCE.md](./REFERENCE.md) for the full module reference.
 
 ## Limitations
 
-SIMP Puppet modules are generally intended for use on Red Hat Enterprise
-Linux and compatible distributions, such as CentOS. Please see the
+This module supports Red Hat Enterprise Linux and compatible distributions,
+and Ubuntu 22.04 and 24.04. Please see the
 [`metadata.json` file](./metadata.json) for the most up-to-date list of
 supported operating systems, Puppet versions, and module dependencies.
 

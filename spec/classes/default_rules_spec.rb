@@ -11,6 +11,8 @@ describe 'aide' do
     context "supported #{os}" do
       let(:facts) { os_facts }
 
+      let(:ruledir) { (os_facts[:os][:family] == 'Debian') ? '/etc/aide/aide.conf.d' : '/etc/aide.conf.d' }
+
       context 'when default_rules is unset (bare include)' do
         it { is_expected.not_to contain_class('aide::default_rules') }
         it { is_expected.not_to contain_aide__rule('default') }
@@ -28,7 +30,7 @@ describe 'aide' do
         end
 
         it { is_expected.to contain_class('aide::default_rules') }
-        it { is_expected.to contain_aide__rule('default').with_ruledir('/etc/aide.conf.d') }
+        it { is_expected.to contain_aide__rule('default').with_ruledir(ruledir) }
         it {
           is_expected.to contain_aide__rule('default')
             .with_rules("/boot   NORMAL\n/bin    NORMAL\n/etc    PERMS")
