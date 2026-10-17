@@ -103,6 +103,10 @@
 #   The directory in which `aide::rule` resources write their rule files and
 #   which is referenced by the ``@@include`` lines they add.
 #
+# @param ruledir_attributes
+#   The ``owner``, ``group`` and ``mode`` of ``ruledir``, which `aide::rule`
+#   creates when it writes a rule file.
+#
 # @param rules
 #   A hash of `aide::rule` resources to create.
 #
@@ -231,9 +235,10 @@ class aide (
   Variant[String[1], Array[String[1], 1]]  $package_name = 'aide',
 
   # Rules
-  Stdlib::Absolutepath                     $ruledir       = '/etc/aide.conf.d',
-  Hash                                     $rules         = {},
-  Optional[Variant[Array[String[1]], String]] $default_rules = undef,
+  Stdlib::Absolutepath                     $ruledir            = '/etc/aide.conf.d',
+  Aide::DirAttributes                      $ruledir_attributes = { 'owner' => 'root', 'group' => 'root', 'mode' => '0700' },
+  Hash                                     $rules              = {},
+  Optional[Variant[Array[String[1]], String]] $default_rules      = undef,
 
   # Database bootstrap (disruptive; off by default)
   Boolean                                  $manage_database         = false,

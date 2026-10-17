@@ -59,6 +59,7 @@ The following parameters are available in the `aide` class:
 * [`config_file`](#-aide--config_file)
 * [`package_name`](#-aide--package_name)
 * [`ruledir`](#-aide--ruledir)
+* [`ruledir_attributes`](#-aide--ruledir_attributes)
 * [`rules`](#-aide--rules)
 * [`default_rules`](#-aide--default_rules)
 * [`manage_database`](#-aide--manage_database)
@@ -256,6 +257,15 @@ The directory in which `aide::rule` resources write their rule files and
 which is referenced by the ``@@include`` lines they add.
 
 Default value: `'/etc/aide.conf.d'`
+
+##### <a name="-aide--ruledir_attributes"></a>`ruledir_attributes`
+
+Data type: `Aide::DirAttributes`
+
+The ``owner``, ``group`` and ``mode`` of ``ruledir``, which `aide::rule`
+creates when it writes a rule file.
+
+Default value: `{ 'owner' => 'root', 'group' => 'root', 'mode' => '0700' }`
 
 ##### <a name="-aide--rules"></a>`rules`
 

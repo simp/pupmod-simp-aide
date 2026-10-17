@@ -103,6 +103,7 @@ OS data sets these defaults there:
 | `package_name`            | `['aide', 'aide-common']` (`aide` only recommends `aide-common`) |
 | `config_file`             | `/etc/aide/aide.conf`                                            |
 | `ruledir`                 | `/etc/aide/aide.conf.d`                                          |
+| `ruledir_attributes`      | `root:root 0755` (as `aide-common` ships it)                     |
 | `cron_command`            | `/bin/nice -n 19 /usr/bin/aide --config=/etc/aide/aide.conf --check` |
 | `database_name`           | `aide.db`                                                        |
 | `database_out_name`       | `aide.db.new`                                                    |

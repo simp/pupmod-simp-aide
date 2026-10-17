@@ -9,6 +9,7 @@ describe 'aide::rule' do
         let(:debian) { facts[:os][:family] == 'Debian' }
         let(:config_file) { debian ? '/etc/aide/aide.conf' : '/etc/aide.conf' }
         let(:ruledir) { debian ? '/etc/aide/aide.conf.d' : '/etc/aide.conf.d' }
+        let(:ruledir_attrs) { { owner: 'root', group: 'root', mode: debian ? '0755' : '0700' } }
         let(:title) { 'test_rules' }
         let(:params) { { rules: 'test_rules' } }
 
@@ -20,7 +21,7 @@ describe 'aide::rule' do
             .that_requires('Package[aide]')
         }
 
-        it { is_expected.to contain_file(ruledir).with_ensure('directory') }
+        it { is_expected.to contain_file(ruledir).with_ensure('directory').with(ruledir_attrs) }
 
         it {
           is_expected.to contain_file_line('aide.conf include test_rules')

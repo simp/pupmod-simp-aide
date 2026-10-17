@@ -10,6 +10,11 @@ aide::package_name:
   - aide-common
 aide::config_file: /etc/aide/aide.conf
 aide::ruledir: /etc/aide/aide.conf.d
+# As aide-common ships it (22.04 and 24.04).
+aide::ruledir_attributes:
+  owner: root
+  group: root
+  mode: '0755'
 # The Debian-built binary has no compiled-in default configuration file.
 aide::cron_command: /bin/nice -n 19 /usr/bin/aide --config=/etc/aide/aide.conf --check
 

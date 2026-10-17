@@ -5,6 +5,8 @@
 - Add `database_update_command`, `database_dir_attributes` and
   `logdir_attributes` for `manage_database`; Ubuntu builds the database with
   `aideinit` and keeps the directory ownership `aide-common` sets
+- Add `ruledir_attributes`; Ubuntu keeps `/etc/aide/aide.conf.d` at its
+  packaged `root:root 0755`
 - `aide::rule` now defaults `ruledir` to `aide::ruledir` instead of always
   using `/etc/aide.conf.d`
 - Confine the `simp:defaults` profile's checks to EL
