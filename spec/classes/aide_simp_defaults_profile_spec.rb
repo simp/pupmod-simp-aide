@@ -49,6 +49,18 @@ describe 'aide' do
 
         it { is_expected.to compile.with_all_deps }
 
+        # The profile restores pre-refactor EL behavior; every check is
+        # confined to os.family RedHat, so it leaves other platforms alone.
+        if os_facts[:os][:family] != 'RedHat'
+          it 'manages only the aide package(s)' do
+            always_present = ['Class', 'Stage', 'Node', 'Filebucket', 'Schedule']
+            managed = catalogue.resources.reject { |r| always_present.include?(r.type) }
+            expect(managed.map(&:ref)).to all(start_with('Package['))
+          end
+
+          next
+        end
+
         it 'installs the package' do
           is_expected.to contain_package('aide')
         end

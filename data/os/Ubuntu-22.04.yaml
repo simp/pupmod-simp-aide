@@ -1,0 +1,11 @@
+---
+# aide-common 0.17.4 has no `_aide` user; AIDE and its daily cron job run as
+# root.
+aide::database_dir_attributes:
+  owner: root
+  group: root
+  mode: '0700'
+aide::logdir_attributes:
+  owner: root
+  group: root
+  mode: '0700'

@@ -6,7 +6,7 @@
 
 ### Classes
 
-* [`aide`](#aide): Manage the AIDE package and, optionally, individual settings in /etc/aide.conf
+* [`aide`](#aide): Manage the AIDE package and, optionally, individual settings in the AIDE configuration file
 * [`aide::default_rules`](#aide--default_rules): A helper class to keep the main AIDE class relatively readable.
 * [`aide::logrotate`](#aide--logrotate): A class that sets up the logrotate state for aide.
 * [`aide::set_schedule`](#aide--set_schedule): Sets a schedule for AIDE to run a check on your system
@@ -18,6 +18,7 @@
 
 ### Data types
 
+* [`Aide::DirAttributes`](#Aide--DirAttributes): Ownership and permissions of a directory the module manages
 * [`Aide::LogLevel`](#Aide--LogLevel): The AIDE log_level (AIDE 0.17 and newer)
 * [`Aide::ReportLevel`](#Aide--ReportLevel): The AIDE report_level (AIDE 0.17 and newer)
 * [`Aide::Rotateperiod`](#Aide--Rotateperiod): The AIDE rotation period
@@ -28,10 +29,11 @@
 ### <a name="aide"></a>`aide`
 
 Manage the AIDE package and, when explicitly told to, individual settings in
-``/etc/aide.conf``.
+the AIDE configuration file (``/etc/aide.conf`` on EL, ``/etc/aide/aide.conf``
+on Ubuntu; see ``config_file``).
 
-A bare ``include aide`` only installs the ``aide`` package. It does **not**
-overwrite ``/etc/aide.conf``, manage the AIDE database, create directories, or
+A bare ``include aide`` only installs the AIDE package(s). It does **not**
+overwrite the configuration file, manage the AIDE database, create directories, or
 schedule anything. Every configuration field is exposed as its own parameter
 that defaults to ``undef``; only the fields you set are managed (as individual
 lines via ``file_line``), leaving the rest of the package-provided
@@ -54,10 +56,15 @@ The following parameters are available in the `aide` class:
 * [`report_urls_purge`](#-aide--report_urls_purge)
 * [`aliases`](#-aide--aliases)
 * [`aliases_purge`](#-aide--aliases_purge)
+* [`config_file`](#-aide--config_file)
+* [`package_name`](#-aide--package_name)
 * [`ruledir`](#-aide--ruledir)
 * [`rules`](#-aide--rules)
 * [`default_rules`](#-aide--default_rules)
 * [`manage_database`](#-aide--manage_database)
+* [`database_update_command`](#-aide--database_update_command)
+* [`database_dir_attributes`](#-aide--database_dir_attributes)
+* [`logdir_attributes`](#-aide--logdir_attributes)
 * [`database_name`](#-aide--database_name)
 * [`database_out_name`](#-aide--database_out_name)
 * [`aide_init_timeout`](#-aide--aide_init_timeout)
@@ -119,7 +126,8 @@ Data type: `Optional[Variant[Pattern[/\A\w+:/], Enum['absent']]]`
 Manage the ``database_in`` line. This is the full value, e.g.
 ``'file:@@{DBDIR}/aide.db.gz'``.
 
-* Only use on **AIDE 0.19 and newer**, where it replaces ``database``.
+* Only use on **AIDE 0.17 and newer** (Ubuntu's packaged configuration
+  already uses it). It replaces ``database``, which AIDE 0.19 removed.
 * Set to ``'absent'`` to remove the line entirely.
 
 Default value: `undef`
@@ -222,6 +230,24 @@ configuration (e.g. ``['NORMAL', 'LSPP']``).
 
 Default value: `[]`
 
+##### <a name="-aide--config_file"></a>`config_file`
+
+Data type: `Stdlib::Absolutepath`
+
+The AIDE configuration file whose settings this class manages, and to
+which `aide::rule` adds its ``@@include`` lines.
+
+Default value: `'/etc/aide.conf'`
+
+##### <a name="-aide--package_name"></a>`package_name`
+
+Data type: `Variant[String[1], Array[String[1], 1]]`
+
+The package(s) to install. On Ubuntu, the configuration file and the
+``aideinit`` helper are in ``aide-common``, which ``aide`` only recommends.
+
+Default value: `'aide'`
+
 ##### <a name="-aide--ruledir"></a>`ruledir`
 
 Data type: `Stdlib::Absolutepath`
@@ -259,6 +285,39 @@ the database. This is **disruptive** (it builds the AIDE database) and is
 therefore off by default.
 
 Default value: `false`
+
+##### <a name="-aide--database_update_command"></a>`database_update_command`
+
+Data type: `Optional[String[1]]`
+
+The command that initializes or updates the AIDE database when
+``manage_database`` is ``true``.
+
+* When ``undef``, the module installs ``/usr/local/sbin/update_aide`` and
+  runs it.
+* Ubuntu sets this to its ``aideinit`` helper, which runs AIDE as the
+  ``_aide`` user where the package expects it and copies the new database
+  into place.
+
+Default value: `undef`
+
+##### <a name="-aide--database_dir_attributes"></a>`database_dir_attributes`
+
+Data type: `Aide::DirAttributes`
+
+The ``owner``, ``group`` and ``mode`` of the database directory. Only
+consumed when ``manage_database`` is ``true``.
+
+Default value: `{ 'owner' => 'root', 'group' => 'root', 'mode' => '0700' }`
+
+##### <a name="-aide--logdir_attributes"></a>`logdir_attributes`
+
+Data type: `Aide::DirAttributes`
+
+The ``owner``, ``group`` and ``mode`` of the log directory. Only consumed
+when ``manage_database`` is ``true``.
+
+Default value: `{ 'owner' => 'root', 'group' => 'root', 'mode' => '0700' }`
 
 ##### <a name="-aide--database_name"></a>`database_name`
 
@@ -400,7 +459,7 @@ Data type: `Boolean`
 
 Whether to send the AIDE output to syslog, in addition to the
 local report file. When ``true`` a ``report_url=syslog:<facility>`` line is
-managed in ``/etc/aide.conf``. Use Hiera to set the parameters on
+managed in ``config_file``. Use Hiera to set the parameters on
 aide::syslog appropriately if you don't care for the defaults.
 
 Default value: `false`
@@ -602,12 +661,12 @@ Default value: `($aide::logdir =~ Stdlib::Absolutepath) ? { true => $aide::logdi
 ### <a name="aide--rule"></a>`aide::rule`
 
 This define adds rules to the AIDE configuration. Rules are
-added to /etc/aide.conf.d unless otherwise specified.
+added to `aide::ruledir` unless otherwise specified.
 
 Declaring an `aide::rule` is an explicit caller action, so it writes the rule
-file and adds an `@@include` line to `/etc/aide.conf` (via `file_line`). Both
-require `Package['aide']` so the configuration the package ships is in place
-first and the catalog stays noop-safe.
+file and adds an `@@include` line to `aide::config_file` (via `file_line`).
+Both require the AIDE package(s) so the configuration the package ships is in
+place first and the catalog stays noop-safe.
 
 #### Examples
 
@@ -643,13 +702,12 @@ fashion.
 
 ##### <a name="-aide--rule--ruledir"></a>`ruledir`
 
-Data type: `Stdlib::Absolutepath`
+Data type: `Optional[Stdlib::Absolutepath]`
 
-The directory within which all additional rules should be written. This
-MUST be the same value as that entered in aide::conf if you want the system
-to work properly.  Default: '/etc/aide.conf.d'
+The directory within which all additional rules should be written.
+Defaults to `aide::ruledir`.
 
-Default value: `'/etc/aide.conf.d'`
+Default value: `undef`
 
 ##### <a name="-aide--rule--order"></a>`order`
 
@@ -661,6 +719,20 @@ backwards compatibility; it no longer affects the generated configuration.
 Default value: `'999'`
 
 ## Data types
+
+### <a name="Aide--DirAttributes"></a>`Aide::DirAttributes`
+
+Ownership and permissions of a directory the module manages
+
+Alias of
+
+```puppet
+Struct[{
+  owner => String[1],
+  group => String[1],
+  mode  => Stdlib::Filemode,
+}]
+```
 
 ### <a name="Aide--LogLevel"></a>`Aide::LogLevel`
 
