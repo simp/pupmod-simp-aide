@@ -100,19 +100,24 @@ class aide::set_schedule (
 
   # Create the augeas regexp match string
   $_regex = "regexp('.*\s?${_base_command}\s?.*')"
+  $_entry = "entry[. =~ ${_regex}][user = 'root']"
 
   if $method == 'etc' {
-    # If only one exists, update it
+    # If only one exists, update it. The set paths must use the same
+    # predicate as onlyif: an exact command match finds nothing when the
+    # existing entry runs a different command (e.g. the SSG remediation's
+    # `/usr/sbin/aide --check`), and augeas then fails to save.
     augeas { 'aide_schedule':
       context => '/files/etc/crontab',
       changes => [
-        "set entry[. = '${command}'][user = 'root']/time/minute '${minute}",
-        "set entry[. = '${command}'][user = 'root']/time/hour '${hour}",
-        "set entry[. = '${command}'][user = 'root']/time/dayofmonth '${monthday}",
-        "set entry[. = '${command}'][user = 'root']/time/month '${month}",
-        "set entry[. = '${command}'][user = 'root']/time/dayofweek '${weekday}"
+        "set ${_entry} '${command}'",
+        "set ${_entry}/time/minute '${minute}'",
+        "set ${_entry}/time/hour '${hour}'",
+        "set ${_entry}/time/dayofmonth '${monthday}'",
+        "set ${_entry}/time/month '${month}'",
+        "set ${_entry}/time/dayofweek '${weekday}'"
       ],
-      onlyif  => "match entry[. =~ ${_regex}][user = 'root'] size == 1"
+      onlyif  => "match ${_entry} size == 1"
     }
 
     # If it does not exist, create it
