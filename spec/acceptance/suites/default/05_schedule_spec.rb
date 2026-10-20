@@ -26,6 +26,34 @@ describe 'aide scheduling' do
     core_hieradata
   end
 
+  def service_state(host, unit)
+    output = on(host, "puppet resource service #{unit} --to_yaml").stdout
+    YAML.safe_load(output)['service'][unit]
+  end
+
+  # set_schedule.pp always declares systemd::timer { 'puppet_aide.timer': },
+  # so both unit files stay installed in every cron_method, ready for a
+  # switch back to systemd. LoadState is 'not-found' when a unit file is
+  # missing, and unlike `is-enabled` it doesn't change when #169 adds
+  # [Install] sections.
+  shared_examples 'installed puppet_aide units' do |host|
+    ['puppet_aide.timer', 'puppet_aide.service'].each do |unit|
+      it "has #{unit} installed" do
+        result = on(host, "systemctl show -p LoadState --value #{unit}")
+        expect(result.stdout.strip).to eq 'loaded'
+      end
+    end
+  end
+
+  shared_examples 'the managed aide crontab entry' do |host|
+    it 'has exactly the expected aide entry in /etc/crontab' do
+      crontab = file_contents_on(host, '/etc/crontab').lines.select { |x| x.include?('aide') }
+
+      expect(crontab.size).to eq 1
+      expect(crontab.first.strip).to eq '22 4 * * 0 root /bin/nice -n 19 /usr/sbin/aide --check'
+    end
+  end
+
   hosts.each do |host|
     context 'with defaults' do
       on(host, 'dnf install -y cronie')
@@ -39,9 +67,7 @@ describe 'aide scheduling' do
       end
 
       it 'is running puppet_aide.timer' do
-        output = on(host, 'puppet resource service puppet_aide.timer --to_yaml').stdout
-        service = YAML.safe_load(output)['service']['puppet_aide.timer']
-        expect(service['ensure']).to eq 'running'
+        expect(service_state(host, 'puppet_aide.timer')['ensure']).to eq 'running'
         # `enable` is deliberately not asserted via puppet resource: both units
         # ship no [Install] section, so they are static and the systemd
         # provider reports enable => 'true' unconditionally (see the cron-mode
@@ -95,9 +121,7 @@ describe 'aide scheduling' do
       end
 
       it 'is not running puppet_aide.timer' do
-        output = on(host, 'puppet resource service puppet_aide.timer --to_yaml').stdout
-        service = YAML.safe_load(output)['service']['puppet_aide.timer']
-        expect(service['ensure']).to eq 'stopped'
+        expect(service_state(host, 'puppet_aide.timer')['ensure']).to eq 'stopped'
         # NOTE: set_schedule.pp intends `enable => false` here, but the timer unit
         # has no [Install] section, so it is static -- `systemctl disable` is a
         # no-op on a static unit and `enable` always reports 'true'. Assert only
@@ -115,6 +139,8 @@ describe 'aide scheduling' do
       # stopped timer never triggers the oneshot. (Its `enable` is also
       # unassertable while the unit is static -- see
       # https://github.com/simp/pupmod-simp-aide/issues/169.)
+
+      it_behaves_like 'installed puppet_aide units', host
 
       it 'has the root cron entry' do
         output = on(host, 'puppet resource cron aide_schedule --to_yaml').stdout
@@ -145,14 +171,12 @@ describe 'aide scheduling' do
         apply_manifest_on(host, manifest, catch_failures: true)
       end
 
-      it 'is idempotent' do # rubocop:disable RSpec/RepeatedExample, RSpec/RepeatedDescription
+      it 'is idempotent' do
         apply_manifest_on(host, manifest, catch_changes: true)
       end
 
       it 'is not running puppet_aide.timer' do
-        output = on(host, 'puppet resource service puppet_aide.timer --to_yaml').stdout
-        service = YAML.safe_load(output)['service']['puppet_aide.timer']
-        expect(service['ensure']).to eq 'stopped'
+        expect(service_state(host, 'puppet_aide.timer')['ensure']).to eq 'stopped'
         # NOTE: see the root-mode note above and
         # https://github.com/simp/pupmod-simp-aide/issues/169 -- the timer is
         # stopped in cron modes but stays static, so `enable` cannot be false.
@@ -160,58 +184,52 @@ describe 'aide scheduling' do
 
       # No assertion on puppet_aide.service -- see the root-mode note above.
 
+      it_behaves_like 'installed puppet_aide units', host
+
       it 'does not have the root cron entry' do
         output = on(host, 'puppet resource cron aide_schedule --to_yaml').stdout
         cron = YAML.safe_load(output)['cron']['aide_schedule']
         expect(cron['ensure']).to eq 'absent'
       end
 
-      it 'has the expected entry in /etc/crontab' do # rubocop:disable RSpec/RepeatedExample
-        crontab = file_contents_on(host, '/etc/crontab').lines.select { |x| x.include?('aide') }
+      it_behaves_like 'the managed aide crontab entry', host
 
-        expect(crontab.size).to eq 1
-        expect(crontab.first.strip).to eq '22 4 * * 0 root /bin/nice -n 19 /usr/sbin/aide --check'
+      context 'with an excess entry added' do
+        it 'adds an excess entry' do
+          on(host, 'echo "* * * * * root /usr/sbin/aide --check" >> /etc/crontab')
+        end
+
+        it 'runs puppet' do
+          apply_manifest_on(host, manifest, catch_failures: true)
+        end
+
+        it 'is idempotent' do
+          apply_manifest_on(host, manifest, catch_changes: true)
+        end
+
+        it_behaves_like 'the managed aide crontab entry', host
       end
 
-      it 'adds an excess entry' do
-        on(host, 'echo "* * * * * root /usr/sbin/aide --check" >> /etc/crontab')
-      end
+      context 'with the entry changed' do
+        it 'changes the current entry' do
+          # Anchored to the aide entry: an unanchored global s/22/21/ would also
+          # rewrite any unrelated '22' elsewhere in /etc/crontab, and the
+          # aide-filtered assertions below would never detect that corruption.
+          on(host, %q{sed -i -E 's|^22 (.*aide --check)$|21 \1|' /etc/crontab})
+          # Fail here if the sed matched nothing; otherwise the correction
+          # below would pass without anything to correct.
+          on(host, "grep -q '^21 .*aide --check$' /etc/crontab")
+        end
 
-      it 'runs puppet' do # rubocop:disable RSpec/RepeatedExample, RSpec/RepeatedDescription
-        apply_manifest_on(host, manifest, catch_failures: true)
-      end
+        it 'runs puppet' do
+          apply_manifest_on(host, manifest, catch_failures: true)
+        end
 
-      it 'is idempotent' do # rubocop:disable RSpec/RepeatedExample, RSpec/RepeatedDescription
-        apply_manifest_on(host, manifest, catch_changes: true)
-      end
+        it 'is idempotent' do
+          apply_manifest_on(host, manifest, catch_changes: true)
+        end
 
-      it 'does not have an excess entry' do # rubocop:disable RSpec/RepeatedExample
-        crontab = file_contents_on(host, '/etc/crontab').lines.select { |x| x.include?('aide') }
-
-        expect(crontab.size).to eq 1
-        expect(crontab.first.strip).to eq '22 4 * * 0 root /bin/nice -n 19 /usr/sbin/aide --check'
-      end
-
-      it 'changes the current entry' do
-        # Anchored to the aide entry: an unanchored global s/22/21/ would also
-        # rewrite any unrelated '22' elsewhere in /etc/crontab, and the
-        # aide-filtered assertions below would never detect that corruption.
-        on(host, %q{sed -i -E 's|^22 (.*aide --check)$|21 \1|' /etc/crontab})
-      end
-
-      it 'runs puppet' do # rubocop:disable RSpec/RepeatedExample, RSpec/RepeatedDescription
-        apply_manifest_on(host, manifest, catch_failures: true)
-      end
-
-      it 'is idempotent' do # rubocop:disable RSpec/RepeatedExample, RSpec/RepeatedDescription
-        apply_manifest_on(host, manifest, catch_changes: true)
-      end
-
-      it 'has a corrected entry' do # rubocop:disable RSpec/RepeatedExample
-        crontab = file_contents_on(host, '/etc/crontab').lines.select { |x| x.include?('aide') }
-
-        expect(crontab.size).to eq 1
-        expect(crontab.first.strip).to eq '22 4 * * 0 root /bin/nice -n 19 /usr/sbin/aide --check'
+        it_behaves_like 'the managed aide crontab entry', host
       end
     end
   end

@@ -75,22 +75,39 @@ describe 'aide class' do
   end
 
   hosts.each do |host|
+    # Clean-state noop previews (must stay the FIRST applies in the suite):
+    # under --noop on a fresh node the catalog must compile and evaluate
+    # without error (exit 0 or 2, never 1/4/6). This guards the
+    # `puppet apply --noop` preview path. A post-convergence noop check is
+    # deliberately NOT included anywhere in this suite: once a catalog has
+    # converged (catch_changes passed), --noop trivially exits 0, so such a
+    # check cannot fail and adds no coverage.
+    context 'previewing under --noop from a clean state' do
+      it 'previews a bare include with no errors' do
+        # Set empty hieradata explicitly so a preserved SUT
+        # (BEAKER_provision=no) can't leak data from a previous run.
+        set_hieradata_on(host, {})
+        apply_manifest_on(host, manifest, noop: true, catch_failures: true)
+      end
+
+      # A bare include declares only Package[aide], so the preview above
+      # cannot exercise the config, database and helper resources. Preview a
+      # configuration that manages them, and check that their pending changes
+      # are reported, so a broken preview can't pass as a package-only one.
+      it 'previews a full configuration with no errors' do
+        set_hieradata_on(host, full_config(host))
+        result = apply_manifest_on(host, manifest, noop: true, catch_failures: true)
+
+        expect(result.stdout).to match(%r{File_line\[aide\.conf alias NORMAL\]/ensure: .*\(noop\)})
+        expect(result.stdout).to match(%r{File\[/usr/local/sbin/update_aide\]/ensure: .*\(noop\)})
+      end
+    end
+
     context 'a bare include is a safe no-op beyond the package' do
       let(:hieradata) { {} }
 
       it 'installs psmisc for killall' do
         install_package(host, 'psmisc')
-      end
-
-      # Clean-state noop preview (must stay the FIRST apply in the suite):
-      # a bare `include aide` under --noop on a fresh node must compile and
-      # evaluate without error (exit 0 or 2, never 1/4/6). This guards the
-      # `puppet apply --noop` preview path. A post-convergence noop check is
-      # deliberately NOT included anywhere in this suite: once a catalog has
-      # converged (catch_changes passed), --noop trivially exits 0, so such a
-      # check cannot fail and adds no coverage.
-      it 'previews with no errors under --noop from a clean state' do
-        apply_manifest_on(host, manifest, noop: true, catch_failures: true)
       end
 
       it 'applies with no errors' do
