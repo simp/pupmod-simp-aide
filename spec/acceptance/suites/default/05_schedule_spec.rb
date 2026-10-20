@@ -231,6 +231,26 @@ describe 'aide scheduling' do
 
         it_behaves_like 'the managed aide crontab entry', host
       end
+
+      context 'with an entry running a different command' do
+        it 'replaces the entry with the SSG remediation line' do
+          # The line SSG's aide_periodic_cron_checking remediation writes. Its
+          # command differs from aide::cron_command, so the update has to
+          # rewrite the command as well as the schedule.
+          on(host, "sed -i -E 's|^.*aide --check$|05 4 * * * root /usr/sbin/aide --check|' /etc/crontab")
+          on(host, "grep -qxF '05 4 * * * root /usr/sbin/aide --check' /etc/crontab")
+        end
+
+        it 'runs puppet' do
+          apply_manifest_on(host, manifest, catch_failures: true)
+        end
+
+        it 'is idempotent' do
+          apply_manifest_on(host, manifest, catch_changes: true)
+        end
+
+        it_behaves_like 'the managed aide crontab entry', host
+      end
     end
   end
 end

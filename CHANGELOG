@@ -1,6 +1,10 @@
 * Tue Oct 20 2026 Hazel Caballero <hazel@sicura.us> - 9.1.1
 - Fix unterminated quotes in the `aide::set_schedule` augeas update of an
   existing `/etc/crontab` entry
+- Fix `aide::set_schedule` failing on every run in `etc` mode when the
+  existing `/etc/crontab` aide entry runs a different command, such as the
+  SSG remediation's `/usr/sbin/aide --check`; set `aide::cron_command` to
+  that command if the SSG cron check must keep passing
 
 * Thu Oct 08 2026 Steven Pritchard <steve@sicura.us> - 9.1.0
 - Add support for OpenVox 9

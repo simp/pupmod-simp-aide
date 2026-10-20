@@ -83,9 +83,17 @@ describe 'aide class' do
     # converged (catch_changes passed), --noop trivially exits 0, so such a
     # check cannot fail and adds no coverage.
     context 'previewing under --noop from a clean state' do
+      # On a preserved SUT (BEAKER_provision=no) an earlier run has already
+      # installed aide and converged the full configuration, so remove what
+      # this suite creates before previewing. Removing the package also
+      # removes the edited /etc/aide.conf (rpm saves it as .rpmsave).
+      it 'starts from a node without aide' do
+        on(host, 'dnf remove -y aide')
+        on(host, 'rm -f /etc/aide.conf.rpmsave /usr/local/sbin/update_aide /var/lib/aide/aide.db.gz /var/lib/aide/aide.db.new.gz')
+      end
+
       it 'previews a bare include with no errors' do
-        # Set empty hieradata explicitly so a preserved SUT
-        # (BEAKER_provision=no) can't leak data from a previous run.
+        # Empty hieradata, so data from a previous run can't leak in.
         set_hieradata_on(host, {})
         apply_manifest_on(host, manifest, noop: true, catch_failures: true)
       end
