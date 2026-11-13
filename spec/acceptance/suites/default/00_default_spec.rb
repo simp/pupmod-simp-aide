@@ -214,8 +214,11 @@ describe 'aide class' do
         on(host, '/usr/sbin/aide --check')
         report = on(host, 'cat /var/log/aide/aide.report').stdout
         expect(report).to match(%r{^(.+NO differences.+)?$})
-        log = on(host, 'cat /var/log/aide/aide.log').stdout
-        expect(log).to match(%r{^(.+NO differences.+)?$})
+        # With aide::syslog, rsyslog's XX_aide rule also writes aide.log, so it
+        # holds update_aide's own (differences found) run as well, and the
+        # check's lines arrive asynchronously. Wait for the check's result.
+        result = retry_on(host, "grep -q 'NO differences' /var/log/aide/aide.log", max_retries: 30, retry_interval: 1, verbose: true)
+        expect(result.exit_code).to eq 0
       end
     end
   end
