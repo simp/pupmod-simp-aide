@@ -189,6 +189,10 @@ describe 'aide class' do
           # report_url=file:@@{LOGDIR}/aide.log so AIDE writes aide.log for the
           # logrotate test below to rotate.
           'aide::report_urls_purge' => [],
+          # simp/rsyslog 11+ only manages (and restarts) the service when asked
+          # to, or under its simp:defaults profile; without a restart the
+          # XX_aide rule that writes aide.log is never loaded
+          'rsyslog::service_ensure' => 'running',
         )
       end
 
