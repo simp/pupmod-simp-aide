@@ -5,6 +5,7 @@
   existing `/etc/crontab` aide entry runs a different command, such as the
   SSG remediation's `/usr/sbin/aide --check`; set `aide::cron_command` to
   that command if the SSG cron check must keep passing
+- Allow `simp/rsyslog` 11.x
 
 * Thu Oct 08 2026 Steven Pritchard <steve@sicura.us> - 9.1.0
 - Add support for OpenVox 9

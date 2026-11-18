@@ -189,6 +189,10 @@ describe 'aide class' do
           # report_url=file:@@{LOGDIR}/aide.log so AIDE writes aide.log for the
           # logrotate test below to rotate.
           'aide::report_urls_purge' => [],
+          # simp/rsyslog 11+ only manages (and restarts) the service when asked
+          # to, or under its simp:defaults profile; without a restart the
+          # XX_aide rule that writes aide.log is never loaded
+          'rsyslog::service_ensure' => 'running',
         )
       end
 
@@ -210,8 +214,11 @@ describe 'aide class' do
         on(host, '/usr/sbin/aide --check')
         report = on(host, 'cat /var/log/aide/aide.report').stdout
         expect(report).to match(%r{^(.+NO differences.+)?$})
-        log = on(host, 'cat /var/log/aide/aide.log').stdout
-        expect(log).to match(%r{^(.+NO differences.+)?$})
+        # With aide::syslog, rsyslog's XX_aide rule also writes aide.log, so it
+        # holds update_aide's own (differences found) run as well, and the
+        # check's lines arrive asynchronously. Wait for the check's result.
+        result = retry_on(host, "grep -q 'NO differences' /var/log/aide/aide.log", max_retries: 30, retry_interval: 1, verbose: true)
+        expect(result.exit_code).to eq 0
       end
     end
   end
