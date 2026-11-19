@@ -27,5 +27,6 @@ profiles:
       simp:defaults.aide.report_level.RedHat-10: true
       simp:defaults.aide.database_in.RedHat-9: true
       simp:defaults.aide.database_in.RedHat-10: true
+      simp:defaults.aide.aliases_purge: true
       simp:defaults.aide.aliases.non_fips: true
       simp:defaults.aide.aliases.fips: true

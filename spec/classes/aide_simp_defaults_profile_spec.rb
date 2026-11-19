@@ -72,6 +72,9 @@ describe 'aide' do
         it 'writes the default ruleset and non-FIPS aliases' do
           is_expected.to contain_aide__rule('default')
           is_expected.to contain_file_line('aide.conf alias R').with_line('R = p+i+l+n+u+g+s+m+c+sha512')
+          # aide 0.19 rejects `>` as a group name; remove it, never write it
+          is_expected.not_to contain_file_line('aide.conf alias >')
+          is_expected.to contain_file_line('aide.conf alias > absent').with_ensure('absent')
         end
 
         if major == '8'
