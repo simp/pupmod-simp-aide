@@ -220,6 +220,15 @@ checks:
   # (sha1/sha256), so the alias set is split on the `fips_enabled` fact exactly
   # as the module's pre-refactor Hiera data did.
   # ---------------------------------------------------------------------------
+  # aide 0.19 (EL9+) rejects `>` as a group name, so the profile no longer
+  # redefines it (`LOG = >` uses the built-in) and removes a line written by an
+  # earlier release of this profile.
+  simp:defaults.aide.aliases_purge:
+    type: puppet-class-parameter
+    settings:
+      parameter: aide::aliases_purge
+      value:
+        - '>'
   simp:defaults.aide.aliases.non_fips:
     type: puppet-class-parameter
     settings:
@@ -227,7 +236,6 @@ checks:
       value:
         - 'R = p+i+l+n+u+g+s+m+c+sha512'
         - 'L = p+i+l+n+u+g+acl+xattrs'
-        - '> = p+i+l+n+u+g+S+acl+xattrs'
         - 'ALLXTRAHASHES = sha1+sha256+sha512'
         - 'EVERYTHING = R+ALLXTRAHASHES'
         - 'NORMAL = R'
@@ -245,7 +253,6 @@ checks:
       value:
         - 'R = p+i+l+n+u+g+s+m+c+sha1+sha256'
         - 'L = p+i+l+n+u+g+acl+xattrs'
-        - '> = p+i+l+n+u+g+S+acl+xattrs'
         - 'ALLXTRAHASHES = sha1+sha256'
         - 'EVERYTHING = R+ALLXTRAHASHES'
         - 'NORMAL = R'

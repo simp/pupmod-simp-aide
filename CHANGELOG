@@ -1,3 +1,8 @@
+* Thu Nov 19 2026 Hazel Caballero <hazel@sicura.us> - 9.1.2
+- The `simp:defaults` profile no longer writes the `>` group alias, which
+  aide 0.19 (EL9 and EL10) refuses to parse, and removes it from
+  `/etc/aide.conf` where an earlier release wrote it
+
 * Tue Oct 20 2026 Hazel Caballero <hazel@sicura.us> - 9.1.1
 - Fix unterminated quotes in the `aide::set_schedule` augeas update of an
   existing `/etc/crontab` entry

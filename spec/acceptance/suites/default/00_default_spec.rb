@@ -25,6 +25,11 @@ describe 'aide class' do
   # chosen per-host: EL > 8 ships AIDE 0.19+ (database_in, log_level/report_level)
   # while EL 8 ships AIDE 0.16 (database, verbose). (AlmaLinux 9 ships aide
   # 0.19.2, which rejects the legacy `database`/`verbose` options.)
+  def profile_value(check)
+    checks = YAML.safe_load_file(File.expand_path('../../../../SIMP/compliance_profiles/checks.yaml', __dir__))['checks']
+    checks.fetch("simp:defaults.aide.#{check}")['settings']['value']
+  end
+
   def full_config(host)
     major = host[:platform].to_s.split('-')[1].to_i
 
@@ -53,12 +58,10 @@ describe 'aide class' do
       # individual lines and leaves that one untouched, so AIDE would also write
       # aide.log. Purge it so the report goes only to the configured aide.report.
       'aide::report_urls_purge' => ['file:@@{LOGDIR}/aide.log'],
-      'aide::aliases' => [
-        'R = p+i+l+n+u+g+s+m+c+sha512',
-        'NORMAL = R',
-        'PERMS = p+i+u+g+acl',
-        'LOG = >',
-      ],
+      # The simp:defaults profile's own (non-FIPS) aliases, so the profile's
+      # alias lines are parsed by each release's aide
+      'aide::aliases'       => profile_value('aliases.non_fips'),
+      'aide::aliases_purge' => profile_value('aliases_purge'),
       'aide::default_rules' => [
         '/bin    NORMAL',
         '/sbin   NORMAL',
@@ -144,6 +147,9 @@ describe 'aide class' do
       let(:hieradata) { full_config(host) }
 
       it 'works with no errors' do
+        # Written by earlier releases of the simp:defaults profile; aide 0.19
+        # refuses to parse it, so the run must remove it
+        on(host, "echo '> = p+i+l+n+u+g+S+acl+xattrs' >> /etc/aide.conf")
         set_hieradata_on(host, hieradata)
         apply_manifest_on(host, manifest, catch_failures: true)
       end

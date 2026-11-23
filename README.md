@@ -179,7 +179,6 @@ parameters (for example via Hiera). Representative values:
 aide::aliases:
   - 'R = p+i+l+n+u+g+s+m+c+sha512'
   - 'L = p+i+l+n+u+g+acl+xattrs'
-  - '> = p+i+l+n+u+g+S+acl+xattrs'
   - 'ALLXTRAHASHES = sha1+sha256+sha512'
   - 'EVERYTHING = R+ALLXTRAHASHES'
   - 'NORMAL = R'
